@@ -6,7 +6,7 @@ import jniosemu.events.*;
 
 import javax.swing.UIManager;
 
-public class JNiosEmu {
+public class JNiosEmuGUI {
 
   public static void main(String[] args)
   {
