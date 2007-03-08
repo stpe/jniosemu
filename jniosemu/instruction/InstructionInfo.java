@@ -60,9 +60,8 @@ public class InstructionInfo
 	 * @param opCode  OpCode for the instruction.
 	 * @param type  Type of instruction
 	 * @param syntax  Syntax of the instruction
-   * @throws InstructionException  If name empty or opCode equal to zero
 	 */
-	public InstructionInfo(String name, int opCode, Type type, Syntax syntax) throws InstructionException {
+	public InstructionInfo(String name, int opCode, Type type, Syntax syntax) {
 		this.name   = name.toLowerCase();
 		this.opCode = opCode;
 		this.type   = type;

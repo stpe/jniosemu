@@ -12,30 +12,73 @@ import jniosemu.instruction.InstructionManager;
 import jniosemu.instruction.InstructionException;
 import jniosemu.instruction.compiler.*;
 
+/**
+ * Takes sourcecode and turn it into a Program.
+ */
 public class Compiler
 {
+	/**
+	 * Lines of the sourcecode.
+	 */
 	private String[] lines;
+	/**
+	 * Contains all Label.
+	 */
 	private Hashtable<String, Integer> labels = new Hashtable<String, Integer>();
+	/**
+	 * Contains all CompilerInstruction.
+	 */
 	private ArrayList<CompilerInstruction> instructions = new ArrayList<CompilerInstruction>();
+	/**
+	 * Contains all Constant.
+	 */
 	private ArrayList<Constant> constants = new ArrayList<Constant>();
+	/**
+	 * Contains all Variable.
+	 */
 	private ArrayList<Variable> variables = new ArrayList<Variable>();
+	/**
+	 * For managing macros.
+	 */
 	private MacroManager macros = new MacroManager();
+	/**
+	 * For managing instructions.
+	 */
 	private InstructionManager instructionManager = new InstructionManager();
+	/**
+	 * True if we are in the codepart of the program.
+	 */
 	private boolean codePart = true;
+	/**
+	 * Contains the name of all global Label.
+	 */
 	private ArrayList<String> globals = new ArrayList<String>();
+	/**
+	 * Contains the name of the last label if we not in codepart.
+	 */
 	private String lastLabel = null;
 
+	/**
+	 * Init Compiler.
+	 *
+	 * @post lines is set
+	 * @calledby EmulatorManager
+	 *
+	 * @param aLines  Sourcecode
+	 */
 	public Compiler(String aLines) {
 		this.lines = aLines.split("\n");
 	}
 
 	/**
-	 * Replaces all instanses of aReplace with aNew in aValue
+	 * Replaces all instanses of aReplace with aNew in aValue.
 	 *
-	 * @param aValue		The string where the replacment will happen
-	 * @param aReplace	The old value
-	 * @param aNew			The new value
-	 * @ret							The new string
+	 * @calledby parseValue(), parseLine()
+	 *
+	 * @param aValue The string where the replacment will happen
+	 * @param aReplace The old value
+	 * @param aNew The new value
+	 * @return The new string
 	 */
 	public static String stringReplace(String aValue, String aReplace, String aNew) {
 		int start = aValue.indexOf(aReplace);
@@ -49,11 +92,15 @@ public class Compiler
 	}
 
 	/**
-	 * Translate a value into a number. Handle +, -, *, / and many other. Also handle labels
+	 * Translate a value into a number. Handle +, -, *, / and many other. Also handle labels.
 	 *
-	 * @param aValue	A string containing numbers, labels and other stuff
-	 * @param aLabels	Contains all labels with there respective memory address
-	 * @ret						The value
+	 * @calledby Instruction.link()
+	 * @calls stringReplace(), parseValue()
+	 *
+	 * @param aValue A string containing numbers, labels and other stuff
+	 * @param aLabels Contains all labels with there respective memory address
+	 * @return The value
+	 * @throws InstructionException  If we can't parse the value
 	 */
 	public static long parseValue(String aValue, Hashtable<String, Integer> aLabels) throws InstructionException {
 		if (aValue.length() == 0)
@@ -174,9 +221,11 @@ public class Compiler
 	}
 
 	/**
-	 * Returns the current memory address
+	 * Returns the current memory address.
 	 *
-	 * @ret The current memory address
+	 * @calledby parseLine()
+	 *
+	 * @return Current memory address
 	 */
 	private int getCurrentAddr() {
 		return MemoryManager.PROGRAMSTART + (this.instructions.size()*4);
@@ -185,8 +234,12 @@ public class Compiler
 	/**
 	 * Parses a sourcecode line 
 	 *
+	 * @post If instruction is found they are added to instructions
+	 * @calledby compile()
+	 *
 	 * @param aLine		A sourcecode line
 	 * @param aFirst	True if this is the first time this sourcecode line is parsed.
+	 * @throws CompilerException  If something goes wrong
 	 */
 	private void parseLine(String aLine, boolean aFirst, int aLineNumber) throws CompilerException {
 		// If it is the first pass replace constants with there value
@@ -294,7 +347,12 @@ public class Compiler
 	}
 
 	/**
-	 * Compile the program
+	 * Compile the program.
+	 *
+	 * @calledby EmulatorManager.compile()
+	 * @calls parseLine()
+	 *
+	 * @throws CompilerException  If parseLine casts CompilerException
 	 */
 	public void compile() throws CompilerException {
 		int i = 1;
@@ -304,9 +362,13 @@ public class Compiler
 	}
 
 	/**
-	 * Link the program and returns it
+	 * Link the program and returns it.
 	 *
-	 * @ret	A byte-array containing the program
+	 * @pre compile() must have run so instructions contains CompilerInstruction
+	 * @calledby EmulatorManager.compile()
+	 *
+	 * @return Program
+	 * @throws CompilerException  If an instruction can't link
 	 */
 	public byte[] link() throws CompilerException {
 		int size = this.instructions.size()*4+8;
@@ -315,6 +377,7 @@ public class Compiler
 
 		byte[] program = new byte[size];
 
+		// Add variables in the memory
 		int addr = this.instructions.size()*4+4;
 		for (Variable variable: this.variables) {
 			if (variable.getName() != null) {
@@ -328,6 +391,7 @@ public class Compiler
 			addr += value.length;
 		}
 
+		// Add program to the memory
 		addr = 0;
 		for (CompilerInstruction instruction: this.instructions) {
 			try {
@@ -351,8 +415,8 @@ public class Compiler
 	/**
 	 * Returns the memory address of the label if the label exists and the label is global
 	 *
-	 * @param aName	Name of the label
-	 * @ret 				Returns the memory address
+	 * @param aName  Name of the label
+	 * @return Returns the memory address
 	 */
 	public int getGlobal(String aName) throws CompilerException {
 		if (this.globals.contains(aName) && this.labels.containsKey(aName)) {

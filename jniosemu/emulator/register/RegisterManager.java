@@ -3,12 +3,29 @@ package jniosemu.emulator.register;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+/**
+ * Manage all register
+ */
 public class RegisterManager
 {
+	/**
+	 * contains the values of the registers
+	 */
 	private int[] register = new int[32];
 
+	/**
+	 * Init RegisterManager
+	 */
 	public RegisterManager() {}
 
+	/**
+	 * Check if you are allowed to access a specific register
+	 *
+	 * @calledby read(), write()
+	 *
+	 * @param index  Register you want to check
+	 * @return true or false depending if you are allowed to access that index
+	 */
 	private boolean checkIndex(int index) {
 		if (!(index == 31 || index == 27 || (index >= 0 && index <= 23)))
 			return false;
@@ -16,6 +33,13 @@ public class RegisterManager
 		return true;
 	}
 
+	/**
+	 * Parse a register name
+	 *
+	 * @param aRegister  Name of the register
+	 * @return index of the register
+	 * @throws RegisterException  If the index is not an integer
+	 */
 	public static int parseRegister(String aRegister) throws RegisterException {
 		if (aRegister.equals("zero")) {
 			return 0;
@@ -40,6 +64,15 @@ public class RegisterManager
 		throw new RegisterException(aRegister);
 	}
 
+	/**
+	 * Read the value of an index
+	 *
+	 * @calledby Emulator
+	 *
+	 * @param index  Register you want to read
+	 * @return Value of the register
+	 * @throws RegisterException  If you don't have access to that register
+	 */
 	public int read(int index) throws RegisterException {
 		if (!checkIndex(index))
 			throw new RegisterException(index);
@@ -47,12 +80,30 @@ public class RegisterManager
 		return register[index];
 	}
 
+	/**
+	 * Write the value to an index
+	 *
+	 * @calledby Emulator
+	 *
+	 * @param index  Register you want to read
+	 * @param Value you want to set
+	 * @throws RegisterException  If you don't have access to that register
+	 */
 	public void write(int aIndex, int aValue) throws RegisterException {
 		if (!checkIndex(aIndex))
 			throw new RegisterException(aIndex);
 
 		if (aIndex > 0)
 		register[aIndex] = aValue;
+	}
+
+	/**
+	 * Reseting all registers
+	 *
+	 * @calledby EmulatorManager.reset()
+	 */
+	public void reset() {
+		
 	}
 
 	public void dump() {
