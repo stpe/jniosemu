@@ -34,9 +34,9 @@ public class CompilerRTypeInstruction extends CompilerInstruction
 	private String tImm = "";
 
 	/**
-	 * Create a CompilerJTypeInstruction by parsing the arguments
+	 * Create a CompilerRTypeInstruction by parsing the arguments
 	 *
-	 * @post rA, rB and tImm is set
+	 * @post rA, rB, rC and tImm is set
 	 *
 	 * @param aInstructionInfo  Info about the instruction
 	 * @param aArgs  Arguments

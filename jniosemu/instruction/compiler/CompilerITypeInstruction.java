@@ -31,7 +31,7 @@ public class CompilerITypeInstruction extends CompilerInstruction
 	private String tImm = "";
 
 	/**
-	 * Create a CompilerJTypeInstruction by parsing the arguments
+	 * Create a CompilerITypeInstruction by parsing the arguments
 	 *
 	 * @post rA, rB and tImm is set
 	 *

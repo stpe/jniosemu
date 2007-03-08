@@ -25,7 +25,7 @@ public class CompilerJTypeInstruction extends CompilerInstruction
 	/**
 	 * Create a CompilerJTypeInstruction by parsing the arguments
 	 *
-	 * @post rA, rB and tImm is set
+	 * @post tImm is set
 	 *
 	 * @param aInstructionInfo  Info about the instruction
 	 * @param aArgs  Arguments
