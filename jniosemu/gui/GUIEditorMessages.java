@@ -9,12 +9,22 @@ import jniosemu.events.*;
 public class GUIEditorMessages extends JPanel 
                        implements ActionListener, EventObserver {
 	
+	/**
+	 * Reference to EventManager used to receive
+	 * and send events.
+	 */
 	private EventManager eventManager;
 	
 	private JTextArea editorMessages;
 	
 	/**
 	 * Editor constructor.
+	 *
+	 * @pre       
+	 * @post      
+	 * @checks    
+	 * @calledby  
+	 * @calls  	 
 	 */
 	public GUIEditorMessages(EventManager eventManager)
 	{
@@ -47,12 +57,6 @@ public class GUIEditorMessages extends JPanel
 		this.add(editorMessagesScrollPane, BorderLayout.CENTER);
 	}
 
-	/**
-	 * Receive incoming events from event manager.
-	 *
-	 * @param  eventIdentifier String identifying the event
-	 * @param  obj             Object associated with event by sender
-	 */
 	public void update(String eventIdentifier, Object obj)
 	{
 		String debugMessage = (String) obj;
@@ -61,7 +65,8 @@ public class GUIEditorMessages extends JPanel
 	}
 
 	/**
-	 * Invoked when a GUI action occurs.
+	 * Invoked when a GUI action occurs, forwards it as
+	 * an event to the EventManager object.
 	 */
   public void actionPerformed(ActionEvent e) {
   		eventManager.sendEvent(e.getActionCommand());

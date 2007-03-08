@@ -11,6 +11,10 @@ import jniosemu.events.*;
 public class GUIToolBar extends JToolBar
                         implements ActionListener {
 	
+	/**
+	 * Reference to EventManager used to receive
+	 * and send events.
+	 */
 	private EventManager eventManager;
 	
 	/**

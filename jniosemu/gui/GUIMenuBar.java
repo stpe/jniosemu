@@ -11,6 +11,10 @@ import jniosemu.events.*;
 public class GUIMenuBar extends JMenuBar 
                         implements ActionListener {
 	
+	/**
+	 * Reference to EventManager used to receive
+	 * and send events.
+	 */
 	private EventManager eventManager;
 	
 	/**

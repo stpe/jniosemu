@@ -12,6 +12,10 @@ import jniosemu.events.*;
 public class GUIEmulator extends JPanel 
                        implements ActionListener, EventObserver {
 
+	/**
+	 * Reference to EventManager used to receive
+	 * and send events.
+	 */
 	private EventManager eventManager;
 
 	private JList listView;

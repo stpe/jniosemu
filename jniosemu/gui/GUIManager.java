@@ -13,20 +13,38 @@ import java.util.*;
 import jniosemu.events.*;
 
 /**
- *
+ * The GUI Manager creates all components of the GUI and
+ * dictates their layout. It also manages general actions
+ * of the GUI not related to specific components.
  */
 public class GUIManager
 	implements EventObserver {
 
+		/**
+		 * Main frame of GUI.
+		 */
     private JFrame frame;
 
-		// file chooser used for open/save dialogs
+		/**
+		 * File chooser used for open/save dialogs.
+		 */
 		private final JFileChooser fc = new JFileChooser();
 
+		/**
+		 * Reference to EventManager used to receive
+		 * and send events.
+		 */
 		private EventManager eventManager;
 
     /**
-     * GUIManager contstructor.
+     * Initiates the creation of GUI components and adds itself to
+     * the Event Manager as an observer.
+     *
+     * @post      eventManager is set.
+		 * @calledby  JNiosEmu
+		 * @calls     initGUI(), EventManager.addEventObserver()
+		 *
+		 * @param  eventManager  The Event Manager object.
      */
     public GUIManager(EventManager eventManager)
     {
@@ -42,7 +60,11 @@ public class GUIManager
     }
 
     /**
-     * Creates and shows the GUIManager GUI.
+     * Creates the GUI frame and initates creation of sub-components.
+     *
+		 * @post      Application frame instance is created.
+		 * @calledby  GUIManager()
+		 * @calls     setup()
      */
     private void initGUI()
     {
