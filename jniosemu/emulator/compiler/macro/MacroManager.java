@@ -36,7 +36,7 @@ public class MacroManager
 	 * Checks if a macro exists
 	 *
 	 * @param aName Name of the macro that we check for
-	 * @ret					True or false depending of the macro exists or not
+	 * @return			True or false depending of the macro exists or not
 	 */
 	public boolean exists(String aName) {
 		return this.nameHash.containsKey(aName.toLowerCase());
@@ -76,7 +76,7 @@ public class MacroManager
 	 *
 	 * @param aName	Name of the macro
 	 * @param aArgs Arguments value
-	 * @ret					Lines
+	 * @return			Lines
 	 */
 	public String[] get(String aName, String aArgs) throws MacroException {
 		String[] args = null;

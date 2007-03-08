@@ -1,6 +1,3 @@
-/** 
- * GUI for code editor.
- */
 package jniosemu.gui;
 
 import javax.swing.*;
@@ -9,6 +6,9 @@ import java.awt.BorderLayout;
 
 import jniosemu.events.*;
 
+/** 
+ * Creates and manages the GUI component of the editor view.
+ */
 public class GUIEditor extends JPanel 
                        implements ActionListener, EventObserver {
 	
@@ -18,12 +18,20 @@ public class GUIEditor extends JPanel
 	 */
 	private EventManager eventManager;
 	
+	/**
+	 * The text area component.
+	 */
 	private JTextArea editor;
 	
 	/**
-	 * GUI component constructor.
+	 * Initiates the creation of GUI components and adds itself to
+	 * the Event Manager as an observer.
 	 *
-	 * @param  eventManager
+	 * @post      eventManager reference is set for this object.
+	 * @calledby  GUIManager.setup()
+	 * @calls     setup(), EventManager.addEventObserver()
+	 *
+	 * @param  eventManager  The Event Manager object.
 	 */
 	public GUIEditor(EventManager eventManager)
 	{
@@ -39,7 +47,10 @@ public class GUIEditor extends JPanel
 
 	/**
 	 * Setup GUI components and attributes.
-	 */	
+	 *
+	 * @post      components created and added to panel
+	 * @calledby  GUIEditor
+	 */
 	private void setup()
 	{
 		editor = new JTextArea();
@@ -55,12 +66,6 @@ public class GUIEditor extends JPanel
 		this.add(editorScrollPane, BorderLayout.CENTER);
 	}
 
-	/**
-	 * Receive incoming events from event manager.
-	 *
-	 * @param  eventIdentifier String identifying the event
-	 * @param  obj             Object associated with event by sender
-	 */
 	public void update(String eventIdentifier, Object obj)
 	{
 		if (eventIdentifier.equals(Events.EVENTID_NEW))
@@ -70,7 +75,12 @@ public class GUIEditor extends JPanel
 	}
 	
 	/**
-	 * Invoked when a GUI action occurs.
+	 * Invoked when a GUI action occurs, forwards it as
+	 * an event to the EventManager object.
+	 *
+	 * @calls     EventManager.sendEvent()
+	 *
+	 * @param  e  action event object
 	 */
   public void actionPerformed(ActionEvent e) {
   		eventManager.sendEvent(e.getActionCommand());

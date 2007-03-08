@@ -6,6 +6,9 @@ import java.awt.BorderLayout;
 
 import jniosemu.events.*;
 
+/** 
+ * Creates and manages the GUI component of the editor message view.
+ */
 public class GUIEditorMessages extends JPanel 
                        implements ActionListener, EventObserver {
 	
@@ -15,16 +18,20 @@ public class GUIEditorMessages extends JPanel
 	 */
 	private EventManager eventManager;
 	
+	/**
+	 * The text area used to display messages.
+	 */
 	private JTextArea editorMessages;
 	
 	/**
-	 * Editor constructor.
+	 * Initiates the creation of GUI components and adds itself to
+	 * the Event Manager as an observer.
 	 *
-	 * @pre       
-	 * @post      
-	 * @checks    
-	 * @calledby  
-	 * @calls  	 
+	 * @post      eventManager reference is set for this object.
+	 * @calledby  GUIManager.setup()
+	 * @calls     setup(), EventManager.addEventObserver()
+	 *
+	 * @param  eventManager  The Event Manager object.
 	 */
 	public GUIEditorMessages(EventManager eventManager)
 	{
@@ -40,7 +47,10 @@ public class GUIEditorMessages extends JPanel
 
 	/**
 	 * Setup GUI components and attributes.
-	 */	
+	 *
+	 * @post      components created and added to panel
+	 * @calledby  GUIEditorMessages
+	 */
 	private void setup()
 	{
 		editorMessages = new JTextArea("Editor messages...\n", 5, 60);
@@ -67,6 +77,10 @@ public class GUIEditorMessages extends JPanel
 	/**
 	 * Invoked when a GUI action occurs, forwards it as
 	 * an event to the EventManager object.
+	 *
+	 * @calls     EventManager.sendEvent()
+	 *
+	 * @param  e  action event object
 	 */
   public void actionPerformed(ActionEvent e) {
   		eventManager.sendEvent(e.getActionCommand());

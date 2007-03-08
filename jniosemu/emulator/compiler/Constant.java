@@ -8,7 +8,7 @@ public class Constant
 	/**
 	 * Init a Constant from a codeline
 	 *
-	 * @param aLine	A line of code containing name and value
+	 * @param aLine  line of code containing name and value
 	 */
 	public Constant(String aLine) {
 		String[] value = aLine.split("\\s*,\\s*", 2);
@@ -19,8 +19,8 @@ public class Constant
 	/**
 	 * Init a Constant from name and value
 	 *
-	 * @param aName		Name of the constant
-	 * @param aValue	Value of the constant
+	 * @param aName		name of the constant
+	 * @param aValue	value of the constant
 	 */
 	public Constant(String aName, String aValue) {
 		this.name = aName;
@@ -30,7 +30,7 @@ public class Constant
 	/**
 	 * Return the name of the constant
 	 *
-	 * @ret	The name of the contant
+	 * @return	name of the constant
 	 */
 	public String getName() {
 		return this.name;
@@ -39,7 +39,7 @@ public class Constant
 	/**
 	 * Return the value of the constant
 	 *
-	 * @ret	The value of the contant
+	 * @return	value of the constant
 	 */
 	public String getValue() {
 		return this.value;

@@ -58,7 +58,7 @@ public class Variable
 	/**
 	 * Return the name of the variable
 	 *
-	 * @ret	The name of the variable
+	 * @return	name of the variable
 	 */
 	public String getName() {
 		return this.name;
@@ -67,7 +67,7 @@ public class Variable
 	/**
 	 * Return the value of the variable
 	 *
-	 * @ret	The value of the variable
+	 * @return	value of the variable
 	 */
 	public byte[] getValue() {
 		return this.value;

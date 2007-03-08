@@ -85,8 +85,8 @@ public class RegisterManager
 	 *
 	 * @calledby Emulator
 	 *
-	 * @param index  Register you want to read
-	 * @param Value you want to set
+	 * @param aIndex  Register you want to read
+	 * @param aValue you want to set
 	 * @throws RegisterException  If you don't have access to that register
 	 */
 	public void write(int aIndex, int aValue) throws RegisterException {

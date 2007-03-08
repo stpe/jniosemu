@@ -1,6 +1,3 @@
-/** 
- * Emulator.
- */
 package jniosemu.gui;
 
 import javax.swing.*;
@@ -9,8 +6,11 @@ import java.awt.BorderLayout;
 
 import jniosemu.events.*;
 
-public class GUIEmulator extends JPanel 
-                       implements ActionListener, EventObserver {
+/** 
+ * Creates and manages the GUI component of the emulator view.
+ */
+ public class GUIEmulator extends JPanel
+											 implements ActionListener, EventObserver {
 
 	/**
 	 * Reference to EventManager used to receive
@@ -18,27 +18,40 @@ public class GUIEmulator extends JPanel
 	 */
 	private EventManager eventManager;
 
+	/**
+	 * List component used to display emulator code.
+	 */
 	private JList listView;
 
 	/**
-	 * Emulator constructor.
+	 * Initiates the creation of GUI components and adds itself to
+	 * the Event Manager as an observer.
+	 *
+	 * @post      eventManager reference is set for this object.
+	 * @calledby  GUIManager.setup()
+	 * @calls     setup(), EventManager.addEventObserver()
+	 *
+	 * @param  eventManager  The Event Manager object.
 	 */
 	public GUIEmulator(EventManager eventManager)
 	{
 		super();
-		
+
 		this.eventManager = eventManager;
-		
+
 		setup();
-		
+
 		// add events to listen to
-    this.eventManager.addEventObserver(Events.EVENTID_NEW, this);		
+		this.eventManager.addEventObserver(Events.EVENTID_NEW, this);
 	}
 
 
 	/**
 	 * Setup GUI components and attributes.
-	 */	
+	 *
+	 * @post      components created and added to panel
+	 * @calledby  GUIEmulator
+	 */
 	private void setup()
 	{
 		// emulator listview
@@ -53,12 +66,6 @@ public class GUIEmulator extends JPanel
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
 
-	/**
-	 * Receive incoming events from event manager.
-	 *
-	 * @param  eventIdentifier String identifying the event
-	 * @param  obj             Object associated with event by sender
-	 */
 	public void update(String eventIdentifier, Object obj)
 	{
 		if (eventIdentifier.equals(Events.EVENTID_NEW))
@@ -66,12 +73,17 @@ public class GUIEmulator extends JPanel
 //			editor.setText("");
 		}
 	}
-	
+
 	/**
-	 * Invoked when a GUI action occurs.
+	 * Invoked when a GUI action occurs, forwards it as
+	 * an event to the EventManager object.
+	 *
+	 * @calls     EventManager.sendEvent()
+	 *
+	 * @param  e  action event object
 	 */
-  public void actionPerformed(ActionEvent e) {
-  		eventManager.sendEvent(e.getActionCommand());
-  }
+	public void actionPerformed(ActionEvent e) {
+			eventManager.sendEvent(e.getActionCommand());
+	}
 
 }

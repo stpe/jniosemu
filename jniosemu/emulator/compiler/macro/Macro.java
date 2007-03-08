@@ -23,7 +23,7 @@ public class Macro
 	 * Gets the value of the arguments and replace the arguments with its value
 	 *
 	 * @param aArgs The arguments value
-	 * @ret					The lines
+	 * @return			The lines
 	 */
 	public String[] get(String[] aArgs) throws MacroException {
 		if (aArgs == null ^ this.args == null)
@@ -47,7 +47,7 @@ public class Macro
 	/**
 	 * Return the name of the macro
 	 *
-	 * @ret	The name of the macro
+	 * @return	name of the macro
 	 */
 	public String getName() {
 		return this.name;
