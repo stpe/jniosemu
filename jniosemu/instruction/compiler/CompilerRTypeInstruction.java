@@ -7,20 +7,41 @@ import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionInfo;
 import jniosemu.instruction.InstructionException;
 
+/**
+ * Contains info about a instruction of type R during compilation.
+ */
 public class CompilerRTypeInstruction extends CompilerInstruction
 {
-	private int rA     = 0;
-	private int rB     = 0;
-	private int rC     = 0;
-	private int imm    = 0;
+	/**
+	 * Contains which register rA is
+	 */
+	private int rA = 0;
+	/**
+	 * Contains which register rB is
+	 */
+	private int rB = 0;
+	/**
+	 * Contains which register rC is
+	 */
+	private int rC = 0;
+	/**
+	 * Contains the immediate value which is calculated from tImm during linking
+	 */
+	private int imm = 0;
+	/**
+	 * Contains the temporary immediate value which is used during linking
+	 */
 	private String tImm = "";
 
 	/**
-	 * Create a CompilerRTypeInstruction
+	 * Create a CompilerJTypeInstruction by parsing the arguments
 	 *
-	 * @param aInstructionInfo	Info about the instruction
-	 * @param aArgs							Arguments
-	 * @param aLineNumber				LineNumber
+	 * @post rA, rB and tImm is set
+	 *
+	 * @param aInstructionInfo  Info about the instruction
+	 * @param aArgs  Arguments
+	 * @param aLineNumber  LineNumber in the sourcecode
+	 * @throws InstructionException  If the argument syntax is wrong
 	 */
 	public CompilerRTypeInstruction (InstructionInfo aInstructionInfo, String aArgs, int aLineNumber) throws InstructionException {
 		this.instructionInfo = aInstructionInfo;
@@ -67,19 +88,28 @@ public class CompilerRTypeInstruction extends CompilerInstruction
 	}
 
 	/**
-	 * Returns the opcode of the instruction
+	 * Returns the opcode of the instruction.
 	 *
-	 * @ret The opcode
+	 * @pre link() must be called first so imm gets it value
+	 * @calledby Compiler.link()
+	 * @calls InstructionInfo.getOpCode()
+	 *
+	 * @return Opcode
 	 */
 	public int getOpcode() {
 		return (this.rA & 0x1F) << 27 | (this.rB & 0x1F) << 22 | (this.rC & 0x1F) << 17 | (this.imm & 0x1F) << 6 | this.instructionInfo.getOpCode();
 	}
 
 	/**
-	 * Linking the instruction. Translate labels into memory addresses
+	 * Linking the instruction. Translate labels into memory addresses.
 	 *
-	 * @param aLabels	Labels with there memory address
-	 * @param aAddr		The memory address of this instruction
+	 * @post Set imm
+	 * @calledby Compiler.link()
+	 * @calls Compiler.parseValue()
+	 *
+	 * @param aLabels  Labels with there memory address
+	 * @param aAddr  Memory address where this instruction is placed in memory
+	 * @throws InstructionException  If the immediate value can't be parsed
 	 */
 	public void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException {}
 }

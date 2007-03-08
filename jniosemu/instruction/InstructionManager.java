@@ -6,14 +6,30 @@ import java.util.ArrayList;
 import jniosemu.instruction.emulator.*;
 import jniosemu.instruction.compiler.*;
 
+/**
+ * Manage all instructions.
+ */
 public class InstructionManager
 {
-	Hashtable<Integer, InstructionInfo> opCodeHash = new Hashtable<Integer, InstructionInfo>(50);
-	Hashtable<String, InstructionInfo> nameHash = new Hashtable<String, InstructionInfo>(50);
-	ArrayList<InstructionInfo> instructions = new ArrayList<InstructionInfo>(50);
+	/**
+   * Used for fast getting an InstructionInfo from an opcode
+   */
+	private Hashtable<Integer, InstructionInfo> opCodeHash = new Hashtable<Integer, InstructionInfo>(50);
+	/**
+	 * Used for fast getting an InstructionInfo from a name
+	 */
+	private Hashtable<String, InstructionInfo> nameHash = new Hashtable<String, InstructionInfo>(50);
+	/**
+	 * Contains all InstructionInfo
+	 */
+	private ArrayList<InstructionInfo> instructions = new ArrayList<InstructionInfo>(50);
 
 	/**
-	 * Init the instructionManager
+	 * Init the instructionManager.
+	 *
+	 * @post Populate instructions, opCodeHash and nameHash
+	 * @calledby EmulatorManager()
+	 * @calls InstructionInfo()
 	 */
 	public InstructionManager() {
 		this.instructions.add(new InstructionInfo("ADDI",  0x04,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT));
@@ -37,10 +53,15 @@ public class InstructionManager
 	}
 
 	/**
-	 * Translate an opcode to an instruction
+	 * Translate an opcode to an instruction.
 	 *
-	 * @param int opCode
-	 * @return Instruction
+	 * @pre opCodeHash must be populated.
+	 * @calledby EmulatorManager
+	 * @calls Instruction()
+	 *
+	 * @param opCode  Opcode of the instruction
+	 * @return Instruction  The instruction that one requested
+	 * @throws InstructionException  If the instruction don't exists or the instruction class is missing
 	 */
 	public Instruction get(int opCode) throws InstructionException {
 		// Check the last 6 bits if it is an opx instruction
@@ -62,11 +83,17 @@ public class InstructionManager
 	}
 
 	/**
-	 * Translate an instruction name and arguments to a CompilerInstruction
+	 * Translate an instruction name and arguments to a CompilerInstruction.
 	 *
-	 * @param ins		Name of the instruction
-	 * @param args	Arguments for the instruction
-	 * @ret					A CompilerInstruction
+	 * @pre nameHash must be populated.
+	 * @calledby Compiler
+	 * @calls CompilerITypeInstruction(), CompilerRTypeInstruction(), CompilerJTypeInstructio()
+	 *
+	 * @param aName  Name of the instruction
+	 * @param aArgs  Arguments for the instruction
+	 * @param aLineNumber  Line number in the sourcecode from where the instruction comes from
+	 * @return CompilerInstruction of requested type
+	 * @throws InstructionException  If the instruction don't exists
 	 */
 	public CompilerInstruction get(String aName, String aArgs, int aLineNumber) throws InstructionException {
 		InstructionInfo instructionInfo = this.nameHash.get(aName.toLowerCase());

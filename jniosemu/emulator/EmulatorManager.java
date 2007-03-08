@@ -5,14 +5,26 @@ import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionManager;
 import jniosemu.instruction.emulator.Instruction;
 
+/**
+ * Managing the emulation
+ */
 public class EmulatorManager
 {
+	/**
+	 * PC address
+	 */
 	private int pc = MemoryManager.PROGRAMSTART;
+	/**
+	 * 
+	 */
 	private MemoryManager memory;
 	private RegisterManager register = new RegisterManager();
 	private InstructionManager instructions = new InstructionManager();
 	private Emulator emulator;
 
+	/**
+	 * 
+	 */
 	public EmulatorManager(int aPc, byte[] aProgram) {
 		this.emulator = new Emulator(this);
 		this.memory = new MemoryManager(aProgram);

@@ -4,23 +4,36 @@ import java.util.Hashtable;
 import jniosemu.instruction.InstructionInfo;
 import jniosemu.instruction.InstructionException;
 
+/**
+ * Contains info about a instruction during compilation.
+ */
 public abstract class CompilerInstruction
 {
+	/**
+	 * Info about the instruction.
+	 */
 	protected InstructionInfo instructionInfo;
+	/**
+	 * Which linenumber in the sourcecode this instruction comes from
+	 */
 	protected int lineNumber;
 
 	/**
-	 * Returns the opcode of the instruction
+	 * Returns the opcode of the instruction.
 	 *
-	 * @ret The opcode
+	 * @calledby Compiler.link()
+	 *
+	 * @return Opcode
 	 */
 	public abstract int getOpcode();
 
 	/**
-	 * Linking the instruction. Translate labels into memory addresses
+	 * Linking the instruction. Translate labels into memory addresses.
 	 *
-	 * @param aLabels	Labels with there memory address
-	 * @param aAddr		The memory address of this instruction
+	 * @calledby Compiler.link()
+	 *
+	 * @param aLabels  Labels with there memory address
+	 * @param aAddr  Memory address where this instruction is placed in memory
 	 */
 	public abstract void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException;
 }
