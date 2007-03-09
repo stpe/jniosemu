@@ -126,7 +126,7 @@ public class Compiler
 		boolean found;
 		do {
 			found = false;
-			Pattern pParenthesis = Pattern.compile("(%(lo|hi|hiadj))?\\(([^\\(\\)]+)\\)");
+			Pattern pParenthesis = Pattern.compile("(%(lo|hi|hiadj|\\-))?\\(([^\\(\\)]+)\\)");
 			Matcher mParenthesis = pParenthesis.matcher(aValue);
 			while (mParenthesis.find()) {
 				found = true;
@@ -134,7 +134,9 @@ public class Compiler
 
 				// If a macro is found take care of it
 				if (mParenthesis.group(2) != null) {
-					if (mParenthesis.group(2).equals("lo")) {
+					if (mParenthesis.group(2).equals("-")) {
+						inner = -inner;
+					} else if (mParenthesis.group(2).equals("lo")) {
 						inner = inner & 0xFFFF;
 					} else if (mParenthesis.group(2).equals("hi")) {
 						inner = (inner >>> 16) & 0xFFFF;

@@ -29,7 +29,7 @@ public class MacroManager
 		this.put("MOVIA",   "rB, imm",       "ORHI \\rB, r0, %hiadj(\\imm)\nADDI \\rB, \\rB, %lo(\\imm)");
 		this.put("MOVUI",   "rB, imm",       "ORI \\rB, r0, \\imm");
 		this.put("NOP",     null,            "ADD r0, r0, r0");
-		this.put("SUBI",    "rB, rA, imm",   "ADDI \\rB, \\rA, -\\imm");
+		this.put("SUBI",    "rB, rA, imm",   "ADDI \\rB, \\rA, -(\\imm)");
 	}
 
 	/**
