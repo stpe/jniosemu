@@ -3,9 +3,14 @@ import jniosemu.events.*;
 import javax.swing.UIManager;
 import jniosemu.emulator.EmulatorManager;
 
+/**
+ * Class containing main method used to start the
+ * application and set the UI look-and-feel.
+ */
 public class JNiosEmu
 {
-	public static void main(String args[]) {
+	public static void main(String args[]) 
+	{
 		try {
       UIManager.setLookAndFeel(
 				UIManager.getSystemLookAndFeelClassName());

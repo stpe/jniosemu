@@ -54,15 +54,19 @@ public class GUIManager
 	public GUIManager(EventManager eventManager)
 	{
 		this.eventManager = eventManager;
-		
-		initGUI();
-		
+
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_EXCEPTION, this);
-		this.eventManager.addEventObserver(Events.EVENTID_CHANGE_TAB, this);
-		this.eventManager.addEventObserver(Events.EVENTID_EXIT, this);
-		this.eventManager.addEventObserver(Events.EVENTID_ABOUT, this);
-		this.eventManager.addEventObserver(Events.EVENTID_COMPILATION_DONE, this);
+		String[] events = {
+			Events.EVENTID_EXCEPTION,
+			Events.EVENTID_CHANGE_TAB,
+			Events.EVENTID_EXIT,
+			Events.EVENTID_ABOUT,
+			Events.EVENTID_COMPILATION_DONE,
+			Events.EVENTID_CHANGE_WINDOW_TITLE
+		};
+		this.eventManager.addEventObserver(events, this);
+
+		initGUI();
 	}
 
 	/**
@@ -77,12 +81,12 @@ public class GUIManager
 		// the main panel will include all components
 		JPanel mainPanel = new JPanel();
 
-		setup(mainPanel);
-
 		// create and set up the window.
 		frame = new JFrame("JNiosEmu");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(mainPanel);
+
+		setup(mainPanel);
 
 		// menu
 		GUIMenuBar menubar = new GUIMenuBar(eventManager);
@@ -168,14 +172,17 @@ public class GUIManager
 				showAbout();
 		else
 			if (eventIdentifier.equals(Events.EVENTID_EXCEPTION))
-				showException( (Exception) obj );				
+				showException( (Exception) obj );
 		else
 			if (eventIdentifier.equals(Events.EVENTID_CHANGE_TAB))
-				changeTab( ((Integer) obj).intValue() );			
+				changeTab( ((Integer) obj).intValue() );
 		else
 			if (eventIdentifier.equals(Events.EVENTID_COMPILATION_DONE))
-				changeTab( new Integer(TAB_EMULATOR) );			
-				
+				changeTab( new Integer(TAB_EMULATOR) );
+		else
+			if (eventIdentifier.equals(Events.EVENTID_CHANGE_WINDOW_TITLE))
+				setFrameTitle( (String) obj );
+
 	}
 
 	/**
@@ -183,7 +190,7 @@ public class GUIManager
 	 *
 	 * @post      Application is shutdown.
 	 * @calledby  update()
-	 * @calls     EventManager.sendEvent()   
+	 * @calls     EventManager.sendEvent()
 	 */
 	private void exitFile()
 	{
@@ -211,12 +218,12 @@ public class GUIManager
 	 *
 	 * @calledby  update()
 	 *
-	 * @param  e  Exception that occured.
+	 * @param  e  Exception that occured
 	 */
 	private void showException(Exception e)
 	{
 		e.printStackTrace();
-		
+
 		JOptionPane.showMessageDialog(
 			frame,
       "Exception",
@@ -224,19 +231,31 @@ public class GUIManager
 			JOptionPane.ERROR_MESSAGE
 		);
 	}
-	
+
 	/**
 	 * Change selected tab between Edtior and Emulator.
 	 *
 	 * @calledby  update()
 	 *
-	 * @param  tabIndex  Index of tab.
+	 * @param  tabIndex  Index of tab
 	 */
 	private void changeTab(int tabIndex)
 	{
 		tabbedPane.setSelectedIndex(tabIndex);
 	}
-	
+
+	/**
+	 * Set title of application window.
+	 *
+	 * @calledby  update()
+	 *
+	 * @param  title  Window title
+	 */
+	private void setFrameTitle(String title)
+	{
+		frame.setTitle("JNiosEmu - [" + title + "]");
+	}
+
 }
 
 

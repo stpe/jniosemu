@@ -8,7 +8,7 @@ import java.util.*;
 import jniosemu.events.*;
 import jniosemu.emulator.*;
 
-/** 
+/**
  * Creates and manages the GUI component of the emulator view.
  */
  public class GUIEmulator extends JPanel
@@ -49,7 +49,10 @@ import jniosemu.emulator.*;
 		setup();
 
 		// add events to listen to
-		String[] events = {Events.EVENTID_COMPILATION_DONE, Events.EVENTID_PC_CHANGE};
+		String[] events = {
+			Events.EVENTID_COMPILATION_DONE,
+			Events.EVENTID_PC_CHANGE
+		};
 		this.eventManager.addEventObserver(events, this);
 	}
 
@@ -62,14 +65,11 @@ import jniosemu.emulator.*;
 	private void setup()
 	{
 		currentIndex = 0;
-		
+
 		// emulator listview
 		listView = new JList();
 		listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		listView.setCellRenderer(new EmulatorCellRenderer());
-
-		Vector<ProgramLine> programLines = new Vector<ProgramLine>();
-		setListModel(programLines);
 
 		// scrollbars
 		JScrollPane scrollPane = new JScrollPane(listView);
@@ -80,34 +80,37 @@ import jniosemu.emulator.*;
 	}
 
 	/**
+	 * Set program object to be displayed in emulator view.
 	 *
-	 */
-	private void setListModel(Vector programLines)
-	{
-		listView.setListData(programLines);
-	}
-
-	/**
+	 * @calledby  update()
 	 *
+	 * @param  prg Program object
 	 */
 	private void setProgram(Program prg)
 	{
-		setListModel( prg.getProgramLines() );
+		listView.setListData( prg.getProgramLines() );
 	}
 
 	/**
-	 * @checks  Only ensure index is visible (by scrolling)
-	 *          if it is not negative.
+	 * Set which line in the emulator view corresponds to the
+	 * instruction where the program counter is pointing to
+	 * and updates the visual indication.
+	 *
+	 * @checks    Only ensure index is visible (by scrolling)
+	 *            if it is not negative.
+	 * @calledby  update()
+	 *
+	 * @param  index Index of line in program
 	 */
 	private void setProgramCounterIndicator(int index)
 	{
 		currentIndex = index;
-		
+
 		if (index != -1)
 		{
 			listView.ensureIndexIsVisible(index);
 		}
-		
+
 		listView.repaint();
 	}
 
@@ -120,7 +123,7 @@ import jniosemu.emulator.*;
 		else if (eventIdentifier.equals(Events.EVENTID_PC_CHANGE))
 		{
 			setProgramCounterIndicator( ((Integer) obj).intValue() );
-		}		
+		}
 	}
 
 	/**
@@ -169,7 +172,7 @@ import jniosemu.emulator.*;
 							setBackground(list.getBackground());
 							setForeground(list.getForeground());
 					}
-					
+
 					// indicate program counter
 					if (index == currentIndex)
 						setBackground(new Color(255, 255, 0));
@@ -180,33 +183,25 @@ import jniosemu.emulator.*;
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 
-			if (isOpaque()) 
-			{ 
+			if (isOpaque())
+			{
 					// paint background
 					g.setColor(getBackground());
 					g.fillRect(0, 0, getWidth(), getHeight());
 			}
 
-			FontMetrics metrics = g.getFontMetrics(getFont());
-
 			g.setColor(new Color(0, 0, 0));
 
 			int yOffset = 11;
-			
-			String tmp = null;
-			
+
 			if (lineObj.getOpCode() != null)
 				g.drawString(lineObj.getOpCode(), 2, yOffset);
 
 			if (lineObj.getInstruction() != null)
 				g.drawString(lineObj.getInstruction(), 120, yOffset);
-			
+
 			if (lineObj.getSourceCodeLine() != null)
 				g.drawString(lineObj.getSourceCodeLine(), 300, yOffset);
-
-//			String tmp = "0x" + this.lineObj.toString();	
-
-//			g.drawString(tmp, getWidth()-metrics.stringWidth(tmp), 11);
 		}
 
 	}

@@ -1,29 +1,35 @@
 package jniosemu.gui;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
 import jniosemu.events.*;
 import jniosemu.editor.*;
 
-/** 
+/**
  * Creates and manages the GUI component of the editor view.
  */
-public class GUIEditor extends JPanel 
-                       implements ActionListener, EventObserver {
-	
+public class GUIEditor extends JPanel
+                       implements DocumentListener, EventObserver {
+
+	/**
+	 * Document name used for unsaved documents.
+	 */
+	private static final String DEFAULT_DOCUMENT_NAME = "untitled";
+
 	/**
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
 	private EventManager eventManager;
-	
+
 	/**
 	 * Editor is the utility class to manage I/O.
 	 */
 	private Editor editor;
-	
+
 	/**
 	 * The text area component.
 	 */
@@ -33,6 +39,16 @@ public class GUIEditor extends JPanel
 	 * File chooser used for open/save dialogs.
 	 */
 	private final JFileChooser fc = new JFileChooser();
+
+	/**
+	 * Keep track if text has changed since last save.
+	 */
+	private boolean textHasChanged = true;
+
+	/**
+	 * Filename of current document (default "untitled").
+	 */
+	private String documentTitle = DEFAULT_DOCUMENT_NAME;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -47,13 +63,13 @@ public class GUIEditor extends JPanel
 	public GUIEditor(EventManager eventManager)
 	{
 		super();
-		
+
 		this.eventManager = eventManager;
-		
+
 		this.editor = new Editor();
-		
+
 		setup();
-		
+
 		// add events to listen to
     this.eventManager.addEventObserver(Events.EVENTID_NEW, this);
 		this.eventManager.addEventObserver(Events.EVENTID_OPEN, this);
@@ -71,6 +87,7 @@ public class GUIEditor extends JPanel
 	{
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		textArea.getDocument().addDocumentListener(this);
 
 		// put scrollbars around editor text area
 		JScrollPane editorScrollPane =
@@ -81,22 +98,56 @@ public class GUIEditor extends JPanel
 		// put everything into the editor panel
 		this.setLayout(new BorderLayout());
 		this.add(editorScrollPane, BorderLayout.CENTER);
-		
+
 		// file chooser
 		fc.setCurrentDirectory(new File("."));
+
+		textChanged(false);
 	}
 
 	/**
-	 * Invoked when a GUI action occurs, forwards it as
+	 * Is called when text is changed in editor. Used to keep track
+	 * of if a document is modified since last save or not.
 	 * an event to the EventManager object.
 	 *
+	 * @calledby  insertUpdate(), removeUpdate(), changedUpdate(),
+	 *            newDocument(), openDocument(), saveDocument()
 	 * @calls     EventManager.sendEvent()
 	 *
-	 * @param  e  action event object
+	 * @param  textChanged  Set value if text has changed
 	 */
-  public void actionPerformed(ActionEvent e) {
-		eventManager.sendEvent(e.getActionCommand());
-  }
+	private void textChanged(boolean textHasChanged)
+	{
+		if (this.textHasChanged != textHasChanged)
+		{
+			this.textHasChanged = textHasChanged;
+
+			String title = this.documentTitle;
+
+			if (textHasChanged)
+				title = title + "*";
+
+			eventManager.sendEvent(Events.EVENTID_CHANGE_WINDOW_TITLE, title);
+		}
+	}
+
+	public void changedUpdate(DocumentEvent e)
+	{
+		// implemented due to DocumentListener interface
+		textChanged(true);
+	}
+
+	public void insertUpdate(DocumentEvent e)
+	{
+		// implemented due to DocumentListener interface
+		textChanged(true);
+	}
+
+	public void removeUpdate(DocumentEvent e)
+	{
+		// implemented due to DocumentListener interface
+		textChanged(true);
+	}
 
 	public void update(String eventIdentifier, Object obj)
 	{
@@ -122,13 +173,15 @@ public class GUIEditor extends JPanel
 	 * Clear editor and start with new document.
 	 *
 	 * @calledby  update()
-	 * @calls     EventManager.sendEvent()	 
+	 * @calls     EventManager.sendEvent()
 	 */
 	private void newDocument()
 	{
 		// clear editor
 		textArea.setText("");
-		
+		this.documentTitle = DEFAULT_DOCUMENT_NAME;
+		textChanged(false);
+
 		eventManager.sendEvent(Events.EVENTID_NEW_DONE);
 		// change tab to editor tab (if not current)
 		eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, new Integer(GUIManager.TAB_EDITOR));
@@ -148,13 +201,15 @@ public class GUIEditor extends JPanel
 		{
 			java.io.File file = fc.getSelectedFile();
 
-			try 
+			try
 			{
 				String content = editor.read(file.toString());
 				
+				this.documentTitle = file.getName();
 				textArea.setText(content);
+				textChanged(false);
 
-				// send event of successfully opened document			
+				// send event of successfully opened document
 				eventManager.sendEvent(Events.EVENTID_OPENED);
 				// change tab to editor tab (if not current)
 				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, new Integer(GUIManager.TAB_EDITOR));
@@ -180,15 +235,18 @@ public class GUIEditor extends JPanel
 		{
 			java.io.File file = fc.getSelectedFile();
 
-			try 
+			try
 			{
 				editor.write(file.toString(), textArea.getText());
+				
+				this.documentTitle = file.getName();
+				textChanged(false);
 
-				// send event of successfully saved document			
+				// send event of successfully saved document
 				eventManager.sendEvent(Events.EVENTID_SAVED);
 				// change tab to editor tab (if not current)
 				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, new Integer(GUIManager.TAB_EDITOR));
-			} 
+			}
 			catch (IOException e)
 			{
 				eventManager.sendEvent(Events.EVENTID_EXCEPTION, e);
