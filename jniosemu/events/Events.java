@@ -98,4 +98,9 @@ public class Events {
 	 * Compilation of current source code successfully done.
 	 */
 	public static final String EVENTID_COMPILATION_DONE = "COMPILATION_DONE";	
+
+	/**
+	 * Program counter in emulated program has changed.
+	 */
+	public static final String EVENTID_PC_CHANGE = "PC_CHANGE";	
 }

@@ -26,6 +26,11 @@ import jniosemu.emulator.*;
 	private JList listView;
 
 	/**
+	 * Current line index of program counter.
+	 */
+	private int currentIndex;
+
+	/**
 	 * Initiates the creation of GUI components and adds itself to
 	 * the Event Manager as an observer.
 	 *
@@ -44,9 +49,9 @@ import jniosemu.emulator.*;
 		setup();
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_COMPILATION_DONE, this);
+		String[] events = {Events.EVENTID_COMPILATION_DONE, Events.EVENTID_PC_CHANGE};
+		this.eventManager.addEventObserver(events, this);
 	}
-
 
 	/**
 	 * Setup GUI components and attributes.
@@ -60,6 +65,7 @@ import jniosemu.emulator.*;
 		listView = new JList();
 		listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		listView.setCellRenderer(new EmulatorCellRenderer());
+		setProgramCounterIndicator(0);
 
 		Vector<ProgramLine> programLines = new Vector<ProgramLine>();
 		setListModel(programLines);
@@ -88,12 +94,25 @@ import jniosemu.emulator.*;
 		setListModel( prg.getProgramLines() );
 	}
 
+	/**
+	 *
+	 */
+	private void setProgramCounterIndicator(int index)
+	{
+		currentIndex = index;
+		listView.ensureIndexIsVisible(index);
+	}
+
 	public void update(String eventIdentifier, Object obj)
 	{
 		if (eventIdentifier.equals(Events.EVENTID_COMPILATION_DONE))
 		{
 			setProgram( (Program) obj );
 		}
+		else if (eventIdentifier.equals(Events.EVENTID_PC_CHANGE))
+		{
+			setProgramCounterIndicator( ((Integer) obj).intValue() );
+		}		
 	}
 
 	/**
@@ -142,6 +161,10 @@ import jniosemu.emulator.*;
 							setBackground(list.getBackground());
 							setForeground(list.getForeground());
 					}
+					
+					// indicate program counter
+					if (index == currentIndex)
+						setBackground(new Color(255, 255, 0));
 
 					return this;
 			}
@@ -172,7 +195,6 @@ import jniosemu.emulator.*;
 			
 			if (lineObj.getSourceCodeLine() != null)
 				g.drawString(lineObj.getSourceCodeLine(), 300, yOffset);
-
 
 //			String tmp = "0x" + this.lineObj.toString();	
 
