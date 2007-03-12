@@ -58,7 +58,7 @@ public class GUIRegisters extends JPanel
 	 */	
 	private void setup()
 	{
-		this.setPreferredSize(new Dimension(70, 0));
+		this.setPreferredSize(new Dimension(120, 0));
 
 		// registers
 		listModel = new DefaultListModel();
@@ -68,6 +68,7 @@ public class GUIRegisters extends JPanel
 		}
 
 		registerList = new JList(listModel);
+		registerList.setFont(new Font("Monospaced", Font.PLAIN, 11));
 		registerList.setCellRenderer(new RegisterCellRenderer());
 		
 		// scrollbars
@@ -119,6 +120,8 @@ public class GUIRegisters extends JPanel
 																				 boolean isSelected,
 																				 boolean cellHasFocus) {
 
+					this.setFont(registerList.getFont());
+
 					this.registerObject = value;
 					setText("."); // trigger repaint
 
@@ -128,15 +131,6 @@ public class GUIRegisters extends JPanel
 					} else {
 							setBackground(list.getBackground());
 							setForeground(list.getForeground());
-					}
-
-					if (index % 5 == 0)
-					{
-						setBackground(new Color(100, 255, 100));
-					}
-					if (index % 7 == 0)
-					{
-						setBackground(new Color(255, 100, 100));
 					}
 
 					return this;
@@ -154,10 +148,10 @@ public class GUIRegisters extends JPanel
 
 			FontMetrics metrics = g.getFontMetrics(getFont());
 
-			g.setColor(new Color(0, 0, 255));
+			g.setColor(new Color(0, 0, 0));
 			g.drawString("#" + this.registerObject.toString(), 2, 11);
 
-			String tmp = "0x" + this.registerObject.toString();	
+			String tmp = "0x00000000";	
 
 			g.drawString(tmp, getWidth()-metrics.stringWidth(tmp), 11);
 		}
