@@ -107,14 +107,20 @@ public class EmulatorManager implements EventObserver
 	 *
 	 * @throws EmulatorException  If it can't get an opcode from MemoryManager, an instruction from InstructionManager or run() on Instruction
 	 */	
-	public boolean step() throws EmulatorException {
-		int opCode = this.memory.readInt(this.pc);
-		if (opCode == 0)
-			return false;
+	public boolean step() {
+		try {
+			int opCode = this.memory.readInt(this.pc);
+			if (opCode == 0)
+				return false;
 
-		Instruction instruction = this.instructions.get(opCode);
-		instruction.run(this.emulator);
-		this.pc += 4;
+			Instruction instruction = this.instructions.get(opCode);
+			instruction.run(this.emulator);
+			this.pc += 4;
+		} catch (EmulatorException e) {
+			System.out.println("ERROR");
+		}
+
+		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, new Integer(this.program.getLineNumber(this.pc)));
 
 		return true;
 	}
@@ -167,6 +173,7 @@ public class EmulatorManager implements EventObserver
 		this.pc = program.getStartAddr();
 
 		this.eventManager.sendEvent(Events.EVENTID_COMPILATION_DONE, this.program);
+		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, this.pc);
 	}
 
 	/**
@@ -198,7 +205,7 @@ public class EmulatorManager implements EventObserver
 		if (eventIdentifier.equals(Events.EVENTID_COMPILE)) {
 			this.compile((String)obj);
 		} else if (eventIdentifier.equals(Events.EVENTID_STEP)) {
-			// this.step();
+			this.step();
 		} else if (eventIdentifier.equals(Events.EVENTID_RUN)) {
 			// this.run();
 		} else if (eventIdentifier.equals(Events.EVENTID_PAUSE)) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.instruction.InstructionManager;
 import jniosemu.instruction.compiler.CompilerInstruction;
 import jniosemu.instruction.emulator.Instruction;
@@ -19,7 +20,7 @@ public class Program
 	// private final String[] lines;
 	// private final ArrayList<CompilerInstruction> instructions;
 	private Vector<ProgramLine> programLines = new Vector<ProgramLine>();
-	private Hashtable<Integer, Integer> addressLookup = new Hashtable<Integer, Integer>();
+	private Hashtable<Integer, Integer> addrLookup = new Hashtable<Integer, Integer>();
 
 	/**
 	 * Init Program.
@@ -34,14 +35,15 @@ public class Program
 		this.startAddr = startAddr;
 		this.data = data;
 
-		int lineNumber = 0;
+		int sourceCodeLineNumber = 0;
+		int addr = MemoryManager.PROGRAMSTART;
 		CompilerInstruction compilerInstruction = null;
 		Iterator instructionIterator = instructions.iterator();
 		if (instructionIterator.hasNext())
 			compilerInstruction = (CompilerInstruction)instructionIterator.next();
 
 		for (String line: lines) {
-			if (compilerInstruction != null && compilerInstruction.getLineNumber() == lineNumber) {
+			if (compilerInstruction != null && compilerInstruction.getLineNumber() == sourceCodeLineNumber) {
 				do {
 					int opCode = compilerInstruction.getOpcode();
 					Instruction instruction = null;
@@ -50,17 +52,20 @@ public class Program
 					} catch (Exception e) {}
 
 					this.programLines.add(new ProgramLine(opCode, instruction, line));
+					this.addrLookup.put(addr, this.programLines.size()-1);
+
+					addr += 4;
 
 					compilerInstruction = null;
 					line = null;
 					if (instructionIterator.hasNext())
 						compilerInstruction = (CompilerInstruction)instructionIterator.next();
-				} while (compilerInstruction != null && compilerInstruction.getLineNumber() == lineNumber);
+				} while (compilerInstruction != null && compilerInstruction.getLineNumber() == sourceCodeLineNumber);
 			} else {
 				this.programLines.add(new ProgramLine(0, null, line));
 			}
 
-			lineNumber++;
+			sourceCodeLineNumber++;
 		}
 	}
 
@@ -84,7 +89,7 @@ public class Program
 	 * @return Linenumber
 	 */
 	public int getLineNumber(int address) {
-		return 0;
+		return this.addrLookup.get(address);
 	}
 
 	/**
