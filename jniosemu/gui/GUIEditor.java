@@ -3,7 +3,7 @@ package jniosemu.gui;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.BorderLayout;
-import java.io.IOException;
+import java.io.*;
 import jniosemu.events.*;
 import jniosemu.editor.*;
 
@@ -32,7 +32,7 @@ public class GUIEditor extends JPanel
 	/**
 	 * File chooser used for open/save dialogs.
 	 */
-	private final JFileChooser fc = new JFileChooser();
+	private final JFileChooser fc;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -80,6 +80,10 @@ public class GUIEditor extends JPanel
 		// put everything into the editor panel
 		this.setLayout(new BorderLayout());
 		this.add(editorScrollPane, BorderLayout.CENTER);
+		
+		// file chooser
+		fc = new JFileChooser();
+		fc.setCurrentDirectory(new File("."));
 	}
 
 	/**
@@ -91,7 +95,7 @@ public class GUIEditor extends JPanel
 	 * @param  e  action event object
 	 */
   public void actionPerformed(ActionEvent e) {
-  		eventManager.sendEvent(e.getActionCommand());
+		eventManager.sendEvent(e.getActionCommand());
   }
 
 	public void update(String eventIdentifier, Object obj)

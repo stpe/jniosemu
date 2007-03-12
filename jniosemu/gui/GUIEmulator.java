@@ -155,8 +155,21 @@ import jniosemu.emulator.*;
 
 			FontMetrics metrics = g.getFontMetrics(getFont());
 
-			g.setColor(new Color(0, 0, 255));
-			g.drawString("#" + this.lineObj, 2, 11);
+			g.setColor(new Color(0, 0, 0));
+
+			int yOffset = 11;
+			
+			String tmp = null;
+			
+			if (lineObj.getOpCode() != null)
+				g.drawString(lineObj.getOpCode(), 2, yOffset);
+
+			if (lineObj.getInstruction() != null)
+				g.drawString(lineObj.getInstruction(), 200, yOffset);
+			
+			if (lineObj.getSourceCodeLine() != null)
+				g.drawString(lineObj.getSourceCodeLine(), 400, yOffset);
+
 
 //			String tmp = "0x" + this.lineObj.toString();	
 
