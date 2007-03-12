@@ -89,7 +89,10 @@ public class Program
 	 * @return Linenumber
 	 */
 	public int getLineNumber(int address) {
-		return this.addrLookup.get(address);
+		if (this.addrLookup.containsKey(address))
+			return this.addrLookup.get(address);
+
+		return -1;
 	}
 
 	/**
