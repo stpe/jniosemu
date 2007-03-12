@@ -2,9 +2,11 @@ package jniosemu.gui;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.BorderLayout;
+import java.awt.*;
+import java.util.*;
 
 import jniosemu.events.*;
+import jniosemu.emulator.*;
 
 /** 
  * Creates and manages the GUI component of the emulator view.
@@ -42,7 +44,7 @@ import jniosemu.events.*;
 		setup();
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_NEW, this);
+		this.eventManager.addEventObserver(Events.EVENTID_COMPILATION_DONE, this);
 	}
 
 
@@ -55,8 +57,11 @@ import jniosemu.events.*;
 	private void setup()
 	{
 		// emulator listview
-		String[] listRows = {"one", "two", "three", "four"};
-		listView = new JList(listRows);
+		listView = new JList();
+		listView.setCellRenderer(new EmulatorCellRenderer());
+
+		Vector<ProgramLine> programLines = new Vector<ProgramLine>();
+		setListModel(programLines);
 
 		// scrollbars
 		JScrollPane scrollPane = new JScrollPane(listView);
@@ -66,11 +71,27 @@ import jniosemu.events.*;
 		this.add(scrollPane, BorderLayout.CENTER);
 	}
 
+	/**
+	 *
+	 */
+	private void setListModel(Vector programLines)
+	{
+		listView.setListData(programLines);
+	}
+
+	/**
+	 *
+	 */
+	private void setProgram(Program prg)
+	{
+		setListModel( prg.getProgramLines() );
+	}
+
 	public void update(String eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_NEW))
+		if (eventIdentifier.equals(Events.EVENTID_COMPILATION_DONE))
 		{
-//			editor.setText("");
+			setProgram( (Program) obj );
 		}
 	}
 
@@ -84,6 +105,64 @@ import jniosemu.events.*;
 	 */
 	public void actionPerformed(ActionEvent e) {
 			eventManager.sendEvent(e.getActionCommand());
+	}
+
+
+	/**
+	 * Custom cell renderer for the JList in the register view.
+	 */
+	class EmulatorCellRenderer extends JLabel
+												 implements ListCellRenderer {
+
+			private ProgramLine lineObj;
+
+			public EmulatorCellRenderer() {
+					setOpaque(true);
+					setHorizontalAlignment(CENTER);
+					setVerticalAlignment(CENTER);
+			}
+
+			public Component getListCellRendererComponent(
+																				 JList list,
+																				 Object value,
+																				 int index,
+																				 boolean isSelected,
+																				 boolean cellHasFocus) {
+
+					this.lineObj = (ProgramLine) value;
+					setText("."); // trigger repaint
+
+					if (isSelected) {
+							setBackground(list.getSelectionBackground());
+							setForeground(list.getSelectionForeground());
+					} else {
+							setBackground(list.getBackground());
+							setForeground(list.getForeground());
+					}
+
+					return this;
+			}
+
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+
+			if (isOpaque()) 
+			{ 
+					// paint background
+					g.setColor(getBackground());
+					g.fillRect(0, 0, getWidth(), getHeight());
+			}
+
+			FontMetrics metrics = g.getFontMetrics(getFont());
+
+			g.setColor(new Color(0, 0, 255));
+			g.drawString("#" + this.lineObj, 2, 11);
+
+//			String tmp = "0x" + this.lineObj.toString();	
+
+//			g.drawString(tmp, getWidth()-metrics.stringWidth(tmp), 11);
+		}
+
 	}
 
 }

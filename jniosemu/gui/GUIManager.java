@@ -16,20 +16,30 @@ public class GUIManager
 	implements EventObserver {
 
 	/**
+	 * Tab number of editor.
+	 */
+	public static final int TAB_EDITOR = 0;
+
+	/**
+	 * Tab number of emulator.
+	 */
+	public static final int TAB_EMULATOR = 1;
+
+	/**
 	 * Main frame of GUI.
 	 */
 	private JFrame frame;
 
 	/**
-	 * File chooser used for open/save dialogs.
-	 */
-	private final JFileChooser fc = new JFileChooser();
-	
-	/**
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
 	private EventManager eventManager;
+
+	/**
+	 * The tabbed pane for the editor/emulator views.
+	 */
+	private JTabbedPane tabbedPane;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -48,8 +58,8 @@ public class GUIManager
 		initGUI();
 		
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_OPEN, this);
-		this.eventManager.addEventObserver(Events.EVENTID_SAVE, this);
+		this.eventManager.addEventObserver(Events.EVENTID_EXCEPTION, this);
+		this.eventManager.addEventObserver(Events.EVENTID_CHANGE_TAB, this);
 		this.eventManager.addEventObserver(Events.EVENTID_EXIT, this);
 		this.eventManager.addEventObserver(Events.EVENTID_ABOUT, this);
 	}
@@ -127,7 +137,7 @@ public class GUIManager
 		emulatorPanel.add(registers, BorderLayout.WEST);
 
 		// tabs
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 
 		tabbedPane.addTab(
 			"Editor",
@@ -135,7 +145,7 @@ public class GUIManager
 			editorPanel,
 			"Edit source file"
 		);
-		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+		tabbedPane.setMnemonicAt(TAB_EDITOR, KeyEvent.VK_1);
 
 		tabbedPane.addTab(
 			"Emulator",
@@ -143,7 +153,7 @@ public class GUIManager
 			emulatorPanel,
 			"Monitor emulation"
 		);
-		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+		tabbedPane.setMnemonicAt(TAB_EMULATOR, KeyEvent.VK_2);
 
 		mainPanel.add(tabbedPane, BorderLayout.CENTER);
 	}
@@ -153,56 +163,15 @@ public class GUIManager
 		if (eventIdentifier.equals(Events.EVENTID_EXIT))
 			exitFile();
 		else
-			if (eventIdentifier.equals(Events.EVENTID_OPEN))
-				openFile();
-		else
-			if (eventIdentifier.equals(Events.EVENTID_SAVE))
-				saveFile();
-		else
 			if (eventIdentifier.equals(Events.EVENTID_ABOUT))
 				showAbout();
-	}
-
-	/**
-	 * Show open file dialog and triggers file open event
-	 * if file is successful selected.
-	 *
-	 * @pre       Instance of FileChooser fc is created.
-	 * @calledby  update()
-	 * @calls     EventManager.sendEvent()	 
-	 */
-	public void openFile()
-	{
-		if (fc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
-		{
-			java.io.File file = fc.getSelectedFile();
-			
-			eventManager.sendEvent(
-				"DEBUG",
-				"Open file: " + file.getName()
-			);
-		}
-	}
-
-	/**
-	 * Show save file dialog and triggers file save event
-	 * if file is successful selected.
-	 *
-	 * @pre       Instance of FileChooser fc is created.
-	 * @calledby  update()
-	 * @calls     EventManager.sendEvent()	 
-	 */
-	public void saveFile()
-	{
-		if (fc.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION)
-		{
-			java.io.File file = fc.getSelectedFile();
-
-			eventManager.sendEvent(
-				"DEBUG",
-				"Save file: " + file.getName()
-			);
-		}
+		else
+			if (eventIdentifier.equals(Events.EVENTID_EXCEPTION))
+				showException( (Exception) obj );				
+		else
+			if (eventIdentifier.equals(Events.EVENTID_CHANGE_TAB))
+				changeTab( ((Integer) obj).intValue() );				
+				
 	}
 
 	/**
@@ -212,7 +181,7 @@ public class GUIManager
 	 * @calledby  update()
 	 * @calls     EventManager.sendEvent()   
 	 */
-	public void exitFile()
+	private void exitFile()
 	{
 		System.exit(0);
 	}
@@ -222,7 +191,7 @@ public class GUIManager
 	 *
 	 * @calledby  update()
 	 */
-	public void showAbout()
+	private void showAbout()
 	{
 		JOptionPane.showMessageDialog(
 			frame,
@@ -232,7 +201,38 @@ public class GUIManager
 		);
 	}
 
-
+	/**
+	 * Display information about exception and output
+	 * stacktrace to stdout.
+	 *
+	 * @calledby  update()
+	 *
+	 * @param  e  Exception that occured.
+	 */
+	private void showException(Exception e)
+	{
+		e.printStackTrace();
+		
+		JOptionPane.showMessageDialog(
+			frame,
+      "Exception",
+			e.getMessage(),
+			JOptionPane.ERROR_MESSAGE
+		);
+	}
+	
+	/**
+	 * Change selected tab between Edtior and Emulator.
+	 *
+	 * @calledby  update()
+	 *
+	 * @param  tabIndex  Index of tab.
+	 */
+	private void changeTab(int tabIndex)
+	{
+		tabbedPane.setSelectedIndex(tabIndex);
+	}
+	
 }
 
 

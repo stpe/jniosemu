@@ -63,6 +63,21 @@ public class EventManager
 		// add observer to list
 		eventObservers.add(obj);
 	}
+
+	/**
+	 * Overloaded variant of addEventObserver that takes multiple
+	 * eventIdentifiers.
+	 *
+	 * @param  eventIdentifiers  Array of string identifying the events
+	 * @param  obj               Object that listens to the event
+	 */	
+	public void addEventObserver(String[] eventIdentifiers, EventObserver obj)
+	{
+		for(String eventIdentifier : eventIdentifiers)
+		{
+			addEventObserver(eventIdentifier, obj);
+		}
+	}
 		
 	/**
 	 * Notifies all observers that listens to given event identifier.

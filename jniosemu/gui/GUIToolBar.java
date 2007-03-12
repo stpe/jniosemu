@@ -66,7 +66,7 @@ public class GUIToolBar extends JToolBar
 
 		this.addSeparator();
 
-		button = makeButton("compile", Events.EVENTID_COMPILE,
+		button = makeButton("compile", Events.EVENTID_GUI_COMPILE,
 												"Compile source code",
 												"Compile");
 		this.add(button);

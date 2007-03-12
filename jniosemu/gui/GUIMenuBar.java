@@ -67,7 +67,7 @@ public class GUIMenuBar extends JMenuBar
 		menu = new JMenu("Emulator");
 		this.add(menu);
 
-		menu.add( createMenuItem("Compile", Events.EVENTID_COMPILE) );
+		menu.add( createMenuItem("Compile", Events.EVENTID_GUI_COMPILE) );
 		menu.add( createMenuItem("Run", Events.EVENTID_RUN) );
 		menu.add( createMenuItem("Pause", Events.EVENTID_PAUSE) );
 		menu.add( createMenuItem("Step", Events.EVENTID_STEP) );

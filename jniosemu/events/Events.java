@@ -22,6 +22,21 @@ public class Events {
 	public static final String EVENTID_SAVE = "SAVE";
 
 	/**
+	 * New document created.
+	 */	
+	public static final String EVENTID_NEW_DONE = "NEW_DONE";
+
+	/**
+	 * A document has been opened.
+	 */	
+	public static final String EVENTID_OPENED = "OPENED";
+
+	/**
+	 * Document has been saved.
+	 */	
+	public static final String EVENTID_SAVED = "SAVED";
+
+	/**
 	 * Exit application.
 	 */	
 	public static final String EVENTID_EXIT = "EXIT";
@@ -36,7 +51,12 @@ public class Events {
 	/**
 	 * Start compiling.
 	 */	
-	public static final String EVENTID_COMPILE = "COMPILE";
+	public static final String EVENTID_COMPILE = "!COMPILE";
+
+	/**
+	 * Start compile requested from GUI.
+	 */	
+	public static final String EVENTID_GUI_COMPILE = "GUI_COMPILE";
 
 	/**
 	 * Start emulation.
@@ -63,4 +83,19 @@ public class Events {
 	 * Show View Memory window.
 	 */	
 	public static final String EVENTID_VIEW_MEMORY = "VIEW_MEMORY";
+	
+	/**
+	 * Exception has occured.
+	 */
+	public static final String EVENTID_EXCEPTION = "EXCEPTION";
+	
+	/**
+	 * Change tab in GUI.
+	 */
+	public static final String EVENTID_CHANGE_TAB = "CHANGE_TAB";
+	
+	/**
+	 * Compilation of current source code successfully done.
+	 */
+	public static final String EVENTID_COMPILATION_DONE = "COMPILATION_DONE";	
 }

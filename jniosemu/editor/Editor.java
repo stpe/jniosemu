@@ -2,39 +2,68 @@ package jniosemu.editor;
 
 import java.io.*;
 
+/**
+ * Utility class for editor. Read and write files.
+ */
 public class Editor
 {
-	public Editor() {
-	}
 
-	public String read(String aFilename) {
-		byte[] content = null;
+	/**
+	 * Return content from file as string.
+	 *
+	 * @calledby GUIEditor.openDocument()
+	 *
+	 * @param  filename  Name and path of file to read
+	 * @return           Content of file as string
+	 */
+  public String read(String filename) throws IOException
+	{
+		BufferedReader in = null;
+		StringBuffer sb = new StringBuffer();
 
-		File file = new File(aFilename);
-		FileInputStream fis = null;
-		BufferedInputStream bis = null;
-		DataInputStream dis = null;
+    try
+    {
+      in = new BufferedReader(new FileReader(filename));
 
-		try {
-			fis = new FileInputStream(file);
+			String line;
+      while ((line = in.readLine()) != null) {
+            sb.append(line + "\n");
+      }
+    }
+    finally {
+      in.close();
+    }
 
-			// Here BufferedInputStream is added for fast reading.
-			bis = new BufferedInputStream(fis);
-			dis = new DataInputStream(bis);
+    return sb.toString();
+  }
 
-			content = new byte[dis.available()];
-			dis.readFully(content);
+	/**
+	 * Write string to file.
+	 *
+	 * @calledby GUIEditor.saveDocument()
+	 *
+	 * @param  filename  Name and path of file to write
+	 * @param  content   Data to write to file
+	 */
+	public void write(String filename, String content) throws IOException
+	{
+		PrintWriter out = null;
 
-			// dispose all the resources after using them.
-			fis.close();
-			bis.close();
-			dis.close();
+    try
+    {
+			out =
+				new PrintWriter(
+					new BufferedWriter(
+						new FileWriter(filename)
+					)
+				);
 
-		} catch (Exception e) {
-			System.out.println("error: "+ e.getMessage());
-			e.printStackTrace();
-		}
-
-		return new String(content);
-	}
+       out.print(content);
+       out.flush();
+    }
+    finally
+    {
+			out.close();
+    }
+  }
 }
