@@ -374,12 +374,12 @@ public class Compiler
 	 * @return Program
 	 * @throws CompilerException  If an instruction can't link
 	 */
-	public byte[] link() throws CompilerException {
+	public Program link() throws CompilerException {
 		int size = this.instructions.size()*4+8;
 		for (Variable variable: this.variables)
 			size += variable.getValue().length;
 
-		byte[] program = new byte[size];
+		byte[] memory = new byte[size];
 
 		// Add variables in the memory
 		int addr = this.instructions.size()*4+4;
@@ -390,7 +390,7 @@ public class Compiler
 
 			byte[] value = variable.getValue();
 			for (int i = 0; i < value.length; i++)
-				program[addr+i] = value[i];
+				memory[addr+i] = value[i];
 
 			addr += value.length;
 		}
@@ -405,17 +405,19 @@ public class Compiler
 			}
 
 			int opcode = instruction.getOpcode();
-			program[addr]     = (byte)(opcode        & 0xFF);
-			program[addr + 1] = (byte)(opcode >>> 8  & 0xFF);
-			program[addr + 2] = (byte)(opcode >>> 16 & 0xFF);
-			program[addr + 3] = (byte)(opcode >>> 24 & 0xFF);
+			memory[addr]     = (byte)(opcode        & 0xFF);
+			memory[addr + 1] = (byte)(opcode >>> 8  & 0xFF);
+			memory[addr + 2] = (byte)(opcode >>> 16 & 0xFF);
+			memory[addr + 3] = (byte)(opcode >>> 24 & 0xFF);
 
 			addr += 4;
 		}
 
-		new Program(this.instructionManager, this.lines, this.instructions, program, 0);
-
-		return program;
+		int pc = MemoryManager.PROGRAMSTART;
+		try {
+			pc = this.getGlobal("main");
+		} catch (CompilerException e) {}
+		return new Program(this.lines, this.instructions, memory, pc);
 	}
 
 	/**

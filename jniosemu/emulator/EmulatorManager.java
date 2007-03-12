@@ -1,5 +1,12 @@
 package jniosemu.emulator;
 
+import java.util.ArrayList;
+
+import jniosemu.events.EventManager;
+import jniosemu.events.Events;
+import jniosemu.events.EventObserver;
+import jniosemu.emulator.compiler.Compiler;
+import jniosemu.emulator.compiler.CompilerException;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionManager;
@@ -8,8 +15,9 @@ import jniosemu.instruction.emulator.Instruction;
 /**
  * Managing the emulation
  */
-public class EmulatorManager
+public class EmulatorManager implements EventObserver
 {
+	private EventManager eventManager;
 	/**
 	 * PC address
 	 */
@@ -35,6 +43,8 @@ public class EmulatorManager
 	 */
 	private boolean running = false;
 
+	private Program program;
+
 	/**
 	 * Init EmulatorManager
 	 *
@@ -42,11 +52,12 @@ public class EmulatorManager
 	 * @calledby JNiosEmu.main()
 	 * @calls Emulator(), MemoryManager()
 	 */
-	public EmulatorManager(int aPc, byte[] aProgram) {
+	public EmulatorManager(EventManager eventManager) {
 		this.emulator = new Emulator(this);
-		this.memory = new MemoryManager(aProgram);
-		if (aPc >= 0)
-			this.pc = aPc;
+		this.eventManager = eventManager;
+
+		String[] events = {Events.EVENTID_COMPILE, Events.EVENTID_PAUSE, Events.EVENTID_RESET};
+		eventManager.addEventObserver(events, this);
 	}
 
 	/**
@@ -126,6 +137,10 @@ public class EmulatorManager
 		return this.register;
 	}
 
+	public Program getProgram() {
+		return this.program;
+	}
+
 	public void dump() {
 		this.register.dump();
 		this.memory.dump();
@@ -137,8 +152,21 @@ public class EmulatorManager
 	 * @calledby update()
 	 * @calls Compiler(), Compiler.compile(), Compiler.link()
 	 */
-	public void compile() {
-		
+	public void compile(String lines) {
+		Compiler compiler = new Compiler(lines);
+
+		this.program = null;
+		try {
+			compiler.compile();
+			this.program = compiler.link();
+		} catch (CompilerException e) {
+			System.out.println("CompilerException: "+ e.getMessage());
+		}
+
+		this.memory = new MemoryManager(program.getData());
+		this.pc = program.getStartAddr();
+
+		this.eventManager.sendEvent(Events.EVENTID_COMPILATION_DONE, this.program);
 	}
 
 	/**
@@ -167,5 +195,12 @@ public class EmulatorManager
 	 * @calls compile(), run(), pause(), step(), reset()
 	 */
 	public void update(String eventIdentifier, Object obj) {
+		if (eventIdentifier.equals(Events.EVENTID_COMPILE)) {
+			this.compile((String)obj);
+		} else if (eventIdentifier.equals(Events.EVENTID_PAUSE)) {
+			this.pause();
+		} else if (eventIdentifier.equals(Events.EVENTID_RESET)) {
+			this.reset();
+		}
 	}
 }
