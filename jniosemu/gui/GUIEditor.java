@@ -2,7 +2,7 @@ package jniosemu.gui;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.io.*;
 import jniosemu.events.*;
 import jniosemu.editor.*;
@@ -70,6 +70,7 @@ public class GUIEditor extends JPanel
 	private void setup()
 	{
 		textArea = new JTextArea();
+		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
 		// put scrollbars around editor text area
 		JScrollPane editorScrollPane =

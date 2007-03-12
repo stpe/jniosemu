@@ -58,6 +58,7 @@ import jniosemu.emulator.*;
 	{
 		// emulator listview
 		listView = new JList();
+		listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		listView.setCellRenderer(new EmulatorCellRenderer());
 
 		Vector<ProgramLine> programLines = new Vector<ProgramLine>();
@@ -129,6 +130,8 @@ import jniosemu.emulator.*;
 																				 boolean isSelected,
 																				 boolean cellHasFocus) {
 
+					this.setFont(listView.getFont());
+
 					this.lineObj = (ProgramLine) value;
 					setText("."); // trigger repaint
 
@@ -165,10 +168,10 @@ import jniosemu.emulator.*;
 				g.drawString(lineObj.getOpCode(), 2, yOffset);
 
 			if (lineObj.getInstruction() != null)
-				g.drawString(lineObj.getInstruction(), 200, yOffset);
+				g.drawString(lineObj.getInstruction(), 120, yOffset);
 			
 			if (lineObj.getSourceCodeLine() != null)
-				g.drawString(lineObj.getSourceCodeLine(), 400, yOffset);
+				g.drawString(lineObj.getSourceCodeLine(), 300, yOffset);
 
 
 //			String tmp = "0x" + this.lineObj.toString();	

@@ -2,7 +2,7 @@ package jniosemu.gui;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.awt.BorderLayout;
+import java.awt.*;
 
 import jniosemu.events.*;
 
@@ -55,6 +55,7 @@ public class GUIEditorMessages extends JPanel
 	{
 		editorMessages = new JTextArea("Editor messages...\n", 5, 60);
 		editorMessages.setEditable(false);
+		editorMessages.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
 		// put scrollbars around editor text area
 		JScrollPane editorMessagesScrollPane =
