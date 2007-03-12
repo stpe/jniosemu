@@ -61,11 +61,12 @@ import jniosemu.emulator.*;
 	 */
 	private void setup()
 	{
+		currentIndex = 0;
+		
 		// emulator listview
 		listView = new JList();
 		listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		listView.setCellRenderer(new EmulatorCellRenderer());
-		setProgramCounterIndicator(0);
 
 		Vector<ProgramLine> programLines = new Vector<ProgramLine>();
 		setListModel(programLines);
@@ -95,12 +96,19 @@ import jniosemu.emulator.*;
 	}
 
 	/**
-	 *
+	 * @checks  Only ensure index is visible (by scrolling)
+	 *          if it is not negative.
 	 */
 	private void setProgramCounterIndicator(int index)
 	{
 		currentIndex = index;
-		listView.ensureIndexIsVisible(index);
+		
+		if (index != -1)
+		{
+			listView.ensureIndexIsVisible(index);
+		}
+		
+		listView.repaint();
 	}
 
 	public void update(String eventIdentifier, Object obj)
