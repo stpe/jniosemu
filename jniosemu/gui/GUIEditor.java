@@ -32,7 +32,7 @@ public class GUIEditor extends JPanel
 	/**
 	 * File chooser used for open/save dialogs.
 	 */
-	private final JFileChooser fc;
+	private final JFileChooser fc = new JFileChooser();
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -82,7 +82,6 @@ public class GUIEditor extends JPanel
 		this.add(editorScrollPane, BorderLayout.CENTER);
 		
 		// file chooser
-		fc = new JFileChooser();
 		fc.setCurrentDirectory(new File("."));
 	}
 
