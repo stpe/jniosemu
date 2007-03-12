@@ -56,7 +56,7 @@ public class EmulatorManager implements EventObserver
 		this.emulator = new Emulator(this);
 		this.eventManager = eventManager;
 
-		String[] events = {Events.EVENTID_COMPILE, Events.EVENTID_PAUSE, Events.EVENTID_RESET};
+		String[] events = {Events.EVENTID_COMPILE, Events.EVENTID_RUN, Events.EVENTID_STEP, Events.EVENTID_PAUSE, Events.EVENTID_RESET};
 		eventManager.addEventObserver(events, this);
 	}
 
@@ -197,6 +197,10 @@ public class EmulatorManager implements EventObserver
 	public void update(String eventIdentifier, Object obj) {
 		if (eventIdentifier.equals(Events.EVENTID_COMPILE)) {
 			this.compile((String)obj);
+		} else if (eventIdentifier.equals(Events.EVENTID_STEP)) {
+			// this.step();
+		} else if (eventIdentifier.equals(Events.EVENTID_RUN)) {
+			// this.run();
 		} else if (eventIdentifier.equals(Events.EVENTID_PAUSE)) {
 			this.pause();
 		} else if (eventIdentifier.equals(Events.EVENTID_RESET)) {

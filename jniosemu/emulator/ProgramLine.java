@@ -23,7 +23,8 @@ public class ProgramLine
 		if (this.opCode == 0)
 			return null;
 
-		return Integer.toHexString(this.opCode);
+		String hexOpCode = "00000000"+ Integer.toHexString(this.opCode);
+		return "0x"+ hexOpCode.substring(hexOpCode.length()-8, hexOpCode.length());
 	}
 
 	public String getInstruction() {

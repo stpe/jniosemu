@@ -1,3 +1,4 @@
 #!/bin/csh
 rm -rf ../../bin/*
 cp test.s ../../bin/.
+cp -r graphics ../../bin/.
