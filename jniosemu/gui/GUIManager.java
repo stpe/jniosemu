@@ -62,6 +62,7 @@ public class GUIManager
 		this.eventManager.addEventObserver(Events.EVENTID_CHANGE_TAB, this);
 		this.eventManager.addEventObserver(Events.EVENTID_EXIT, this);
 		this.eventManager.addEventObserver(Events.EVENTID_ABOUT, this);
+		this.eventManager.addEventObserver(Events.EVENTID_COMPILATION_DONE, this);
 	}
 
 	/**
@@ -170,7 +171,10 @@ public class GUIManager
 				showException( (Exception) obj );				
 		else
 			if (eventIdentifier.equals(Events.EVENTID_CHANGE_TAB))
-				changeTab( ((Integer) obj).intValue() );				
+				changeTab( ((Integer) obj).intValue() );			
+		else
+			if (eventIdentifier.equals(Events.EVENTID_COMPILATION_DONE))
+				changeTab( new Integer(TAB_EMULATOR) );			
 				
 	}
 

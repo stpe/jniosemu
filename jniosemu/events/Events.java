@@ -51,7 +51,7 @@ public class Events {
 	/**
 	 * Start compiling.
 	 */	
-	public static final String EVENTID_COMPILE = "!COMPILE";
+	public static final String EVENTID_COMPILE = "COMPILE";
 
 	/**
 	 * Start compile requested from GUI.
