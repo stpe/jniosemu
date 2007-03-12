@@ -1,11 +1,3 @@
 #!/bin/csh
-rm *.class
-rm jniosemu/editor/*.class
-rm jniosemu/emulator/*.class
-rm jniosemu/emulator/compiler/*.class
-rm jniosemu/emulator/compiler/macro/*.class
-rm jniosemu/emulator/memory/*.class
-rm jniosemu/emulator/register/*.class
-rm jniosemu/instruction/*.class
-rm jniosemu/instruction/compiler/*.class
-rm jniosemu/instruction/emulator/*.class
+rm -rf ../../bin/*
+cp test.s ../../bin/.

@@ -3,7 +3,6 @@ package jniosemu.instruction;
 /**
  * Have info about one instruction
  */
-
 public class InstructionInfo
 {
 	/**
@@ -98,7 +97,7 @@ public class InstructionInfo
 	 * @return Hash of the instruction.
 	 */
 	public int getHash() {
-		return this.opCode & 0x1F83F;
+		return InstructionManager.getHash(this.opCode);
 	}
 
 	/**

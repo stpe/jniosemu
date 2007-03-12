@@ -2,6 +2,8 @@ package jniosemu.instruction.emulator;
 
 import jniosemu.emulator.Emulator;
 import jniosemu.emulator.EmulatorException;
+import jniosemu.instruction.InstructionInfo;
+import jniosemu.instruction.InstructionManager;
 
 public abstract class RTypeInstruction extends Instruction
 {
@@ -18,4 +20,27 @@ public abstract class RTypeInstruction extends Instruction
 	}
 
 	public abstract void run(Emulator em) throws EmulatorException;
+
+	public String toString() {
+		InstructionInfo info = InstructionManager.getInfo(this.opCode);
+
+		if (info != null) {
+			switch (info.getSyntax()) {
+				case DEFAULT:
+					return info.getName() +" r"+ Integer.toString(this.rC) +", r"+ Integer.toString(this.rA) +", "+ Integer.toString(this.rB);
+				case CALLJUMP:
+					return info.getName() +" r"+ Integer.toString(this.rA);
+				case PC:
+					return info.getName() +" r"+ Integer.toString(this.rA);
+				case SHIFT:
+					return info.getName() +" r"+ Integer.toString(this.rC) +", r"+ Integer.toString(this.rA) +", "+ Integer.toString(this.imm);
+				case CUSTOM:
+					return info.getName() +" "+ Integer.toString(this.imm) +", r"+ Integer.toString(this.rC) +", r"+ Integer.toString(this.rA) +", r"+ Integer.toString(this.rB);
+				case NONE:
+					return info.getName();
+			}
+		}
+
+		return null;
+	}
 }

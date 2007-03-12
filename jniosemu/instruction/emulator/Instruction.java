@@ -8,6 +8,8 @@ import jniosemu.emulator.EmulatorException;
  */
 public abstract class Instruction
 {
+	protected int opCode;
+
 	/**
 	 * Help method that the instructions could use to cast an int to a long if the int is unsigned
 	 *
@@ -40,4 +42,6 @@ public abstract class Instruction
 	 * @throws EmulatorException  If something goes wrong trying to execute the instruction
 	 */
 	public abstract void run(Emulator aEm) throws EmulatorException;
+
+	public abstract String toString();
 }

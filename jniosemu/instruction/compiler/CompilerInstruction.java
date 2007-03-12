@@ -18,6 +18,10 @@ public abstract class CompilerInstruction
 	 */
 	protected int lineNumber;
 
+	public int getLineNumber() {
+		return lineNumber;
+	}
+
 	/**
 	 * Returns the opcode of the instruction.
 	 *

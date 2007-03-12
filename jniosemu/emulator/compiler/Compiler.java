@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import jniosemu.emulator.Program;
 import jniosemu.emulator.compiler.macro.MacroManager;
 import jniosemu.emulator.compiler.macro.MacroException;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.instruction.InstructionManager;
 import jniosemu.instruction.InstructionException;
 import jniosemu.instruction.compiler.*;
+
 
 /**
  * Takes sourcecode and turn it into a Program.
@@ -357,7 +359,7 @@ public class Compiler
 	 * @throws CompilerException  If parseLine casts CompilerException
 	 */
 	public void compile() throws CompilerException {
-		int i = 1;
+		int i = 0;
 		for (String line: this.lines) {
 			this.parseLine(line, true, i++);
 		}
@@ -410,6 +412,8 @@ public class Compiler
 
 			addr += 4;
 		}
+
+		new Program(this.instructionManager, this.lines, this.instructions, program, 0);
 
 		return program;
 	}
