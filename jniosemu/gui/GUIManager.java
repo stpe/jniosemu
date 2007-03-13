@@ -92,7 +92,7 @@ public class GUIManager
 		GUIMenuBar menubar = new GUIMenuBar(eventManager);
 		frame.setJMenuBar(menubar);
 
-		frame.setSize(640, 400);
+		frame.setSize(800, 600);
 		frame.setVisible(true);
 	}
 
@@ -161,7 +161,6 @@ public class GUIManager
 			editorPanel,
 			"Edit source file"
 		);
-		tabbedPane.setMnemonicAt(TAB_EDITOR, KeyEvent.VK_1);
 
 		tabbedPane.addTab(
 			"Emulator",
@@ -169,7 +168,6 @@ public class GUIManager
 			emulatorPanel,
 			"Monitor emulation"
 		);
-		tabbedPane.setMnemonicAt(TAB_EMULATOR, KeyEvent.VK_2);
 
 		mainPanel.add(tabbedPane, BorderLayout.CENTER);
 	}
