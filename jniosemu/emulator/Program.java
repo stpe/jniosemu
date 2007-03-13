@@ -21,6 +21,7 @@ public class Program
 	// private final ArrayList<CompilerInstruction> instructions;
 	private Vector<ProgramLine> programLines = new Vector<ProgramLine>();
 	private Hashtable<Integer, Integer> addrLookup = new Hashtable<Integer, Integer>();
+	private Hashtable<Integer, Integer> lineNumberLookup = new Hashtable<Integer, Integer>();
 
 	/**
 	 * Init Program.
@@ -37,6 +38,10 @@ public class Program
 
 		int sourceCodeLineNumber = 0;
 		int addr = MemoryManager.PROGRAMSTART;
+		int programLineCount = 0;
+		ProgramLine programLineParent = null;
+		ProgramLine programLine = null;
+
 		CompilerInstruction compilerInstruction = null;
 		Iterator instructionIterator = instructions.iterator();
 		if (instructionIterator.hasNext())
@@ -51,20 +56,30 @@ public class Program
 						instruction = InstructionManager.get(opCode);
 					} catch (Exception e) {}
 
-					this.programLines.add(new ProgramLine(opCode, instruction, line));
-					this.addrLookup.put(addr, this.programLines.size()-1);
+					programLine = new ProgramLine(opCode, instruction, line, programLineCount, programLineParent);
+					this.programLines.add(programLine);
+
+					if (programLineParent == null)
+						programLineParent = programLine;
+					else
+						programLineParent.incrChildCount();
+
+					this.addrLookup.put(addr, programLineCount);
+					this.lineNumberLookup.put(programLineCount, addr);
 
 					addr += 4;
-
+					programLineCount++;
 					compilerInstruction = null;
 					line = null;
 					if (instructionIterator.hasNext())
 						compilerInstruction = (CompilerInstruction)instructionIterator.next();
 				} while (compilerInstruction != null && compilerInstruction.getLineNumber() == sourceCodeLineNumber);
 			} else {
-				this.programLines.add(new ProgramLine(0, null, line));
+				this.programLines.add(new ProgramLine(0, null, line, programLineCount, null));
+				programLineCount++;
 			}
 
+			programLineParent = null;
 			sourceCodeLineNumber++;
 		}
 	}
@@ -91,6 +106,13 @@ public class Program
 	public int getLineNumber(int address) {
 		if (this.addrLookup.containsKey(address))
 			return this.addrLookup.get(address);
+
+		return -1;
+	}
+
+	public int getAddress(int lineNumber) {
+		if (this.lineNumberLookup.containsKey(lineNumber))
+			return this.lineNumberLookup.get(lineNumber);
 
 		return -1;
 	}
