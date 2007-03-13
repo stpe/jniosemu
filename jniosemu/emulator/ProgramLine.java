@@ -1,6 +1,7 @@
 package jniosemu.emulator;
 
 import jniosemu.instruction.emulator.Instruction;
+import jniosemu.instruction.InstructionManager;
 
 public class ProgramLine
 {
@@ -23,8 +24,7 @@ public class ProgramLine
 		if (this.opCode == 0)
 			return null;
 
-		String hexOpCode = "00000000"+ Integer.toHexString(this.opCode);
-		return "0x"+ hexOpCode.substring(hexOpCode.length()-8, hexOpCode.length());
+		return InstructionManager.intToHexString(this.opCode);
 	}
 
 	public String getInstruction() {

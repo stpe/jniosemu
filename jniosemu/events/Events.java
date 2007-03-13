@@ -103,6 +103,11 @@ public class Events {
 	 * Program counter in emulated program has changed.
 	 */
 	public static final String EVENTID_PC_CHANGE = "PC_CHANGE";	
+
+	/**
+	 * Regiser in emulated program has changed.
+	 */
+	public static final String EVENTID_REGISTER_CHANGE = "REGISTER_CHANGE";	
 	
 	/**
 	 * Trigger change of window title (used when text in editor is modified).

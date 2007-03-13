@@ -108,6 +108,8 @@ public class EmulatorManager implements EventObserver
 	 * @throws EmulatorException  If it can't get an opcode from MemoryManager, an instruction from InstructionManager or run() on Instruction
 	 */	
 	public boolean step() {
+		this.register.resetState();
+
 		try {
 			int opCode = this.memory.readInt(this.pc);
 			if (opCode == 0)
@@ -121,6 +123,7 @@ public class EmulatorManager implements EventObserver
 		}
 
 		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, new Integer(this.program.getLineNumber(this.pc)));
+		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());
 
 		return true;
 	}
@@ -173,7 +176,8 @@ public class EmulatorManager implements EventObserver
 		this.pc = program.getStartAddr();
 
 		this.eventManager.sendEvent(Events.EVENTID_COMPILATION_DONE, this.program);
-		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, this.pc);
+
+		this.pcChange();
 	}
 
 	/**
@@ -192,7 +196,11 @@ public class EmulatorManager implements EventObserver
 	 * @calls RegisterManager.reset(), MemoryManager.reset()
 	 */
 	public void reset() {
-		
+		this.memory = new MemoryManager(program.getData());
+		this.pc = this.program.getStartAddr();
+		this.register.reset();
+
+		this.pcChange();
 	}
 
 	/**
@@ -213,5 +221,9 @@ public class EmulatorManager implements EventObserver
 		} else if (eventIdentifier.equals(Events.EVENTID_RESET)) {
 			this.reset();
 		}
+	}
+
+	private void pcChange() {
+		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, this.program.getLineNumber(this.pc));
 	}
 }

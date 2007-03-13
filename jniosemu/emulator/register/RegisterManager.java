@@ -2,6 +2,7 @@ package jniosemu.emulator.register;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.Vector;
 
 /**
  * Manage all register
@@ -11,26 +12,16 @@ public class RegisterManager
 	/**
 	 * contains the values of the registers
 	 */
-	private int[] register = new int[32];
+	private Vector<Register> registers;
+	// private int[] register = new int[32];
 
 	/**
 	 * Init RegisterManager
-	 */
-	public RegisterManager() {}
-
-	/**
-	 * Check if you are allowed to access a specific register
 	 *
-	 * @calledby read(), write()
-	 *
-	 * @param index  Register you want to check
-	 * @return true or false depending if you are allowed to access that index
+	 * @post Populate this.register
 	 */
-	private boolean checkIndex(int index) {
-		if (!(index == 31 || index == 27 || (index >= 0 && index <= 23)))
-			return false;
-
-		return true;
+	public RegisterManager() {
+		this.reset();
 	}
 
 	/**
@@ -74,10 +65,7 @@ public class RegisterManager
 	 * @throws RegisterException  If you don't have access to that register
 	 */
 	public int read(int index) throws RegisterException {
-		if (!checkIndex(index))
-			throw new RegisterException(index);
-
-		return register[index];
+		return this.registers.get(index).readValue();
 	}
 
 	/**
@@ -89,27 +77,38 @@ public class RegisterManager
 	 * @param aValue you want to set
 	 * @throws RegisterException  If you don't have access to that register
 	 */
-	public void write(int aIndex, int aValue) throws RegisterException {
-		if (!checkIndex(aIndex))
-			throw new RegisterException(aIndex);
-
-		if (aIndex > 0)
-		register[aIndex] = aValue;
+	public void write(int index, int value) throws RegisterException {
+		this.registers.get(index).writeValue(value);
 	}
 
 	/**
 	 * Reseting all registers
 	 *
+	 * @post Populate this.register
 	 * @calledby EmulatorManager.reset()
 	 */
 	public void reset() {
-		
+		this.registers = new Vector<Register>(32);
+		for (int i = 0; i < 32; i++)
+			this.registers.add(new Register(i));
+	}
+
+	// Kommer kanske inte fungera. Eftersom reg inte är en referens till this.registers utan en ny kopia
+	public void resetState() {
+		for (Register reg: this.registers)
+			reg.resetState();
+	}
+
+	public Vector<Register> get() {
+		return this.registers;
 	}
 
 	public void dump() {
+		/*
 		for (int i = 0; i < 32; i++) {
 			if (checkIndex(i))
 				System.out.println(i +": "+ this.register[i] + " ("+ Integer.toBinaryString(this.register[i]) +")");
 		}
+		*/
 	}
 }
