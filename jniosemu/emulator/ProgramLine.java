@@ -43,17 +43,22 @@ public class ProgramLine
 		if (this.lineNumber == lineNumber)
 			return SIBLINGSTATUS.ME;
 
-		if (this.parent == null)
+		if (this.parent == null) {
+			if (this.lineNumber <= lineNumber && this.lineNumber + this.childs - 1 >= lineNumber)
+				return SIBLINGSTATUS.FIRST;
+
 			return SIBLINGSTATUS.NONE;
+		}
 
 		int parentStart = this.parent.getLineNumber();
-		if (parentStart == lineNumber)
-			return SIBLINGSTATUS.FIRST;
-		int parentEnd = parentStart + this.parent.getChildCount();
-		if (parentEnd == lineNumber)
-			return SIBLINGSTATUS.LAST;
-		if (parentStart < lineNumber && parentEnd > lineNumber)
+		int parentEnd = parentStart + this.parent.getChildCount() - 1;
+		if (parentStart <= lineNumber && parentEnd >= lineNumber) {
+			if (parentStart == this.lineNumber)
+				return SIBLINGSTATUS.FIRST;
+			if (parentEnd == this.lineNumber)
+				return SIBLINGSTATUS.LAST;
 			return SIBLINGSTATUS.MIDDLE;
+		}
 
 		return SIBLINGSTATUS.NONE;
 	}

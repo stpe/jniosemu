@@ -94,7 +94,7 @@ public class EmulatorManager implements EventObserver
 	 *
 	 * @throws EmulatorException  If something goes wrong when trying to run a instruction
 	 */
-	public void run() throws EmulatorException {
+	public void run() {
 		while (this.step());
 	}
 
@@ -172,12 +172,8 @@ public class EmulatorManager implements EventObserver
 			System.out.println("CompilerException: "+ e.getMessage());
 		}
 
-		this.memory = new MemoryManager(program.getData());
-		this.pc = program.getStartAddr();
-
 		this.eventManager.sendEvent(Events.EVENTID_COMPILATION_DONE, this.program);
-
-		this.pcChange();
+		this.load();
 	}
 
 	/**
@@ -195,7 +191,7 @@ public class EmulatorManager implements EventObserver
 	 * @calledby update()
 	 * @calls RegisterManager.reset(), MemoryManager.reset()
 	 */
-	public void reset() {
+	public void load() {
 		this.memory = new MemoryManager(program.getData());
 		this.pc = this.program.getStartAddr();
 		this.register.reset();
@@ -215,16 +211,16 @@ public class EmulatorManager implements EventObserver
 		} else if (eventIdentifier.equals(Events.EVENTID_STEP)) {
 			this.step();
 		} else if (eventIdentifier.equals(Events.EVENTID_RUN)) {
-			// this.run();
+			this.run();
 		} else if (eventIdentifier.equals(Events.EVENTID_PAUSE)) {
 			this.pause();
 		} else if (eventIdentifier.equals(Events.EVENTID_RESET)) {
-			this.reset();
+			this.load();
 		}
 	}
 
 	private void pcChange() {
-		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, this.pc);
+		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, new Integer(this.pc));
 		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());
 	}
 }

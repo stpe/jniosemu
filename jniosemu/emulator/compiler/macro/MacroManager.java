@@ -49,13 +49,17 @@ public class MacroManager
 	 * @param aArgs		Arguments separated with ","-character
 	 * @param aLines  Lines separated with ","-character
 	 */
-	public void put(String aName, String aArgs, String aLines) {
+	public Macro put(String aName, String aArgs, String aLines) {
 		String[] args = null;
-		if (aArgs != null)
+		if (aArgs != null && aArgs.length() > 0) {
 			args = aArgs.split("\\s*,\\s*");
+		}
 
-		String[] lines = aLines.split("\n");
-		this.put(aName, args, lines);
+		String[] lines = null;
+		if (aLines != null && aLines.length() > 0)
+			lines = aLines.split("\n");
+
+		return this.put(aName, args, lines);
 	}
 
 	/**
@@ -65,10 +69,11 @@ public class MacroManager
 	 * @param aArgs 	Arguments
 	 * @param aLines	Lines
 	 */
-	public void put(String aName, String[] aArgs, String[] aLines) {
+	public Macro put(String aName, String[] aArgs, String[] aLines) {
 		Macro macro = new Macro(aName, aArgs, aLines);
 		this.macros.add(macro);
 		this.nameHash.put(macro.getName(), macro);
+		return macro;
 	}
 
 	/**
@@ -78,7 +83,7 @@ public class MacroManager
 	 * @param aArgs Arguments value
 	 * @return			Lines
 	 */
-	public String[] get(String aName, String aArgs) throws MacroException {
+	public ArrayList<String> get(String aName, String aArgs) throws MacroException {
 		String[] args = null;
 		if (aArgs != null && aArgs.length() > 0)
 			args = aArgs.split("\\s*,\\s*");

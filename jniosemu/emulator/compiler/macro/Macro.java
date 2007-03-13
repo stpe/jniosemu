@@ -1,10 +1,13 @@
 package jniosemu.emulator.compiler.macro;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Macro
 {
 	private String name;
 	private String[] args;
-	private String[] lines;
+	private ArrayList<String> lines = new ArrayList<String>();
 
 	/**
 	 * Init a Macro
@@ -16,7 +19,27 @@ public class Macro
 	public Macro(String aName, String[] aArgs, String[] aLines) {
 		this.name = aName.toLowerCase();
 		this.args = aArgs;
+
+		if (aLines != null) {
+			for (String line: aLines)
+				this.lines.add(line);
+		}
+	}
+
+	public Macro(String aName, String[] aArgs, ArrayList<String> aLines) {
+		this.name = aName.toLowerCase();
+		this.args = aArgs;
+
 		this.lines = aLines;
+	}
+
+	public void addLine(ArrayList<String> lines) {
+		for (String line: lines)
+			this.lines.add(line);
+	}
+
+	public void addLine(String line) {
+		this.lines.add(line);
 	}
 
 	/**
@@ -25,20 +48,24 @@ public class Macro
 	 * @param aArgs The arguments value
 	 * @return			The lines
 	 */
-	public String[] get(String[] aArgs) throws MacroException {
+	public ArrayList<String> get(String[] aArgs) throws MacroException {
 		if (aArgs == null ^ this.args == null)
 			throw new MacroException();
 
 		if (aArgs != null && this.args != null && aArgs.length != this.args.length)
 			throw new MacroException();
 
-		String[] lines = this.lines.clone();
+		ArrayList<String> lines = new ArrayList<String>(this.lines.size());
 
 		if (this.args != null && this.args.length > 0) {
-			for (int i = 0; i < lines.length; i++) {
+			for(String line: this.lines) {
+				String outLine = line;
 				for (int j = 0; j < aArgs.length; j++)
-					lines[i] = lines[i].replaceAll("\\\\"+ this.args[j], aArgs[j]);
+					outLine = outLine.replaceAll("\\\\"+ this.args[j], aArgs[j]);
+				lines.add(outLine);
 			}
+		} else {
+			lines = (ArrayList<String>)this.lines.clone();
 		}
 
 		return lines;

@@ -187,17 +187,21 @@ import jniosemu.emulator.*;
 					this.lineObj = (ProgramLine) value;
 					setText("."); // trigger repaint
 
+					/*
 					if (isSelected) {
 							setBackground(list.getSelectionBackground());
 							setForeground(list.getSelectionForeground());
 					} else {
+					*/
 							setBackground(list.getBackground());
 							setForeground(list.getForeground());
-					}
+					// }
 
 					// indicate program counter
+					/*
 					if (index == currentIndex)
 						setBackground(new Color(255, 255, 0));
+					*/
 
 					return this;
 			}
@@ -207,9 +211,30 @@ import jniosemu.emulator.*;
 
 			if (isOpaque())
 			{
-					// paint background
-					g.setColor(getBackground());
-					g.fillRect(0, 0, getWidth(), getHeight());
+				ProgramLine.SIBLINGSTATUS status = lineObj.isSibling(currentIndex);
+
+				g.setColor(getBackground());
+				g.fillRect(0, 0, getWidth(), getHeight());
+
+				if (status != ProgramLine.SIBLINGSTATUS.NONE) {
+					g.setColor(new Color(255, 255, 0));
+					g.fillRect(3, 0, getWidth()-6, getHeight());
+				}
+
+				switch (status) {
+					case FIRST:
+						g.setColor(new Color(255, 255, 220));
+						g.fillRect(4, 1, getWidth()-8, getHeight()-1);
+						break;
+					case MIDDLE:
+						g.setColor(new Color(255, 255, 220));
+						g.fillRect(4, 0, getWidth()-8, getHeight());
+						break;
+					case LAST:
+						g.setColor(new Color(255, 255, 220));
+						g.fillRect(4, 0, getWidth()-8, getHeight()-1);
+						break;
+				}
 			}
 
 			g.setColor(new Color(0, 0, 0));
@@ -220,15 +245,15 @@ import jniosemu.emulator.*;
 			switch (lineObj.getBreakPoint())
 			{
 				case TRUE:
-					g.drawImage(breakPointSetIcon.getImage(), 0, 0, null);
+					g.drawImage(breakPointSetIcon.getImage(), 3, 0, null);
 					break;
 				case FALSE:
-					g.drawImage(breakPointUnsetIcon.getImage(), 0, 0, null);
+					g.drawImage(breakPointUnsetIcon.getImage(), 3, 0, null);
 					break;
 			}
 
 			if (lineObj.getOpCode() != null)
-				g.drawString(lineObj.getOpCode(), 14, yOffset);
+				g.drawString(lineObj.getOpCode(), 18, yOffset);
 
 			if (lineObj.getInstruction() != null)
 				g.drawString(lineObj.getInstruction(), 120, yOffset);

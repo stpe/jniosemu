@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import jniosemu.emulator.Program;
+import jniosemu.emulator.compiler.macro.Macro;
 import jniosemu.emulator.compiler.macro.MacroManager;
 import jniosemu.emulator.compiler.macro.MacroException;
 import jniosemu.emulator.memory.MemoryManager;
@@ -51,6 +52,10 @@ public class Compiler
 	 * True if we are in the codepart of the program.
 	 */
 	private boolean codePart = true;
+	/**
+	 * Contains the macro if we are in one.
+	 */
+	private Macro lastMacro = null;
 	/**
 	 * Contains the name of all global Label.
 	 */
@@ -259,7 +264,6 @@ public class Compiler
 		if (mRemoveWhitespace.matches()) {
 			String match = mRemoveWhitespace.group(1);
 			if (match.length() > 0) {
-				
 				// Find labels
 				Pattern pLabel = Pattern.compile("([A-Za-z]+):\\s*(.*?)");
 				Matcher mLabel = pLabel.matcher(match);
@@ -291,6 +295,19 @@ public class Compiler
 								this.codePart = true;
 							} else if (name.equals("global")) {
 								this.globals.add(mInstruction.group(3));
+							} else if (name.equals("macro")) {
+								System.out.println("Macro start");
+								Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
+								Matcher mMacro = pMacro.matcher(mInstruction.group(3));
+								if (mMacro.matches()) {
+									System.out.println("Added macro: "+ mMacro.group(1) +", "+ mMacro.group(2));
+									this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null);
+								} else {
+									throw new CompilerException(aLineNumber, "Wrong syntax for a macro");
+								}
+							} else if (name.equals("endm")) {
+								System.out.println("Macro end");
+								this.lastMacro = null;
 							} else if (name.equals("word")) {
 								try {
 									this.variables.add(new Variable(lastLabel, Variable.Type.WORD, mInstruction.group(3)));
@@ -328,19 +345,28 @@ public class Compiler
 							if (this.macros.exists(ins)) {
 								try {
 									// Parse the macro
-									String[] lines = this.macros.get(ins, mInstruction.group(3));
-									for (String line: lines)
-										this.parseLine(line, true, aLineNumber);
+									ArrayList<String> lines = this.macros.get(ins, mInstruction.group(3));
+
+									if (this.lastMacro != null) {
+										this.lastMacro.addLine(lines);
+									} else {
+										for (String line: lines)
+											this.parseLine(line, true, aLineNumber);
+									}
 								} catch (MacroException e) {
-									throw new CompilerException(aLineNumber, e.getMessage());
+									throw new CompilerException(aLineNumber, "macro "+ e.getMessage());
 								}
 							} else {
-								// get the CompilerInstruction for the instruction
-								try {
-									CompilerInstruction cins = this.instructionManager.get(ins, mInstruction.group(3), aLineNumber);
-									this.instructions.add(cins);
-								} catch (InstructionException e) {
-									throw new CompilerException(aLineNumber, e.getMessage());
+								if (this.lastMacro != null) {
+									this.lastMacro.addLine(mInstruction.group(3));
+								} else {
+									// get the CompilerInstruction for the instruction
+									try {
+										CompilerInstruction cins = this.instructionManager.get(ins, mInstruction.group(3), aLineNumber);
+										this.instructions.add(cins);
+									} catch (InstructionException e) {
+										throw new CompilerException(aLineNumber, "ins "+ e.getMessage());
+									}
 								}
 							}
 						}
