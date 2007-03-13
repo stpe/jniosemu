@@ -12,6 +12,9 @@ public class Register
 
 	public Register(int number) {
 		this.number = number;
+
+		if (!(index == 31 || index == 27 || (index >= 0 && index <= 23)))
+			this.state = STATE.DISABLED;
 	}
 
 	public void resetState() {
