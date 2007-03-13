@@ -224,7 +224,7 @@ public class EmulatorManager implements EventObserver
 	}
 
 	private void pcChange() {
-		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, this.program.getLineNumber(this.pc));
+		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, this.pc);
 		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());
 	}
 }

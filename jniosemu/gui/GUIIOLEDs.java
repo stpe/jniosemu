@@ -9,7 +9,7 @@ import jniosemu.events.*;
 import jniosemu.emulator.*;
 
 /**
- * Creates and manages the GUI component of the emulator view.
+ * Creates and manages the GUI component of the LEDs.
  */
  public class GUIIOLEDs extends JPanel
 											 implements ActionListener, EventObserver {

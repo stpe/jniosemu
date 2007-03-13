@@ -29,6 +29,21 @@ import jniosemu.emulator.*;
 	 * Current line index of program counter.
 	 */
 	private int currentIndex;
+	
+	/**
+	 * Current program that is emulated.
+	 */
+	private Program program;
+
+	/**
+	 * Icon for breakpoint that is set (active).
+	 */
+	private ImageIcon breakPointSetIcon;
+
+	/**
+	 * Icon for breakpoint that is unset.
+	 */
+	private ImageIcon breakPointUnsetIcon;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -69,10 +84,15 @@ import jniosemu.emulator.*;
 		// emulator listview
 		listView = new JList();
 		listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		listView.setBackground(Color.WHITE);
 		listView.setCellRenderer(new EmulatorCellRenderer());
 
 		// scrollbars
 		JScrollPane scrollPane = new JScrollPane(listView);
+
+		// get breakpoint images
+		breakPointSetIcon = new ImageIcon("graphics/emulator/breakpoint_set.png");
+		breakPointUnsetIcon = new ImageIcon("graphics/emulator/breakpoint_unset.png");
 
 		// put everything into the emulator panel
 		this.setLayout(new BorderLayout());
@@ -88,27 +108,29 @@ import jniosemu.emulator.*;
 	 */
 	private void setProgram(Program prg)
 	{
+		this.program = prg;
+		
 		listView.setListData( prg.getProgramLines() );
 	}
 
 	/**
-	 * Set which line in the emulator view corresponds to the
-	 * instruction where the program counter is pointing to
-	 * and updates the visual indication.
+	 * Set which address in the current emulated program
+	 * the program counter is pointing to and update the
+	 * visual indication.
 	 *
 	 * @checks    Only ensure index is visible (by scrolling)
 	 *            if it is not negative.
 	 * @calledby  update()
 	 *
-	 * @param  index Index of line in program
+	 * @param  addr Address of program counter
 	 */
-	private void setProgramCounterIndicator(int index)
+	private void setProgramCounterIndicator(int addr)
 	{
-		currentIndex = index;
+		currentIndex = program.getLineNumber(addr);
 
-		if (index != -1)
+		if (currentIndex != -1)
 		{
-			listView.ensureIndexIsVisible(index);
+			listView.ensureIndexIsVisible(currentIndex);
 		}
 
 		listView.repaint();
@@ -192,10 +214,21 @@ import jniosemu.emulator.*;
 
 			g.setColor(new Color(0, 0, 0));
 
-			int yOffset = 11;
+			int yOffset = 12;
+			
+			// draw breakpoint
+			switch (lineObj.getBreakPoint())
+			{
+				case TRUE:
+					g.drawImage(breakPointSetIcon.getImage(), 0, 0, null);
+					break;
+				case FALSE:
+					g.drawImage(breakPointUnsetIcon.getImage(), 0, 0, null);
+					break;
+			}
 
 			if (lineObj.getOpCode() != null)
-				g.drawString(lineObj.getOpCode(), 2, yOffset);
+				g.drawString(lineObj.getOpCode(), 14, yOffset);
 
 			if (lineObj.getInstruction() != null)
 				g.drawString(lineObj.getInstruction(), 120, yOffset);

@@ -59,6 +59,7 @@ public class GUIRegisters extends JPanel
 
 		// registers
 		registerList = new JList();
+		registerList.setBackground(Color.WHITE);
 		registerList.setFont(new Font("Monospaced", Font.PLAIN, 11));
 		registerList.setCellRenderer(new RegisterCellRenderer());
 		
@@ -110,13 +111,8 @@ public class GUIRegisters extends JPanel
 					this.regObj = (Register) value;
 					setText("."); // trigger repaint
 
-					if (isSelected) {
-							setBackground(list.getSelectionBackground());
-							setForeground(list.getSelectionForeground());
-					} else {
-							setBackground(list.getBackground());
-							setForeground(list.getForeground());
-					}
+					setBackground(list.getBackground());
+					setForeground(list.getForeground());
 
 					return this;
 			}
@@ -145,7 +141,7 @@ public class GUIRegisters extends JPanel
 			FontMetrics metrics = g.getFontMetrics(getFont());
 		
 			if (regObj.getState() == Register.STATE.DISABLED)
-				g.setColor(new Color(80, 80, 80));
+				g.setColor(new Color(196, 196, 196));
 			else
 				g.setColor(new Color(0, 0, 0));
 			

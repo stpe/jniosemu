@@ -136,8 +136,15 @@ public class GUIManager
 		emulatorPanel.add(emulator, BorderLayout.CENTER);
 
 		// emulator: left panel
+		JPanel emulatorLeftPanel = new JPanel(new BorderLayout());
+
+		GUIPCView pcView = new GUIPCView(this.eventManager);
+		emulatorLeftPanel.add(pcView, BorderLayout.PAGE_START);
+		
 		GUIRegisters registers = new GUIRegisters(this.eventManager);
-		emulatorPanel.add(registers, BorderLayout.LINE_START);
+		emulatorLeftPanel.add(registers, BorderLayout.CENTER);
+		
+		emulatorPanel.add(emulatorLeftPanel, BorderLayout.LINE_START);
 
 		// emulator: right panel
 		JPanel emulatorRightPanel = new JPanel(new BorderLayout());
