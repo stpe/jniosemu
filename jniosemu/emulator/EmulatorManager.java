@@ -112,8 +112,10 @@ public class EmulatorManager implements EventObserver
 
 		try {
 			int opCode = this.memory.readInt(this.pc);
-			if (opCode == 0)
+			if (opCode == 0) {
+				this.pcChange();
 				return false;
+			}
 
 			Instruction instruction = this.instructions.get(opCode);
 			instruction.run(this.emulator);
@@ -122,9 +124,7 @@ public class EmulatorManager implements EventObserver
 			System.out.println("ERROR");
 		}
 
-		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, new Integer(this.program.getLineNumber(this.pc)));
-		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());
-
+		this.pcChange();
 		return true;
 	}
 
@@ -225,5 +225,6 @@ public class EmulatorManager implements EventObserver
 
 	private void pcChange() {
 		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, this.program.getLineNumber(this.pc));
+		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());
 	}
 }

@@ -13,7 +13,7 @@ public class Register
 	public Register(int number) {
 		this.number = number;
 
-		if (!(index == 31 || index == 27 || (index >= 0 && index <= 23)))
+		if (!(this.number == 31 || this.number == 27 || (this.number >= 0 && this.number <= 23)))
 			this.state = STATE.DISABLED;
 	}
 
