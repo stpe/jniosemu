@@ -113,5 +113,10 @@ public class Events {
 	 * Trigger change of window title (used when text in editor is modified).
 	 */
 	public static final String EVENTID_CHANGE_WINDOW_TITLE = "CHANGE_WINDOW_TITLE";
-	
+
+	/**
+	 * Update state of LEDs.
+	 */
+	public static final String EVENTID_UPDATE_LEDS = "UPDATE_LEDS";
+
 }

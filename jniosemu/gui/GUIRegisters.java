@@ -3,14 +3,16 @@ package jniosemu.gui;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.*;
 
 import jniosemu.events.*;
+import jniosemu.emulator.register.*;
 
 /** 
  * Creates and manages the GUI component of the register view in the emulator.
  */
 public class GUIRegisters extends JPanel 
-											 implements ActionListener, EventObserver {
+											 implements EventObserver {
 
 	/**
 	 * Reference to EventManager used to receive
@@ -23,11 +25,6 @@ public class GUIRegisters extends JPanel
 	 */
 	private JList registerList;
 	
-	/**
-	 * ListModel used by registerList.
-	 */
-	private DefaultListModel listModel;
-
 	/**
 	 * Initiates the creation of GUI components and adds itself to
 	 * the Event Manager as an observer.
@@ -47,7 +44,7 @@ public class GUIRegisters extends JPanel
 		setup();
 		
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_NEW, this);		
+		this.eventManager.addEventObserver(Events.EVENTID_REGISTER_CHANGE, this);		
 	}
 
 	/**
@@ -58,16 +55,10 @@ public class GUIRegisters extends JPanel
 	 */	
 	private void setup()
 	{
-		this.setPreferredSize(new Dimension(120, 0));
+		this.setPreferredSize(new Dimension(160, 0));
 
 		// registers
-		listModel = new DefaultListModel();
-		for (int i = 1; i < 25; i++)
-		{
-			listModel.addElement(new Integer(i));	
-		}
-
-		registerList = new JList(listModel);
+		registerList = new JList();
 		registerList.setFont(new Font("Monospaced", Font.PLAIN, 11));
 		registerList.setCellRenderer(new RegisterCellRenderer());
 		
@@ -79,24 +70,18 @@ public class GUIRegisters extends JPanel
 		this.add(scrollPane, BorderLayout.CENTER);		
 	}
 
+	public void setRegisters(Vector<Register> registers)
+	{
+		registerList.setListData(registers);
+	}
+
 	public void update(String eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_NEW))
+		if (eventIdentifier.equals(Events.EVENTID_REGISTER_CHANGE))
 		{
-//			editor.setText("");
+			Vector<Register> tmp = (Vector<Register>) obj;
+			setRegisters( tmp );
 		}
-	}
-	
-	/**
-	 * Invoked when a GUI action occurs, forwards it as
-	 * an event to the EventManager object.
-	 *
-	 * @calls     EventManager.sendEvent()
-	 *
-	 * @param  e  action event object
-	 */
-	public void actionPerformed(ActionEvent e) {
-			eventManager.sendEvent(e.getActionCommand());
 	}
 
 	/**
@@ -105,7 +90,7 @@ public class GUIRegisters extends JPanel
 	class RegisterCellRenderer extends JLabel
 												 implements ListCellRenderer {
 
-			private Object registerObject;
+			private Register regObj;
 
 			public RegisterCellRenderer() {
 					setOpaque(true);
@@ -122,7 +107,7 @@ public class GUIRegisters extends JPanel
 
 					this.setFont(registerList.getFont());
 
-					this.registerObject = value;
+					this.regObj = (Register) value;
 					setText("."); // trigger repaint
 
 					if (isSelected) {
@@ -142,16 +127,31 @@ public class GUIRegisters extends JPanel
 			if (isOpaque()) 
 			{ 
 					// paint background
-					g.setColor(getBackground());
+					switch (regObj.getState())
+					{
+						case READ:
+							g.setColor(new Color(220, 255, 220));
+							break;
+						case WRITE:
+							g.setColor(new Color(255, 220, 220));
+							break;
+						default:
+							g.setColor(getBackground());
+					}
+
 					g.fillRect(0, 0, getWidth(), getHeight());
 			}
 
 			FontMetrics metrics = g.getFontMetrics(getFont());
+		
+			if (regObj.getState() == Register.STATE.DISABLED)
+				g.setColor(new Color(80, 80, 80));
+			else
+				g.setColor(new Color(0, 0, 0));
+			
+			g.drawString(regObj.getName(), 2, 11);
 
-			g.setColor(new Color(0, 0, 0));
-			g.drawString("#" + this.registerObject.toString(), 2, 11);
-
-			String tmp = "0x00000000";	
+			String tmp = regObj.getValue();	
 
 			g.drawString(tmp, getWidth()-metrics.stringWidth(tmp), 11);
 		}

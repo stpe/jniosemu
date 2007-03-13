@@ -116,8 +116,7 @@ public class GUIManager
 		mainPanel.add(toolBar, BorderLayout.PAGE_START);
 
 		// editor panel
-		JPanel editorPanel = new JPanel();
-		editorPanel.setLayout(new BorderLayout());
+		JPanel editorPanel = new JPanel(new BorderLayout());
 		editorPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
 		// editor
@@ -129,8 +128,7 @@ public class GUIManager
 		editorPanel.add(editorMessages, BorderLayout.PAGE_END);
 
 		// emulator panel
-		JPanel emulatorPanel = new JPanel();
-		emulatorPanel.setLayout(new BorderLayout());
+		JPanel emulatorPanel = new JPanel(new BorderLayout());
 		emulatorPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
 		// emulator
@@ -139,7 +137,13 @@ public class GUIManager
 
 		// emulator: left panel
 		GUIRegisters registers = new GUIRegisters(this.eventManager);
-		emulatorPanel.add(registers, BorderLayout.WEST);
+		emulatorPanel.add(registers, BorderLayout.LINE_START);
+
+		// emulator: right panel
+		JPanel emulatorRightPanel = new JPanel(new BorderLayout());
+		GUIIOLEDs ledPanel = new GUIIOLEDs(this.eventManager);
+		emulatorRightPanel.add(ledPanel, BorderLayout.PAGE_END);
+		emulatorPanel.add(emulatorRightPanel, BorderLayout.LINE_END);
 
 		// tabs
 		tabbedPane = new JTabbedPane();
