@@ -96,6 +96,35 @@ public class CompilerRTypeInstruction extends CompilerInstruction
 					throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
 				}
 				break;
+			case PC:
+				pArgs = Pattern.compile("([a-z0-9]+)");
+				mArgs = pArgs.matcher(aArgs);
+				if (mArgs.matches()) {
+					try {
+						this.rC = RegisterManager.parseRegister(mArgs.group(1));
+					} catch (Exception e) {
+						throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
+					}
+				} else {
+					throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
+				}
+				break;
+			case CUSTOM:
+				pArgs = Pattern.compile("(.*)\\s*,\\s*([a-z0-9]+)\\s*,\\s*([a-z0-9]+)\\s*,\\s*([a-z0-9]+)");
+				mArgs = pArgs.matcher(aArgs);
+				if (mArgs.matches()) {
+					try {
+						this.tImm = mArgs.group(1);
+						this.rC = RegisterManager.parseRegister(mArgs.group(2));
+						this.rA = RegisterManager.parseRegister(mArgs.group(3));
+						this.rB = RegisterManager.parseRegister(mArgs.group(4));
+					} catch (Exception e) {
+						throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
+					}
+				} else {
+					throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
+				}
+				break;
 			case NONE:
 				break;
 			default:
