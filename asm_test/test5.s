@@ -1,9 +1,5 @@
 	.data
 var:	.word 5
-	.word 0
-	.word 0
-	.word 0
-stack:	.word 0
 
 	.macro PUSH reg		# Macro för PUSH
 	addi sp, sp, -4
@@ -22,8 +18,6 @@ main:	movia	r8, var		# Flyttar adressen till variabeln var till r8
 	ldw	r9, 0(r8)	# Flyttar värdet på variabeln var till r9
 	addi	r9, r9, 2	# Adderar 2 till värdet på r9
 	stw	r9, 0(r8)	# Flyttar värdet på r8 till variabeln var
-
-	movia sp, stack
 
 	PUSH r9			# lägger r9 på stacken
 	POP r10			# poppar värdet i stacken till r10
