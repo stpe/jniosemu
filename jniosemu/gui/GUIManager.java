@@ -148,8 +148,22 @@ public class GUIManager
 
 		// emulator: right panel
 		JPanel emulatorRightPanel = new JPanel(new BorderLayout());
+		
+		JPanel ioPanel = new JPanel();
+		ioPanel.setLayout(new BoxLayout(ioPanel, BoxLayout.PAGE_AXIS));
+
+		GUIIOButtons buttonPanel = new GUIIOButtons(this.eventManager);
+		ioPanel.add(buttonPanel);
+
+		GUIIODipswitches dipswitchesPanel = new GUIIODipswitches(this.eventManager);
+		ioPanel.add(dipswitchesPanel);
+		
 		GUIIOLEDs ledPanel = new GUIIOLEDs(this.eventManager);
-		emulatorRightPanel.add(ledPanel, BorderLayout.PAGE_END);
+		ioPanel.add(ledPanel);
+		
+		emulatorRightPanel.add(ioPanel, BorderLayout.PAGE_END);
+		emulatorRightPanel.add(Box.createVerticalGlue(), BorderLayout.CENTER);
+		
 		emulatorPanel.add(emulatorRightPanel, BorderLayout.LINE_END);
 
 		// tabs

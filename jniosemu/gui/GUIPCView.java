@@ -42,6 +42,7 @@ import jniosemu.emulator.*;
 		this.eventManager = eventManager;
 
 		setup();
+		setPC(0);
 
 		// add events to listen to
 		this.eventManager.addEventObserver(Events.EVENTID_PC_CHANGE, this);

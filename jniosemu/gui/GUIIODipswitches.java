@@ -10,9 +10,9 @@ import jniosemu.events.*;
 import jniosemu.emulator.*;
 
 /**
- * Creates and manages the GUI component of the LEDs.
+ * Creates and manages the GUI component of the dipswitches.
  */
- public class GUIIOLEDs extends JPanel
+ public class GUIIODipswitches extends JPanel
 											 implements ActionListener, EventObserver {
 
 	/**
@@ -21,9 +21,9 @@ import jniosemu.emulator.*;
 	 */
 	private EventManager eventManager;
 
-	private static int LED_COUNT = 4;
+	private static int DIPSWITCH_COUNT = 4;
 
-	private JLabel[] leds = new JLabel[LED_COUNT];
+	private JLabel[] dipswitches = new JLabel[DIPSWITCH_COUNT];
 
 	private ImageIcon[] icons = new ImageIcon[2];
 
@@ -37,7 +37,7 @@ import jniosemu.emulator.*;
 	 *
 	 * @param  eventManager  The Event Manager object.
 	 */
-	public GUIIOLEDs(EventManager eventManager)
+	public GUIIODipswitches(EventManager eventManager)
 	{
 		super();
 
@@ -57,7 +57,7 @@ import jniosemu.emulator.*;
 	 * Setup GUI components and attributes.
 	 *
 	 * @post      components created and added to panel
-	 * @calledby  GUIIOLEDs
+	 * @calledby  GUIIODipswitches
 	 */
 	private void setup()
 	{
@@ -67,56 +67,56 @@ import jniosemu.emulator.*;
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
 			)
 		);
-		
-		// load image icons
-		icons[0] = new ImageIcon("graphics/io/led_off.png");
-		icons[1] = new ImageIcon("graphics/io/led_on.png");
 
-		// create LEDs		
-		for(int i = 0; i < leds.length; i++)
+		// load image icons
+		icons[0] = new ImageIcon("graphics/io/dipswitch_unset.png");
+		icons[1] = new ImageIcon("graphics/io/dipswitch_set.png");
+
+		// create dipswitches		
+		for(int i = 0; i < dipswitches.length; i++)
 		{
-			leds[i] = new JLabel(icons[0]);
-			this.add(leds[i]);
+			dipswitches[i] = new JLabel(icons[0]);
+			this.add(dipswitches[i]);
 		}
 	}
 
 	/**
 	 *
 	 */
-	public void setLed(int ledIndex, int value)
+	public void setButton(int dipswitchIndex, int value)
 	{
-		if (ledIndex < 0 || ledIndex >= LED_COUNT)
+		if (dipswitchIndex < 0 || dipswitchIndex >= DIPSWITCH_COUNT)
 		{
-			System.out.println("GUIIOLEDs.setLED(): Invalid ledIndex " + ledIndex);
+			System.out.println("GUIIODipswitches.setButton(): Invalid dipswitchIndex " + dipswitchIndex);
 			return;
 		}
 			
 		if (value == 0)
-			leds[ledIndex].setIcon(icons[0]);
+			dipswitches[dipswitchIndex].setIcon(icons[0]);
 		else
-			leds[ledIndex].setIcon(icons[1]);
+			dipswitches[dipswitchIndex].setIcon(icons[1]);
 	}
 
 	/**
 	 *
 	 */
-	public void resetLeds()
+	public void resetDipswitches()
 	{
-		for(int i = 0; i < leds.length; i++)
+		for(int i = 0; i < dipswitches.length; i++)
 		{
-			setLed(i, 0);
+			setButton(i, 0);
 		}
 	}
 
 	public void update(String eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_UPDATE_LEDS))
+		if (eventIdentifier.equals(Events.EVENTID_UPDATE_DIPSWITCHES))
 		{
-			// setLed()
+			// setButton()
 		}
 		else if (eventIdentifier.equals(Events.EVENTID_RESET))
 		{
-			resetLeds();
+			resetDipswitches();
 		}
 	}
 

@@ -115,8 +115,19 @@ public class Events {
 	public static final String EVENTID_CHANGE_WINDOW_TITLE = "CHANGE_WINDOW_TITLE";
 
 	/**
-	 * Update state of LEDs.
+	 * Update state of leds.
 	 */
 	public static final String EVENTID_UPDATE_LEDS = "UPDATE_LEDS";
+
+	/**
+	 * Update state of buttons.
+	 */
+	public static final String EVENTID_UPDATE_BUTTONS = "UPDATE_BUTTONS";
+
+	/**
+	 * Update state of dipswitches.
+	 */
+	public static final String EVENTID_UPDATE_DIPSWITCHES = "UPDATE_DIPSWITCHES";
+
 
 }

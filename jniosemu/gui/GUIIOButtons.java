@@ -10,9 +10,9 @@ import jniosemu.events.*;
 import jniosemu.emulator.*;
 
 /**
- * Creates and manages the GUI component of the LEDs.
+ * Creates and manages the GUI component of the buttons.
  */
- public class GUIIOLEDs extends JPanel
+ public class GUIIOButtons extends JPanel
 											 implements ActionListener, EventObserver {
 
 	/**
@@ -21,9 +21,9 @@ import jniosemu.emulator.*;
 	 */
 	private EventManager eventManager;
 
-	private static int LED_COUNT = 4;
+	private static int BUTTON_COUNT = 4;
 
-	private JLabel[] leds = new JLabel[LED_COUNT];
+	private JLabel[] buttons = new JLabel[BUTTON_COUNT];
 
 	private ImageIcon[] icons = new ImageIcon[2];
 
@@ -37,7 +37,7 @@ import jniosemu.emulator.*;
 	 *
 	 * @param  eventManager  The Event Manager object.
 	 */
-	public GUIIOLEDs(EventManager eventManager)
+	public GUIIOButtons(EventManager eventManager)
 	{
 		super();
 
@@ -57,7 +57,7 @@ import jniosemu.emulator.*;
 	 * Setup GUI components and attributes.
 	 *
 	 * @post      components created and added to panel
-	 * @calledby  GUIIOLEDs
+	 * @calledby  GUIIOButtons
 	 */
 	private void setup()
 	{
@@ -69,54 +69,54 @@ import jniosemu.emulator.*;
 		);
 		
 		// load image icons
-		icons[0] = new ImageIcon("graphics/io/led_off.png");
-		icons[1] = new ImageIcon("graphics/io/led_on.png");
+		icons[0] = new ImageIcon("graphics/io/button.png");
+		icons[1] = new ImageIcon("graphics/io/button_pressed.png");
 
-		// create LEDs		
-		for(int i = 0; i < leds.length; i++)
+		// create buttons		
+		for(int i = 0; i < buttons.length; i++)
 		{
-			leds[i] = new JLabel(icons[0]);
-			this.add(leds[i]);
+			buttons[i] = new JLabel(icons[0]);
+			this.add(buttons[i]);
 		}
 	}
 
 	/**
 	 *
 	 */
-	public void setLed(int ledIndex, int value)
+	public void setButton(int buttonIndex, int value)
 	{
-		if (ledIndex < 0 || ledIndex >= LED_COUNT)
+		if (buttonIndex < 0 || buttonIndex >= BUTTON_COUNT)
 		{
-			System.out.println("GUIIOLEDs.setLED(): Invalid ledIndex " + ledIndex);
+			System.out.println("GUIIOButtons.setButton(): Invalid buttonIndex " + buttonIndex);
 			return;
 		}
 			
 		if (value == 0)
-			leds[ledIndex].setIcon(icons[0]);
+			buttons[buttonIndex].setIcon(icons[0]);
 		else
-			leds[ledIndex].setIcon(icons[1]);
+			buttons[buttonIndex].setIcon(icons[1]);
 	}
 
 	/**
 	 *
 	 */
-	public void resetLeds()
+	public void resetButtons()
 	{
-		for(int i = 0; i < leds.length; i++)
+		for(int i = 0; i < buttons.length; i++)
 		{
-			setLed(i, 0);
+			setButton(i, 0);
 		}
 	}
 
 	public void update(String eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_UPDATE_LEDS))
+		if (eventIdentifier.equals(Events.EVENTID_UPDATE_BUTTONS))
 		{
-			// setLed()
+			// setButton()
 		}
 		else if (eventIdentifier.equals(Events.EVENTID_RESET))
 		{
-			resetLeds();
+			resetButtons();
 		}
 	}
 
