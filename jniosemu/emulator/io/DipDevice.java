@@ -6,9 +6,9 @@ import jniosemu.events.Events;
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
 /**
- * 
+ * Handle the dipswitches
  */
-public class DipDevice extends IODevice implements EventObserver
+public class DipSwitchDevice extends IODevice implements EventObserver
 {
 	public static int MEMORYADDR = 0x850;
 	public static int COUNT = 4;
