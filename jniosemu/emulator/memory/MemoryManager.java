@@ -1,6 +1,7 @@
 package jniosemu.emulator.memory;
 
 import java.util.ArrayList;
+import jniosemu.emulator.io.IODevice;
 
 /**
  * Manage the memory that the emulated program can access.
@@ -28,12 +29,7 @@ public class MemoryManager
 	 * @calls MemoryBlocks()
 	 */
 	public MemoryManager() {
-		this.memoryBlocks.add(new MemoryBlock("SRAM", PROGRAMSTART, 50));
-		this.memoryBlocks.add(new MemoryBlock("LED_PIO", 0x810, 16));
-		this.memoryBlocks.add(new MemoryBlock("BUTTON_PIO", 0x840, 16));
-		this.memoryBlocks.add(new MemoryBlock("DIP_PIO", 0x850, 16));
-
-		this.memory = new byte[100];
+		this.memoryBlocks.add(new MemoryBlock("SRAM", PROGRAMSTART, 50, null, null));
 	}
 
 	/**
@@ -47,37 +43,14 @@ public class MemoryManager
 	 */
 	public MemoryManager(byte[] memory)
 	{
-		this.memoryBlocks.add(new MemoryBlock("SRAM", PROGRAMSTART, memory.length));
-		this.memoryBlocks.add(new MemoryBlock("LED_PIO", 0x810, 16));
-		this.memoryBlocks.add(new MemoryBlock("BUTTON_PIO", 0x840, 16));
-		this.memoryBlocks.add(new MemoryBlock("DIP_PIO", 0x850, 16));
-
-		int length = 0;
-		for (MemoryBlock block: this.memoryBlocks)
-			length += block.getLength();
-
-		this.memory = new byte[length];
-		for (int i = 0; i < memory.length; i++)
-			this.memory[i] = memory[i];
+		this.memoryBlocks.add(new MemoryBlock("SRAM", PROGRAMSTART, memory.length, null, memory));
 	}
 
 	/**
-	 * Get the internal address for an external address.
 	 *
-	 * @calledby readByte(), readShort(), readInt(), writeByte(), writeShort(), writeInt()
-	 *
-	 * @param aAddr  External address
-	 * @return Internal address
 	 */
-	private int mapAddr(int aAddr) throws MemoryException {
-		int start = 0;
-		for (MemoryBlock block: this.memoryBlocks) {
-			if (block.getStart() <= aAddr && block.getEnd() >= aAddr)
-				return start + (aAddr - block.getStart());
-			start += block.getLength();
-		}
-
-		throw new MemoryException(aAddr);
+	public void register(String name, int startAddr, int length, IODevice device) {
+		this.memoryBlocks.add(new MemoryBlock(name, startAddr, length, device, null));
 	}
 
 	/**
@@ -89,8 +62,19 @@ public class MemoryManager
 	 * @return One byte from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public byte readByte(int aAddr) throws MemoryException {
-		return memory[mapAddr(aAddr)];
+	public byte readByte(int addr, boolean notify) throws MemoryException {
+		for (MemoryBlock block: this.memoryBlocks) {
+			if (block.inRange(addr)) {
+				// System.out.println("read: "+ block.getName() +" ("+ addr +")");
+				return block.readByte(addr, notify);
+			}
+		}
+
+		throw new MemoryException(addr);		
+	}
+
+	public byte readByte(int addr) throws MemoryException {
+		return readByte(addr, true);
 	}
 
 	/**
@@ -102,8 +86,19 @@ public class MemoryManager
 	 * @param aValue  Value
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public void writeByte(int aAddr, byte aValue) throws MemoryException {
-		memory[mapAddr(aAddr)] = aValue;
+	public void writeByte(int addr, byte value, boolean notify) throws MemoryException {
+		for (MemoryBlock block: this.memoryBlocks) {
+			if (block.inRange(addr)) {
+				block.writeByte(addr, value, notify);
+				return;
+			}
+		}
+
+		throw new MemoryException(addr);		
+	}
+
+	public void writeByte(int addr, byte value) throws MemoryException {
+		writeByte(addr, value, true);
 	}
 
 	/**
@@ -115,8 +110,12 @@ public class MemoryManager
 	 * @return One short from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public short readShort(int aAddr) throws MemoryException {
-		return (short)((memory[mapAddr(aAddr+1)] & 0xFF) << 8 | (memory[mapAddr(aAddr)] & 0xFF));
+	public short readShort(int aAddr, boolean notify) throws MemoryException {
+		return (short)((this.readByte(aAddr+1, notify) & 0xFF) << 8 | (this.readByte(aAddr, notify) & 0xFF));
+	}
+
+	public short readShort(int addr) throws MemoryException {
+		return readShort(addr, true);
 	}
 
 	/**
@@ -128,9 +127,13 @@ public class MemoryManager
 	 * @param aValue  Value
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public void writeShort(int aAddr, short aValue) throws MemoryException {
-		memory[mapAddr(aAddr)  ] = (byte)(aValue        & 0xFF);
-		memory[mapAddr(aAddr+1)] = (byte)(aValue >>> 8  & 0xFF);
+	public void writeShort(int aAddr, short aValue, boolean notify) throws MemoryException {
+		this.writeByte(aAddr    , (byte)(aValue       & 0xFF), notify);
+		this.writeByte(aAddr + 1, (byte)(aValue >>> 8 & 0xFF), notify);
+	}
+
+	public void writeShort(int addr, short value) throws MemoryException {
+		writeShort(addr, value, true);
 	}
 
 	/**
@@ -142,8 +145,12 @@ public class MemoryManager
 	 * @return One int from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public int readInt(int aAddr) throws MemoryException {
-		return (memory[mapAddr(aAddr+3)] & 0xFF) << 24 | (memory[mapAddr(aAddr+2)] & 0xFF) << 16 | (memory[mapAddr(aAddr+1)] & 0xFF) << 8 | (memory[mapAddr(aAddr)] & 0xFF);
+	public int readInt(int aAddr, boolean notify) throws MemoryException {
+		return (this.readByte(aAddr+3, notify) & 0xFF) << 24 | (this.readByte(aAddr+2, notify) & 0xFF) << 16 | (this.readByte(aAddr+1, notify) & 0xFF) << 8 | (this.readByte(aAddr, notify) & 0xFF);
+	}
+
+	public int readInt(int addr) throws MemoryException {
+		return readInt(addr, true);
 	}
 
 	/**
@@ -155,11 +162,15 @@ public class MemoryManager
 	 * @param aValue  Value
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public void writeInt(int aAddr, int aValue) throws MemoryException {
-		memory[mapAddr(aAddr)]   = (byte)(aValue        & 0xFF);
-		memory[mapAddr(aAddr+1)] = (byte)(aValue >>> 8  & 0xFF);
-		memory[mapAddr(aAddr+2)] = (byte)(aValue >>> 16 & 0xFF);
-		memory[mapAddr(aAddr+3)] = (byte)(aValue >>> 24 & 0xFF);
+	public void writeInt(int aAddr, int aValue, boolean notify) throws MemoryException {
+		this.writeByte(aAddr    , (byte)(aValue        & 0xFF), notify);
+		this.writeByte(aAddr + 1, (byte)(aValue >>> 8  & 0xFF), notify);
+		this.writeByte(aAddr + 2, (byte)(aValue >>> 16 & 0xFF), notify);
+		this.writeByte(aAddr + 3, (byte)(aValue >>> 24 & 0xFF), notify);
+	}
+
+	public void writeInt(int addr, int value) throws MemoryException {
+		writeInt(addr, value, true);
 	}
 
 	/**

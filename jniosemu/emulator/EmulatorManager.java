@@ -7,6 +7,7 @@ import jniosemu.events.Events;
 import jniosemu.events.EventObserver;
 import jniosemu.emulator.compiler.Compiler;
 import jniosemu.emulator.compiler.CompilerException;
+import jniosemu.emulator.io.IOManager;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionManager;
@@ -29,11 +30,11 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * RegisterManager that is used
 	 */
-	private RegisterManager register = new RegisterManager();
+	private RegisterManager register;
 	/**
-	 * InstructionManager that is used
+	 * IOManager that is used
 	 */
-	private InstructionManager instructions = new InstructionManager();
+	private IOManager io;
 	/**
 	 * Emulator that is used
 	 */
@@ -56,7 +57,13 @@ public class EmulatorManager implements EventObserver
 		this.emulator = new Emulator(this);
 		this.eventManager = eventManager;
 
-		String[] events = {Events.EVENTID_COMPILE, Events.EVENTID_RUN, Events.EVENTID_STEP, Events.EVENTID_PAUSE, Events.EVENTID_RESET};
+		String[] events = {
+			Events.EVENTID_COMPILE,
+			Events.EVENTID_RUN,
+			Events.EVENTID_STEP,
+			Events.EVENTID_PAUSE,
+			Events.EVENTID_RESET,
+			Events.EVENTID_GUI_TOGGLE_BREAKPOINT};
 		eventManager.addEventObserver(events, this);
 	}
 
@@ -117,7 +124,7 @@ public class EmulatorManager implements EventObserver
 				return false;
 			}
 
-			Instruction instruction = this.instructions.get(opCode);
+			Instruction instruction = InstructionManager.get(opCode);
 			instruction.run(this.emulator);
 			this.pc += 4;
 		} catch (EmulatorException e) {
@@ -193,10 +200,25 @@ public class EmulatorManager implements EventObserver
 	 */
 	public void load() {
 		this.memory = new MemoryManager(program.getData());
+		this.io = new IOManager(this.memory, this.eventManager);
 		this.pc = this.program.getStartAddr();
-		this.register.reset();
+		this.register = new RegisterManager();
 
 		this.pcChange();
+	}
+
+	/**
+	 * Toggle breakpoint
+	 *
+	 * @calledby update()
+	 * @calls Program.toggleBreakpoint(), EVENTID_TOGGLE_BREAKPOINT
+	 *
+	 * @param lineNumber  Line to toggle breakpoint
+	 */
+	public void toggleBreakpoint(int lineNumber) {
+		this.program.toggleBreakpoint(lineNumber);
+
+		this.eventManager.sendEvent(Events.EVENTID_TOGGLE_BREAKPOINT, lineNumber);
 	}
 
 	/**
@@ -216,6 +238,8 @@ public class EmulatorManager implements EventObserver
 			this.pause();
 		} else if (eventIdentifier.equals(Events.EVENTID_RESET)) {
 			this.load();
+		} else if (eventIdentifier.equals(Events.EVENTID_GUI_TOGGLE_BREAKPOINT)) {
+			this.toggleBreakpoint(((Integer)obj).intValue());
 		}
 	}
 

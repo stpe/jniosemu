@@ -3,19 +3,54 @@ package jniosemu.emulator;
 import jniosemu.instruction.emulator.Instruction;
 import jniosemu.instruction.InstructionManager;
 
+/**
+ * Contains info about one line in the program
+ */
 public class ProgramLine
 {
+	/**
+	 * Status of a breakpoint
+	 */
 	public static enum BREAKPOINT {TRUE, FALSE, DISABLED};
+	/**
+	 * Sibling status. Is used for GUI.
+	 */
 	public static enum SIBLINGSTATUS {FIRST, LAST, ME, MIDDLE, NONE}
 
+	/**
+	 * Breakpoint status for the Programline
+	 */
 	private BREAKPOINT breakpoint = BREAKPOINT.FALSE;
-	private int childs = 1;
+	/**
+	 * Number of child lines
+	 */
+	private int childs;
+	/**
+	 * Opcode of the Programline.
+	 */
 	private final int opCode;
+	/**
+	 * Instruction of the line
+	 */
 	private final Instruction instruction;
+	/**
+	 * Sourcecode line
+	 */
 	private final String sourceCodeLine;
+	/**
+	 * Which number is this ProgramLine
+	 */
 	private final int lineNumber;
+	/**
+	 * Parent of this ProgramLine
+	 */
 	private final ProgramLine parent;
 
+	/**
+	 * Init ProgramLine
+	 *
+	 * @checks If opcode == 0 then breakpoint = DISABLED
+	 */
 	public ProgramLine(int opCode, Instruction instruction, String sourceCodeLine, int lineNumber, ProgramLine parent) {
 		this.opCode = opCode;
 		this.instruction = instruction;
@@ -23,22 +58,54 @@ public class ProgramLine
 		this.lineNumber = lineNumber;
 		this.parent = parent;
 
-		if (this.opCode == 0)
+		if (this.opCode == 0) {
 			this.breakpoint = BREAKPOINT.DISABLED;
+			this.childs = 0;
+	 	} else {
+			this.childs = 1;
+		}
 	}
 
+	/**
+	 * Get line number
+	 *
+	 * @calledby Program()
+	 *
+	 * @ret line number
+	 */
 	public int getLineNumber() {
 		return this.lineNumber;
 	}
 
+	/**
+	 * Get child count
+	 *
+	 * @calledby Program()
+	 *
+	 * @ret child count
+	 */
 	public int getChildCount() {
 		return this.childs;
 	}
 
+	/**
+	 * Increase child count by one
+	 *
+	 * @post intrease child count by one
+	 * @calledby Program()
+	 */
 	public void incrChildCount() {
 		this.childs++;
 	}
 
+	/**
+	 * Return sibling status. 
+	 *
+	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
+	 *
+	 * @param lineNumber The line that is marked in Emulator
+	 * @ret Sibling status
+	 */
 	public SIBLINGSTATUS isSibling(int lineNumber) {
 		if (this.lineNumber == lineNumber)
 			return SIBLINGSTATUS.ME;
@@ -63,10 +130,25 @@ public class ProgramLine
 		return SIBLINGSTATUS.NONE;
 	}
 
+	/**
+	 * Get breakpoint status
+	 *
+	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
+	 *
+	 * @ret breakpoint status
+	 */
 	public BREAKPOINT getBreakPoint() {
 		return this.breakpoint;
 	}
 
+	/**
+	 * Get opcode
+	 *
+	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
+	 * @calls InstructionManager.intToHexString()
+	 *
+	 * @ret opcode
+	 */
 	public String getOpCode() {
 		if (this.opCode == 0)
 			return null;
@@ -74,6 +156,14 @@ public class ProgramLine
 		return InstructionManager.intToHexString(this.opCode);
 	}
 
+	/**
+	 * Get instruction string
+	 *
+	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
+	 * @calls Instruction.toString()
+	 *
+	 * @ret instruction
+	 */
 	public String getInstruction() {
 		if (this.instruction == null)
 			return null;
@@ -81,6 +171,13 @@ public class ProgramLine
 		return this.instruction.toString();
 	}
 
+	/**
+	 * Get sourcecode line
+	 *
+	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
+	 *
+	 * @ret sourcecode line
+	 */
 	public String getSourceCodeLine() {
 		if (this.sourceCodeLine == null)
 			return null;
@@ -88,6 +185,11 @@ public class ProgramLine
 		return this.sourceCodeLine;
 	}
 
+	/**
+	 * Get a debug string
+	 *
+	 * @ret debug string
+	 */
 	public String toString() {
 		String ret = "";
 		if (this.getSourceCodeLine() != null)
@@ -95,5 +197,22 @@ public class ProgramLine
 		if (this.getOpCode() != null)
 			ret += this.getOpCode() +" "+ this.getInstruction();
 		return ret;
+	}
+
+	/**
+	 * Toggle breakpoint. If DISABLED nothing happens.
+	 * Else TRUE -> FALSE and FALSE -> TRUE.
+	 *
+	 * @calledby Program.toggleBreakpoint()
+	 */
+	public void toggleBreakpoint() {
+		switch (this.breakpoint) {
+			case TRUE:
+				this.breakpoint = BREAKPOINT.FALSE;
+				break;
+			case FALSE:
+				this.breakpoint = BREAKPOINT.TRUE;
+				break;
+		}
 	}
 }

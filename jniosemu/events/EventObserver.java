@@ -15,6 +15,6 @@ public interface EventObserver {
 	 * @param  eventIdentifier String identifying the event
 	 * @param  obj             Object associated with event by sender
 	 */
-	void update(String eventIdentifier, Object obj);
+	public void update(String eventIdentifier, Object obj);
 	
 }

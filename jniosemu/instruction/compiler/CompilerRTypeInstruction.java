@@ -3,6 +3,7 @@ package jniosemu.instruction.compiler;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import jniosemu.emulator.compiler.Compiler;
 import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionInfo;
 import jniosemu.instruction.InstructionException;
@@ -80,6 +81,21 @@ public class CompilerRTypeInstruction extends CompilerInstruction
 					throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
 				}
 				break;
+			case SHIFT:
+				pArgs = Pattern.compile("([a-z0-9]+)\\s*,\\s*([a-z0-9]+)\\s*,\\s*(.*)");
+				mArgs = pArgs.matcher(aArgs);
+				if (mArgs.matches()) {
+					try {
+						this.rC = RegisterManager.parseRegister(mArgs.group(1));
+						this.rA = RegisterManager.parseRegister(mArgs.group(2));
+						this.tImm = mArgs.group(3);
+					} catch (Exception e) {
+						throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
+					}
+				} else {
+					throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
+				}
+				break;
 			case NONE:
 				break;
 			default:
@@ -111,5 +127,7 @@ public class CompilerRTypeInstruction extends CompilerInstruction
 	 * @param aAddr  Memory address where this instruction is placed in memory
 	 * @throws InstructionException  If the immediate value can't be parsed
 	 */
-	public void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException {}
+	public void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException {
+		this.imm = (int)(Compiler.parseValue(this.tImm, aLabels) & 0xFFFFFFFF);
+	}
 }

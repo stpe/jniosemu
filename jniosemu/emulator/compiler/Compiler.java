@@ -296,17 +296,14 @@ public class Compiler
 							} else if (name.equals("global")) {
 								this.globals.add(mInstruction.group(3));
 							} else if (name.equals("macro")) {
-								System.out.println("Macro start");
 								Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
 								Matcher mMacro = pMacro.matcher(mInstruction.group(3));
 								if (mMacro.matches()) {
-									System.out.println("Added macro: "+ mMacro.group(1) +", "+ mMacro.group(2));
 									this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null);
 								} else {
 									throw new CompilerException(aLineNumber, "Wrong syntax for a macro");
 								}
 							} else if (name.equals("endm")) {
-								System.out.println("Macro end");
 								this.lastMacro = null;
 							} else if (name.equals("word")) {
 								try {

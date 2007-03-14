@@ -10,6 +10,6 @@ public class BrInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		em.writePC(em.readPC() + this.imm - 4);
+		em.writePC(em.readPC() + this.imm);
 	}
 }

@@ -27,10 +27,10 @@ public class Program
 	 * Init Program.
 	 *
 	 * @calledby Compiler
-	 * @todo Doc
 	 *
-	 * @param data Program in the form of binary data
-	 * @param startAddr Start position in the memory (what to set pc before starting to emulate)
+	 * @param lines  Sourcecode lines
+	 * @param instruction  Program in the form of binary data
+	 * @param startAddr  Start position in the memory (what to set pc before starting to emulate)
 	 */
 	public Program(String[] lines, ArrayList<CompilerInstruction> instructions, byte[] data, int startAddr) {
 		this.startAddr = startAddr;
@@ -137,5 +137,17 @@ public class Program
 	 */
 	public int getStartAddr() {
 		return this.startAddr;
+	}
+
+	/**
+	 * Toggle breakpoint
+	 *
+	 * @calledby EmulatorManager.toggleBreakpoint()
+	 * @calls ProgramLine.toggleBreakpoint()
+	 *
+	 * @param lineNumber  lineNumber to toggle breakpoint
+	 */
+	public void toggleBreakpoint(int lineNumber) {
+		this.programLines.get(lineNumber).toggleBreakpoint();
 	}
 }

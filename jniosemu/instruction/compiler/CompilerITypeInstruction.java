@@ -3,8 +3,8 @@ package jniosemu.instruction.compiler;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import jniosemu.emulator.register.RegisterManager;
 import jniosemu.emulator.compiler.Compiler;
+import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionInfo;
 import jniosemu.instruction.InstructionException;
 
@@ -131,7 +131,7 @@ public class CompilerITypeInstruction extends CompilerInstruction
 		long imm = Compiler.parseValue(this.tImm, aLabels) & 0xFFFFFFFF;
 
 		if (this.instructionInfo.getSyntax() == InstructionInfo.Syntax.BRANCH || this.instructionInfo.getSyntax() == InstructionInfo.Syntax.BRANCH_COND)
-			this.imm = (int)(imm - aAddr);
+			this.imm = (int)(imm - aAddr - 4);
 		else
 			this.imm = (int)imm;
 	}

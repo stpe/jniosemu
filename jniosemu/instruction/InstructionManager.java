@@ -52,6 +52,7 @@ public class InstructionManager
 		instructions.add(new InstructionInfo("AND",   0x703A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT));
 		instructions.add(new InstructionInfo("CALLR", 0x3EE83A,   InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.CALLJUMP));
 		instructions.add(new InstructionInfo("RET",   0xF800283A, InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.NONE));
+		instructions.add(new InstructionInfo("ROLI",  0x83A,      InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT));
 		instructions.add(new InstructionInfo("CALL",  0x0,        InstructionInfo.Type.JTYPE, InstructionInfo.Syntax.DEFAULT));
 
 		for (InstructionInfo instruction: instructions) {
