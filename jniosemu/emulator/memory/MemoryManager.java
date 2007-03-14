@@ -134,7 +134,7 @@ public class MemoryManager
 	 * @throws MemoryException  If the address is wrong
 	 */
 	public short readShort(int addr, boolean notify) throws MemoryException {
-		return (short)((this.readByte(aAddr+1, notify) & 0xFF) << 8 | (this.readByte(aAddr, notify) & 0xFF));
+		return (short)((this.readByte(addr+1, notify) & 0xFF) << 8 | (this.readByte(addr, notify) & 0xFF));
 	}
 
 	/**

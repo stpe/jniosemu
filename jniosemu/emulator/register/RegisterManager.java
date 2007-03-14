@@ -109,4 +109,6 @@ public class RegisterManager
 	public Vector<Register> get() {
 		return this.registers;
 	}
+
+	public void dump() {}
 }
