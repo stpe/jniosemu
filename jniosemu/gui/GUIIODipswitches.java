@@ -46,11 +46,7 @@ import jniosemu.emulator.*;
 		setup();
 
 		// add events to listen to
-		String[] events = {
-			Events.EVENTID_COMPILATION_DONE,
-			Events.EVENTID_PC_CHANGE
-		};
-		this.eventManager.addEventObserver(events, this);
+		this.eventManager.addEventObserver(Events.EVENTID_UPDATE_DIPSWITCHES, this);
 	}
 
 	/**

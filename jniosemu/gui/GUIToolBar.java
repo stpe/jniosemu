@@ -90,6 +90,18 @@ public class GUIToolBar extends JToolBar
 												"Reset emulator",
 												"Reset");
 		this.add(button);
+
+		this.addSeparator();
+
+		button = makeButton("variable_view", Events.EVENTID_VIEW_VARIABLES,
+												"View used variables",
+												"Variable View");
+		this.add(button);
+
+		button = makeButton("memory_view", Events.EVENTID_VIEW_MEMORY,
+												"View memory",
+												"Memory View");
+		this.add(button);
 	}
 
 	/**
