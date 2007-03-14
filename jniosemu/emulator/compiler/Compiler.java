@@ -355,7 +355,7 @@ public class Compiler
 								}
 							} else {
 								if (this.lastMacro != null) {
-									this.lastMacro.addLine(mInstruction.group(3));
+									this.lastMacro.addLine(mInstruction.group(0));
 								} else {
 									// get the CompilerInstruction for the instruction
 									try {

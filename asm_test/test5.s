@@ -6,7 +6,7 @@ var:	.word 5
 stack:	.word 0
 
 	.macro PUSH reg		# Macro för PUSH
-	addi sp, sp, –4
+	addi sp, sp, -4
 	stw \reg, 0(sp)
 	.endm
 
