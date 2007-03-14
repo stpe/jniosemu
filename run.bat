@@ -1,3 +1,3 @@
-java JNiosEmu
+java jniosemu.JNiosEmu
 
 PAUSE

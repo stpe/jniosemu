@@ -80,9 +80,14 @@ public class Events {
 	
 
 	/**
-	 * Show View Memory window.
+	 * Show Memory View window.
 	 */	
 	public static final String EVENTID_VIEW_MEMORY = "VIEW_MEMORY";
+
+	/**
+	 * Show Variables View window.
+	 */	
+	public static final String EVENTID_VIEW_VARIABLES = "VIEW_VARIABLES";
 	
 	/**
 	 * Exception has occured.
@@ -103,6 +108,11 @@ public class Events {
 	 * Program counter in emulated program has changed.
 	 */
 	public static final String EVENTID_PC_CHANGE = "PC_CHANGE";	
+
+	/**
+	 * Breakpoint has been toggled.
+	 */
+	public static final String EVENTID_TOGGLE_BREAKPOINT = "TOGGLE_BREAKPOINT";
 
 	/**
 	 * Regiser in emulated program has changed.

@@ -1,6 +1,7 @@
 package jniosemu.gui;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.*;
@@ -12,7 +13,12 @@ import jniosemu.emulator.*;
  * Creates and manages the GUI component of the emulator view.
  */
  public class GUIEmulator extends JPanel
-											 implements ActionListener, EventObserver {
+											 implements MouseListener, EventObserver {
+
+	/**
+	 * Defines the width of the breakpoint column. 
+	 */
+	private static int BREAKPOINT_AREA_WIDTH = 18;
 
 	/**
 	 * Reference to EventManager used to receive
@@ -87,6 +93,8 @@ import jniosemu.emulator.*;
 		listView.setBackground(Color.WHITE);
 		listView.setCellRenderer(new EmulatorCellRenderer());
 
+		listView.addMouseListener(this);
+
 		// scrollbars
 		JScrollPane scrollPane = new JScrollPane(listView);
 
@@ -149,17 +157,42 @@ import jniosemu.emulator.*;
 	}
 
 	/**
-	 * Invoked when a GUI action occurs, forwards it as
-	 * an event to the EventManager object.
+	 * Listens to mouse clicks in the list. If the mouse click is
+	 * in the breakpoint column of the emulator, a toggle breakpoint
+	 * event is sent.
 	 *
-	 * @calls     EventManager.sendEvent()
+	 * @calls  EventManager.sendEvent();
 	 *
-	 * @param  e  action event object
+	 * @param  e  MouseEvent object for the click
 	 */
-	public void actionPerformed(ActionEvent e) {
-			eventManager.sendEvent(e.getActionCommand());
+	public void mouseClicked(MouseEvent e) 
+	{
+		if (e.getX() <= BREAKPOINT_AREA_WIDTH)
+		{
+			int index = listView.locationToIndex(e.getPoint());
+			eventManager.sendEvent(Events.EVENTID_TOGGLE_BREAKPOINT, new Integer(index));
+		}
 	}
 
+	/**
+	 * Not used, empty method. Enforced by MouseListener interface.
+	 */
+	public void mouseEntered(MouseEvent e) { }
+
+	/**
+	 * Not used, empty method. Enforced by MouseListener interface.
+	 */
+	public void mouseExited(MouseEvent e) { }
+
+	/**
+	 * Not used, empty method. Enforced by MouseListener interface.
+	 */
+	public void mousePressed(MouseEvent e) { }
+
+	/**
+	 * Not used, empty method. Enforced by MouseListener interface.
+	 */
+	public void mouseReleased(MouseEvent e) { }
 
 	/**
 	 * Custom cell renderer for the JList in the register view.
@@ -168,7 +201,7 @@ import jniosemu.emulator.*;
 												 implements ListCellRenderer {
 
 			private ProgramLine lineObj;
-
+			
 			public EmulatorCellRenderer() {
 					setOpaque(true);
 					setHorizontalAlignment(CENTER);
@@ -253,7 +286,7 @@ import jniosemu.emulator.*;
 			}
 
 			if (lineObj.getOpCode() != null)
-				g.drawString(lineObj.getOpCode(), 18, yOffset);
+				g.drawString(lineObj.getOpCode(), BREAKPOINT_AREA_WIDTH, yOffset);
 
 			if (lineObj.getInstruction() != null)
 				g.drawString(lineObj.getInstruction(), 120, yOffset);

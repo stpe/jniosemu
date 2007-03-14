@@ -81,30 +81,42 @@ import jniosemu.emulator.*;
 	}
 
 	/**
+	 * Set state of dipswitch.
 	 *
+	 * @checks   Verify that dipswitchIndex is a valid index. If not, print
+	 *           warning and return.
+	 * @calledby updateDipswitches
+	 *
+	 * @param  dipswitchIndex  index of dipswitch
+	 * @param  state           state to set
 	 */
-	public void setButton(int dipswitchIndex, int value)
+	public void setDipswitch(int dipswitchIndex, boolean state)
 	{
 		if (dipswitchIndex < 0 || dipswitchIndex >= DIPSWITCH_COUNT)
 		{
-			System.out.println("GUIIODipswitches.setButton(): Invalid dipswitchIndex " + dipswitchIndex);
+			System.out.println("GUIIODipswitches.setDipswitch(): Invalid dipswitchIndex " + dipswitchIndex);
 			return;
 		}
 			
-		if (value == 0)
-			dipswitches[dipswitchIndex].setIcon(icons[0]);
-		else
+		if (state)
 			dipswitches[dipswitchIndex].setIcon(icons[1]);
+		else
+			dipswitches[dipswitchIndex].setIcon(icons[0]);
 	}
 
 	/**
+	 * Update dipswitch states.
 	 *
+	 * @calls     setDipswitch()
+	 * @calledby  update()
+	 *
+	 * @param  states  states of available dipswitches
 	 */
-	public void resetDipswitches()
+	public void updateDipswitches(Vector<Boolean> states)
 	{
-		for(int i = 0; i < dipswitches.length; i++)
+		for(int i = 0; i < states.size(); i++)
 		{
-			setButton(i, 0);
+			setDipswitch(i, states.get(i).booleanValue());
 		}
 	}
 
@@ -112,11 +124,7 @@ import jniosemu.emulator.*;
 	{
 		if (eventIdentifier.equals(Events.EVENTID_UPDATE_DIPSWITCHES))
 		{
-			// setButton()
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_RESET))
-		{
-			resetDipswitches();
+			updateDipswitches( (Vector<Boolean>) obj );
 		}
 	}
 

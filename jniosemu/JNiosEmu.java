@@ -1,3 +1,5 @@
+package jniosemu;
+
 import jniosemu.gui.*;
 import jniosemu.events.*;
 import javax.swing.UIManager;

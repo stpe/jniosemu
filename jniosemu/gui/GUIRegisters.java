@@ -111,8 +111,14 @@ public class GUIRegisters extends JPanel
 					this.regObj = (Register) value;
 					setText("."); // trigger repaint
 
-					setBackground(list.getBackground());
-					setForeground(list.getForeground());
+ 
+					if (isSelected) { 
+						setBackground(list.getSelectionBackground()); 
+						setForeground(list.getSelectionForeground()); 
+					} else { 
+						setBackground(list.getBackground()); 
+						setForeground(list.getForeground()); 
+					} 
 
 					return this;
 			}

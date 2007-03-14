@@ -62,7 +62,9 @@ public class GUIManager
 			Events.EVENTID_EXIT,
 			Events.EVENTID_ABOUT,
 			Events.EVENTID_COMPILATION_DONE,
-			Events.EVENTID_CHANGE_WINDOW_TITLE
+			Events.EVENTID_CHANGE_WINDOW_TITLE,
+			Events.EVENTID_VIEW_VARIABLES,
+			Events.EVENTID_VIEW_MEMORY
 		};
 		this.eventManager.addEventObserver(events, this);
 
@@ -205,7 +207,12 @@ public class GUIManager
 		else
 			if (eventIdentifier.equals(Events.EVENTID_CHANGE_WINDOW_TITLE))
 				setFrameTitle( (String) obj );
-
+		else
+			if (eventIdentifier.equals(Events.EVENTID_VIEW_MEMORY))
+				showMemoryView();
+		else
+			if (eventIdentifier.equals(Events.EVENTID_VIEW_VARIABLES))
+				showVariableView();
 	}
 
 	/**
@@ -277,6 +284,32 @@ public class GUIManager
 	private void setFrameTitle(String title)
 	{
 		frame.setTitle("JNiosEmu - [" + title + "]");
+	}
+
+	/**
+	 * Show Variables View window.
+	 *
+	 * @calls     GUIVariableyView
+	 * @calledby  update()
+	 */
+	private void showVariableView()
+	{
+		GUIVariableView frame = new GUIVariableView(this.eventManager);
+		frame.setSize(new Dimension(200, 260));
+		frame.setVisible(true);
+	}
+	
+	/**
+	 * Show Memory View window.
+	 *
+	 * @calls     GUIMemoryView
+	 * @calledby  update()
+	 */	
+	private void showMemoryView()
+	{
+		GUIMemoryView frame = new GUIMemoryView(this.eventManager);
+		frame.setSize(new Dimension(200, 260));
+		frame.setVisible(true);		
 	}
 
 }

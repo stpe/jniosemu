@@ -85,6 +85,7 @@ public class GUIMenuBar extends JMenuBar
 		this.add(menu);
 
 		menu.add( createMenuItem("Memory...", Events.EVENTID_VIEW_MEMORY) );
+		menu.add( createMenuItem("Variables...", Events.EVENTID_VIEW_VARIABLES) );
 
 		this.add(Box.createHorizontalGlue());
 

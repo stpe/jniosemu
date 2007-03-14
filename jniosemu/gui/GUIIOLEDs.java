@@ -81,9 +81,16 @@ import jniosemu.emulator.*;
 	}
 
 	/**
+	 * Set state of led.
 	 *
+	 * @checks   Verify that ledIndex is a valid index. If not, print
+	 *           warning and return.
+	 * @calledby updateLeds
+	 *
+	 * @param  ledIndex  index of led
+	 * @param  state     state to set
 	 */
-	public void setLed(int ledIndex, int value)
+	public void setLed(int ledIndex, boolean state)
 	{
 		if (ledIndex < 0 || ledIndex >= LED_COUNT)
 		{
@@ -91,32 +98,33 @@ import jniosemu.emulator.*;
 			return;
 		}
 			
-		if (value == 0)
-			leds[ledIndex].setIcon(icons[0]);
-		else
+		if (state)
 			leds[ledIndex].setIcon(icons[1]);
+		else
+			leds[ledIndex].setIcon(icons[0]);
 	}
 
 	/**
+	 * Update led states.
 	 *
+	 * @calls     setLed()
+	 * @calledby  update()
+	 *
+	 * @param  states  states of available leds 
 	 */
-	public void resetLeds()
+	public void updateLeds(Vector<Boolean> states)
 	{
-		for(int i = 0; i < leds.length; i++)
+		for(int i = 0; i < states.size(); i++)
 		{
-			setLed(i, 0);
+			setLed(i, states.get(i).booleanValue());
 		}
 	}
-
+	
 	public void update(String eventIdentifier, Object obj)
 	{
 		if (eventIdentifier.equals(Events.EVENTID_UPDATE_LEDS))
 		{
-			// setLed()
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_RESET))
-		{
-			resetLeds();
+			updateLeds( (Vector<Boolean>) obj );
 		}
 	}
 

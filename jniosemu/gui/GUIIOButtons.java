@@ -81,9 +81,16 @@ import jniosemu.emulator.*;
 	}
 
 	/**
+	 * Set state of button.
 	 *
+	 * @checks   Verify that buttonIndex is a valid index. If not, print
+	 *           warning and return.
+	 * @calledby updateButtons
+	 *
+	 * @param  buttonIndex  index of button
+	 * @param  state        state to set
 	 */
-	public void setButton(int buttonIndex, int value)
+	public void setButton(int buttonIndex, boolean state)
 	{
 		if (buttonIndex < 0 || buttonIndex >= BUTTON_COUNT)
 		{
@@ -91,20 +98,25 @@ import jniosemu.emulator.*;
 			return;
 		}
 			
-		if (value == 0)
-			buttons[buttonIndex].setIcon(icons[0]);
-		else
+		if (state)
 			buttons[buttonIndex].setIcon(icons[1]);
+		else
+			buttons[buttonIndex].setIcon(icons[0]);
 	}
 
 	/**
+	 * Update button states.
 	 *
+	 * @calls     setButton()
+	 * @calledby  update()
+	 *
+	 * @param  states  states of available buttons 
 	 */
-	public void resetButtons()
+	public void updateButtons(Vector<Boolean> states)
 	{
-		for(int i = 0; i < buttons.length; i++)
+		for(int i = 0; i < states.size(); i++)
 		{
-			setButton(i, 0);
+			setButton(i, states.get(i).booleanValue());
 		}
 	}
 
@@ -112,11 +124,7 @@ import jniosemu.emulator.*;
 	{
 		if (eventIdentifier.equals(Events.EVENTID_UPDATE_BUTTONS))
 		{
-			// setButton()
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_RESET))
-		{
-			resetButtons();
+			updateButtons( (Vector<Boolean>) obj );
 		}
 	}
 
