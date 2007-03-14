@@ -1,6 +1,3 @@
-/**
- * Toolbar in GUI.
- */
 package jniosemu.gui;
 
 import javax.swing.*;
@@ -8,6 +5,9 @@ import java.awt.event.*;
 
 import jniosemu.events.*;
 
+/**
+ * Toolbar in GUI.
+ */
 public class GUIToolBar extends JToolBar
 												implements ActionListener {
 

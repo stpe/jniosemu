@@ -114,9 +114,14 @@ public class Events {
 	public static final String EVENTID_PC_CHANGE = "PC_CHANGE";	
 
 	/**
-	 * Breakpoint has been toggled.
+	 * Breakpoint has been changed.
 	 */
 	public static final String EVENTID_TOGGLE_BREAKPOINT = "TOGGLE_BREAKPOINT";
+
+	/**
+	 * Breakpoint has been toggled in GUI.
+	 */
+	public static final String EVENTID_GUI_TOGGLE_BREAKPOINT = "GUI_TOGGLE_BREAKPOINT";
 
 	/**
 	 * Regiser in emulated program has changed.

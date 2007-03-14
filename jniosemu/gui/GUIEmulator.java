@@ -72,7 +72,8 @@ import jniosemu.emulator.*;
 		// add events to listen to
 		String[] events = {
 			Events.EVENTID_COMPILATION_DONE,
-			Events.EVENTID_PC_CHANGE
+			Events.EVENTID_PC_CHANGE,
+			Events.EVENTID_TOGGLE_BREAKPOINT
 		};
 		this.eventManager.addEventObserver(events, this);
 	}
@@ -154,6 +155,10 @@ import jniosemu.emulator.*;
 		{
 			setProgramCounterIndicator( ((Integer) obj).intValue() );
 		}
+		else if (eventIdentifier.equals(Events.EVENTID_TOGGLE_BREAKPOINT))
+		{
+			listView.repaint();
+		}
 	}
 
 	/**
@@ -170,7 +175,7 @@ import jniosemu.emulator.*;
 		if (e.getX() <= BREAKPOINT_AREA_WIDTH)
 		{
 			int index = listView.locationToIndex(e.getPoint());
-			eventManager.sendEvent(Events.EVENTID_TOGGLE_BREAKPOINT, new Integer(index));
+			eventManager.sendEvent(Events.EVENTID_GUI_TOGGLE_BREAKPOINT, new Integer(index));
 		}
 	}
 
