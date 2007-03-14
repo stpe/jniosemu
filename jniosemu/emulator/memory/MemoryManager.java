@@ -12,20 +12,15 @@ public class MemoryManager
 	 * The default program start memory address.
 	 */
 	public static int PROGRAMSTART = 0x20000;
-
 	/**
-	 * The memory
-	 */
-	private byte[] memory;
-	/**
-	 * Info about the different parts of memory.
+	 * Contains the different MemoryBlocks
 	 */
 	private ArrayList<MemoryBlock> memoryBlocks = new ArrayList<MemoryBlock>();
 
 	/**
 	 * Init MemoryManager without any program.
 	 *
-	 * @post memory and memoryBlocks is set
+	 * @post add SRAM MemoryBlock
 	 * @calls MemoryBlocks()
 	 */
 	public MemoryManager() {
@@ -35,8 +30,8 @@ public class MemoryManager
 	/**
 	 * Init MemoryManager with program.
 	 *
-	 * @post memory and memoryBlocks is set
-	 * @calledby EmulatorManager
+	 * @post add SRAM MemoryBlock
+	 * @calledby EmulatorManager()
 	 * @calls MemoryBlocks()
 	 *
 	 * @param memory Program
@@ -47,7 +42,14 @@ public class MemoryManager
 	}
 
 	/**
+	 * Register a part of memory
 	 *
+	 * @calledby IODevice.reset()
+	 *
+	 * @param name Name of the MemoryBlock
+	 * @param startAddr Memory start address
+	 * @param length Length of the MemoryBlock
+	 * @param device Device
 	 */
 	public void register(String name, int startAddr, int length, IODevice device) {
 		this.memoryBlocks.add(new MemoryBlock(name, startAddr, length, device, null));
@@ -58,7 +60,8 @@ public class MemoryManager
 	 *
 	 * @calledby Instruction
 	 *
-	 * @param aAddr  External address
+	 * @param addr  External address
+	 * @param notify True if the device should be notified
 	 * @return One byte from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
@@ -73,6 +76,15 @@ public class MemoryManager
 		throw new MemoryException(addr);		
 	}
 
+	/**
+	 * Read one byte from memory.
+	 *
+	 * @calledby Instruction
+	 *
+	 * @param addr  External address
+	 * @return One byte from the memory
+	 * @throws MemoryException  If the address is wrong
+	 */
 	public byte readByte(int addr) throws MemoryException {
 		return readByte(addr, true);
 	}
@@ -82,8 +94,9 @@ public class MemoryManager
 	 *
 	 * @calledby Instruction
 	 *
-	 * @param aAddr  External address
-	 * @param aValue  Value
+	 * @param addr  External address
+	 * @param notify True if the device should be notified
+	 * @param value  Value
 	 * @throws MemoryException  If the address is wrong
 	 */
 	public void writeByte(int addr, byte value, boolean notify) throws MemoryException {
@@ -97,6 +110,15 @@ public class MemoryManager
 		throw new MemoryException(addr);		
 	}
 
+	/**
+	 * Write one byte to memory.
+	 *
+	 * @calledby Instruction
+	 *
+	 * @param addr  External address
+	 * @param value  Value
+	 * @throws MemoryException  If the address is wrong
+	 */
 	public void writeByte(int addr, byte value) throws MemoryException {
 		writeByte(addr, value, true);
 	}
@@ -106,14 +128,24 @@ public class MemoryManager
 	 *
 	 * @calledby Instruction
 	 *
-	 * @param aAddr  External address
+	 * @param addr  External address
+	 * @param notify True if the device should be notified
 	 * @return One short from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public short readShort(int aAddr, boolean notify) throws MemoryException {
+	public short readShort(int addr, boolean notify) throws MemoryException {
 		return (short)((this.readByte(aAddr+1, notify) & 0xFF) << 8 | (this.readByte(aAddr, notify) & 0xFF));
 	}
 
+	/**
+	 * Read one short from memory.
+	 *
+	 * @calledby Instruction
+	 *
+	 * @param addr  External address
+	 * @return One short from the memory
+	 * @throws MemoryException  If the address is wrong
+	 */
 	public short readShort(int addr) throws MemoryException {
 		return readShort(addr, true);
 	}
@@ -123,15 +155,25 @@ public class MemoryManager
 	 *
 	 * @calledby Instruction
 	 *
-	 * @param aAddr  External address
-	 * @param aValue  Value
+	 * @param addr  External address
+	 * @param value  Value
+	 * @param notify True if the device should be notified
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public void writeShort(int aAddr, short aValue, boolean notify) throws MemoryException {
-		this.writeByte(aAddr    , (byte)(aValue       & 0xFF), notify);
-		this.writeByte(aAddr + 1, (byte)(aValue >>> 8 & 0xFF), notify);
+	public void writeShort(int addr, short value, boolean notify) throws MemoryException {
+		this.writeByte(addr    , (byte)(value       & 0xFF), notify);
+		this.writeByte(addr + 1, (byte)(value >>> 8 & 0xFF), notify);
 	}
 
+	/**
+	 * Write one short to memory.
+	 *
+	 * @calledby Instruction
+	 *
+	 * @param addr  External address
+	 * @param value  Value
+	 * @throws MemoryException  If the address is wrong
+	 */
 	public void writeShort(int addr, short value) throws MemoryException {
 		writeShort(addr, value, true);
 	}
@@ -141,14 +183,24 @@ public class MemoryManager
 	 *
 	 * @calledby Instruction, EmulatorManager
 	 *
-	 * @param aAddr  External address
+	 * @param addr  External address
+	 * @param notify True if the device should be notified
 	 * @return One int from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public int readInt(int aAddr, boolean notify) throws MemoryException {
-		return (this.readByte(aAddr+3, notify) & 0xFF) << 24 | (this.readByte(aAddr+2, notify) & 0xFF) << 16 | (this.readByte(aAddr+1, notify) & 0xFF) << 8 | (this.readByte(aAddr, notify) & 0xFF);
+	public int readInt(int addr, boolean notify) throws MemoryException {
+		return (this.readByte(addr+3, notify) & 0xFF) << 24 | (this.readByte(addr+2, notify) & 0xFF) << 16 | (this.readByte(addr+1, notify) & 0xFF) << 8 | (this.readByte(addr, notify) & 0xFF);
 	}
 
+	/**
+	 * Read one int from memory.
+	 *
+	 * @calledby Instruction, EmulatorManager
+	 *
+	 * @param addr  External address
+	 * @return One int from the memory
+	 * @throws MemoryException  If the address is wrong
+	 */
 	public int readInt(int addr) throws MemoryException {
 		return readInt(addr, true);
 	}
@@ -158,28 +210,29 @@ public class MemoryManager
 	 *
 	 * @calledby Instruction
 	 *
-	 * @param aAddr  External address
-	 * @param aValue  Value
+	 * @param addr  External address
+	 * @param notify True if the device should be notified
+	 * @param value  Value
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public void writeInt(int aAddr, int aValue, boolean notify) throws MemoryException {
-		this.writeByte(aAddr    , (byte)(aValue        & 0xFF), notify);
-		this.writeByte(aAddr + 1, (byte)(aValue >>> 8  & 0xFF), notify);
-		this.writeByte(aAddr + 2, (byte)(aValue >>> 16 & 0xFF), notify);
-		this.writeByte(aAddr + 3, (byte)(aValue >>> 24 & 0xFF), notify);
-	}
-
-	public void writeInt(int addr, int value) throws MemoryException {
-		writeInt(addr, value, true);
+	public void writeInt(int addr, int value, boolean notify) throws MemoryException {
+		this.writeByte(addr    , (byte)(value        & 0xFF), notify);
+		this.writeByte(addr + 1, (byte)(value >>> 8  & 0xFF), notify);
+		this.writeByte(addr + 2, (byte)(value >>> 16 & 0xFF), notify);
+		this.writeByte(addr + 3, (byte)(value >>> 24 & 0xFF), notify);
 	}
 
 	/**
-	 * Reseting the part of the memory that is changed during emulation
+	 * Write one int to memory.
 	 *
-	 * @calledby EmulatorManager.reset()
+	 * @calledby Instruction
+	 *
+	 * @param addr  External address
+	 * @param value  Value
+	 * @throws MemoryException  If the address is wrong
 	 */
-	public void reset() {
-		
+	public void writeInt(int addr, int value) throws MemoryException {
+		writeInt(addr, value, true);
 	}
 
 	public void dump() {

@@ -15,12 +15,25 @@ import jniosemu.instruction.emulator.Instruction;
  */
 public class Program
 {
+	/**
+	 * Binary representation of the program
+	 */
 	private final byte[] data;
+	/**
+	 * Start address
+	 */
 	private final int startAddr;
-	// private final String[] lines;
-	// private final ArrayList<CompilerInstruction> instructions;
+	/**
+	 * Contains all ProgramLine:s
+	 */
 	private Vector<ProgramLine> programLines = new Vector<ProgramLine>();
+	/**
+	 * Used for fast get linenumber from address
+	 */
 	private Hashtable<Integer, Integer> addrLookup = new Hashtable<Integer, Integer>();
+	/**
+	 * Used for fast get address from linenumber
+	 */
 	private Hashtable<Integer, Integer> lineNumberLookup = new Hashtable<Integer, Integer>();
 
 	/**
@@ -29,7 +42,8 @@ public class Program
 	 * @calledby Compiler
 	 *
 	 * @param lines  Sourcecode lines
-	 * @param instruction  Program in the form of binary data
+	 * @param instructions  Program in the form of binary data
+	 * @param data  The binary program
 	 * @param startAddr  Start position in the memory (what to set pc before starting to emulate)
 	 */
 	public Program(String[] lines, ArrayList<CompilerInstruction> instructions, byte[] data, int startAddr) {
@@ -87,8 +101,6 @@ public class Program
 	/**
 	 * Return an arraylist of programlines
 	 *
-	 * @todo Doc
-	 *
 	 * @return Arraylist of ProgramLine:s
 	 */
 	public Vector<ProgramLine> getProgramLines() {
@@ -97,8 +109,6 @@ public class Program
 
 	/**
 	 * Return the linenumber of an address
-	 *
-	 * @todo Doc
 	 *
 	 * @param address  Memory address
 	 * @return Linenumber
@@ -110,6 +120,14 @@ public class Program
 		return -1;
 	}
 
+	/**
+	 * Return the memory address where a line is placed
+	 *
+	 * @calledby EmulatorManager
+	 *
+	 * @param lineNumber  line number
+	 * @return memory address
+	 */
 	public int getAddress(int lineNumber) {
 		if (this.lineNumberLookup.containsKey(lineNumber))
 			return this.lineNumberLookup.get(lineNumber);
@@ -120,7 +138,7 @@ public class Program
 	/**
 	 * Get the executable data
 	 *
-	 * @calledby EmulatorManager
+	 * @calledby EmulatorManager.load()
 	 *
 	 * @return Program in the form of binary data
 	 */
@@ -131,7 +149,7 @@ public class Program
 	/**
 	 * Get start address
 	 *
-	 * @calledby EmulatorManager
+	 * @calledby EmulatorManager.load()
 	 *
 	 * @return Start address
 	 */

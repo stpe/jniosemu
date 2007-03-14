@@ -71,7 +71,7 @@ public class ProgramLine
 	 *
 	 * @calledby Program()
 	 *
-	 * @ret line number
+	 * @return line number
 	 */
 	public int getLineNumber() {
 		return this.lineNumber;
@@ -82,7 +82,7 @@ public class ProgramLine
 	 *
 	 * @calledby Program()
 	 *
-	 * @ret child count
+	 * @return child count
 	 */
 	public int getChildCount() {
 		return this.childs;
@@ -104,7 +104,7 @@ public class ProgramLine
 	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
 	 *
 	 * @param lineNumber The line that is marked in Emulator
-	 * @ret Sibling status
+	 * @return Sibling status
 	 */
 	public SIBLINGSTATUS isSibling(int lineNumber) {
 		if (this.lineNumber == lineNumber)
@@ -135,7 +135,7 @@ public class ProgramLine
 	 *
 	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
 	 *
-	 * @ret breakpoint status
+	 * @return breakpoint status
 	 */
 	public BREAKPOINT getBreakPoint() {
 		return this.breakpoint;
@@ -147,7 +147,7 @@ public class ProgramLine
 	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
 	 * @calls InstructionManager.intToHexString()
 	 *
-	 * @ret opcode
+	 * @return opcode
 	 */
 	public String getOpCode() {
 		if (this.opCode == 0)
@@ -162,7 +162,7 @@ public class ProgramLine
 	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
 	 * @calls Instruction.toString()
 	 *
-	 * @ret instruction
+	 * @return instruction
 	 */
 	public String getInstruction() {
 		if (this.instruction == null)
@@ -176,7 +176,7 @@ public class ProgramLine
 	 *
 	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
 	 *
-	 * @ret sourcecode line
+	 * @return sourcecode line
 	 */
 	public String getSourceCodeLine() {
 		if (this.sourceCodeLine == null)
@@ -188,7 +188,7 @@ public class ProgramLine
 	/**
 	 * Get a debug string
 	 *
-	 * @ret debug string
+	 * @return debug string
 	 */
 	public String toString() {
 		String ret = "";

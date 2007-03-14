@@ -282,8 +282,6 @@ public class GUIManager
 	 * Toggle selected tab between Editor and Emulator.
 	 *
 	 * @calledby  update()
-	 *
-	 * @param  tabIndex  Index of tab
 	 */
 	private void toggleTab()
 	{

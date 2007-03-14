@@ -10,23 +10,58 @@ import jniosemu.events.EventObserver;
  */
 public class DipSwitchDevice extends IODevice implements EventObserver
 {
+	/**
+	 * Address to memory where this is placed
+	 */
 	public static int MEMORYADDR = 0x850;
+	/**
+	 * Length of memory that is used
+	 */
+	public static int MEMORYLENGTH = 16;
+	/**
+	 * Number of dipswitches
+	 */
 	public static int COUNT = 4;
-
+	/**
+	 * Containing the states of each dipswitch
+	 */
 	private Vector<Boolean> state;
+	/**
+	 * Used MemoryManager
+	 */
 	private MemoryManager memory;
+	/**
+	 * Used EventManager
+	 */
 	private EventManager eventManager;
 
-	public DipDevice(MemoryManager memory, EventManager eventManager) {
+	/**
+	 * Init DipSwitchDevice
+	 *
+	 * @post Add events. Init states.
+	 * @calledby IOManager.reset()
+	 *
+	 * @param memory  current MemoryManager
+	 * @param eventManager current EventManager
+	 */
+	public DipSwitchDevice(MemoryManager memory, EventManager eventManager) {
 		this.reset(memory, eventManager);
 	}
 
+	/**
+	 * Reset
+	 *
+	 * @calledby  DipSwitchDevice()
+	 *
+	 * @param memory current MemoryManager
+	 * @param eventManager current EventManager
+	 */
 	public void reset(MemoryManager memory, EventManager eventManager) {
 		this.memory = memory;
 		this.eventManager = eventManager;
 
 		this.eventManager.addEventObserver(Events.EVENTID_GUI_DIPSWITCHES, this);
-		this.memory.register("DipSwitches", MEMORYADDR, 16, this);
+		this.memory.register("DipSwitches", MEMORYADDR, MEMORYLENGTH, this);
 
 		this.state = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)

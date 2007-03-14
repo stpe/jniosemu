@@ -73,8 +73,8 @@ public class RegisterManager
 	 *
 	 * @calledby Emulator
 	 *
-	 * @param aIndex  Register you want to read
-	 * @param aValue you want to set
+	 * @param index  Register you want to read
+	 * @param value you want to set
 	 * @throws RegisterException  If you don't have access to that register
 	 */
 	public void write(int index, int value) throws RegisterException {
@@ -93,22 +93,20 @@ public class RegisterManager
 			this.registers.add(new Register(i));
 	}
 
-	// Kommer kanske inte fungera. Eftersom reg inte är en referens till this.registers utan en ny kopia
+	/**
+	 * Reset state of all registers
+	 */
 	public void resetState() {
 		for (Register reg: this.registers)
 			reg.resetState();
 	}
 
+	/**
+	 * Get all registers
+	 *
+	 * @calledby EmulatorManager
+	 */
 	public Vector<Register> get() {
 		return this.registers;
-	}
-
-	public void dump() {
-		/*
-		for (int i = 0; i < 32; i++) {
-			if (checkIndex(i))
-				System.out.println(i +": "+ this.register[i] + " ("+ Integer.toBinaryString(this.register[i]) +")");
-		}
-		*/
 	}
 }

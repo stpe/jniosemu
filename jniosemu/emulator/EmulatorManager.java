@@ -153,10 +153,18 @@ public class EmulatorManager implements EventObserver
 		return this.register;
 	}
 
+	/**
+	 * Get the current compiled program
+	 *
+	 * @return program
+	 */
 	public Program getProgram() {
 		return this.program;
 	}
 
+	/**
+	 * Used for debuggin
+	 */
 	public void dump() {
 		this.register.dump();
 		this.memory.dump();
@@ -243,6 +251,11 @@ public class EmulatorManager implements EventObserver
 		}
 	}
 
+	/**
+	 * If pc is changed this method is called and all events that should be sent are sent.
+	 *
+	 * @calledby load(), step()
+	 */
 	private void pcChange() {
 		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, new Integer(this.pc));
 		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());

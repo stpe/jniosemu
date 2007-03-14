@@ -114,7 +114,7 @@ public class GUIEditor extends JPanel
 	 *            newDocument(), openDocument(), saveDocument()
 	 * @calls     EventManager.sendEvent()
 	 *
-	 * @param  textChanged  Set value if text has changed
+	 * @param  textHasChanged  Set value if text has changed
 	 */
 	private void textChanged(boolean textHasChanged)
 	{
