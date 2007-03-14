@@ -59,6 +59,7 @@ public class GUIManager
 		String[] events = {
 			Events.EVENTID_EXCEPTION,
 			Events.EVENTID_CHANGE_TAB,
+			Events.EVENTID_TOGGLE_TAB,
 			Events.EVENTID_EXIT,
 			Events.EVENTID_ABOUT,
 			Events.EVENTID_COMPILATION_DONE,
@@ -202,6 +203,9 @@ public class GUIManager
 			if (eventIdentifier.equals(Events.EVENTID_CHANGE_TAB))
 				changeTab( ((Integer) obj).intValue() );
 		else
+			if (eventIdentifier.equals(Events.EVENTID_TOGGLE_TAB))
+				toggleTab();
+		else
 			if (eventIdentifier.equals(Events.EVENTID_COMPILATION_DONE))
 				changeTab( new Integer(TAB_EMULATOR) );
 		else
@@ -263,15 +267,27 @@ public class GUIManager
 	}
 
 	/**
-	 * Change selected tab between Edtior and Emulator.
+	 * Change selected tab between Editor and Emulator.
 	 *
-	 * @calledby  update()
+	 * @calledby  update(), toggleTab()
 	 *
 	 * @param  tabIndex  Index of tab
 	 */
 	private void changeTab(int tabIndex)
 	{
 		tabbedPane.setSelectedIndex(tabIndex);
+	}
+
+	/**
+	 * Toggle selected tab between Editor and Emulator.
+	 *
+	 * @calledby  update()
+	 *
+	 * @param  tabIndex  Index of tab
+	 */
+	private void toggleTab()
+	{
+		changeTab(1 - tabbedPane.getSelectedIndex());
 	}
 
 	/**

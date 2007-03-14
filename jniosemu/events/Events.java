@@ -77,7 +77,6 @@ public class Events {
 	 * Reset emulator.
 	 */	
 	public static final String EVENTID_RESET = "RESET";	
-	
 
 	/**
 	 * Show Memory View window.
@@ -98,6 +97,11 @@ public class Events {
 	 * Change tab in GUI.
 	 */
 	public static final String EVENTID_CHANGE_TAB = "CHANGE_TAB";
+	
+	/**
+	 * Toggles between view the emulator or editor.
+	 */		
+	public static final String EVENTID_TOGGLE_TAB = "TOGGLE_TAB";
 	
 	/**
 	 * Compilation of current source code successfully done.
@@ -138,6 +142,16 @@ public class Events {
 	 * Update state of dipswitches.
 	 */
 	public static final String EVENTID_UPDATE_DIPSWITCHES = "UPDATE_DIPSWITCHES";
+
+	/**
+	 * IO button in GUI has changed.
+	 */
+	public static final String EVENTID_GUI_BUTTONS = "GUI_BUTTON";
+
+	/**
+	 * IO dipswitches in GUI has changed.
+	 */
+	public static final String EVENTID_GUI_DIPSWITCHES = "GUI_DIPSWITCHES";
 
 
 }

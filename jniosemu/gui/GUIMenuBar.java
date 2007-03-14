@@ -87,6 +87,10 @@ public class GUIMenuBar extends JMenuBar
 		menu.add( createMenuItem("Memory...", Events.EVENTID_VIEW_MEMORY) );
 		menu.add( createMenuItem("Variables...", Events.EVENTID_VIEW_VARIABLES) );
 
+		menu.addSeparator();
+		menu.add( createMenuItem("Toggle Editor/Emulator", Events.EVENTID_TOGGLE_TAB,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK)) );
+		
 		this.add(Box.createHorizontalGlue());
 
 		// Help menu
