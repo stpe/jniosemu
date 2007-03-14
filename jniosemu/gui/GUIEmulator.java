@@ -200,11 +200,14 @@ import jniosemu.emulator.*;
 	public void mouseReleased(MouseEvent e) { }
 
 	/**
-	 * Custom cell renderer for the JList in the register view.
+	 * Custom cell renderer for the JList in the emulator view.
 	 */
 	class EmulatorCellRenderer extends JLabel
 												 implements ListCellRenderer {
 
+			/**
+			 * ProgramLine object for the current cell that is drawn.
+			 */
 			private ProgramLine lineObj;
 			
 			public EmulatorCellRenderer() {
