@@ -46,7 +46,7 @@ public class GUIMenuBar extends JMenuBar
 	 *
 	 * @post      menu items created and added to menu bar
 	 * @calledby  GUIMenuBar
-	 * @calls     createMenuItem()
+	 * @calls     createMenuItem(), setupInstructions()
 	 */
 	private void setup()
 	{
@@ -65,6 +65,10 @@ public class GUIMenuBar extends JMenuBar
 		          
 		menu.addSeparator();
 		menu.add( createMenuItem("Exit", Events.EVENTID_EXIT) );
+
+		// Insert instruction menu
+		
+		this.add( setupInstructions() );
 
 		// Emulator menu
 		menu = new JMenu("Emulator");
@@ -98,6 +102,58 @@ public class GUIMenuBar extends JMenuBar
 		this.add(menu);
 
 		menu.add( createMenuItem("About...", Events.EVENTID_ABOUT) );
+	}
+
+	/**
+	 * Creates the Instruction menu that lists all available
+	 * instructions categorized by functionality. When a menu item
+	 * is selected the corresponding instruction will be inserted
+	 * into the editor.
+	 *
+	 * @calledby  setup()
+	 *
+	 * @return  Instruction menu
+	 */
+	private JMenu setupInstructions()
+	{
+		JMenu menu = new JMenu("Instruction");
+		
+		JMenu submenu = new JMenu("Arithmetic & Logical");
+		
+		menu.add(submenu);
+
+
+		submenu = new JMenu("Move");
+		
+		menu.add(submenu);
+
+
+		submenu = new JMenu("Comparison");
+		
+		menu.add(submenu);
+
+
+		submenu = new JMenu("Shift & Rotate");
+		
+		menu.add(submenu);
+
+
+		submenu = new JMenu("Program Control");
+		
+		menu.add(submenu);
+		
+		
+		submenu = new JMenu("Data Transfer");
+		
+		menu.add(submenu);
+
+
+		submenu = new JMenu("Other");
+		
+		menu.add(submenu);
+		
+		
+		return menu;
 	}
 
 	/**

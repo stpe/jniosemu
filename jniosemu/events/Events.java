@@ -159,12 +159,17 @@ public class Events {
 	public static final String EVENTID_GUI_DIPSWITCHES = "GUI_DIPSWITCHES";
 
 	/**
-	 * Event sent when the compilation goes wrong
+	 * Error occured during compilation.
 	 */
 	public static final String EVENTID_COMPILE_ERROR = "COMPILE_ERROR";
 
 	/**
-	 * Event sent when the emulations goes wrong
+	 * Error occured during emulation.
 	 */
 	public static final String EVENTID_EMULATE_ERROR = "EMULATE_ERROR";
+
+	/**
+	 * Cursor changed line in editor.
+	 */
+	public static final String EVENTID_EDITOR_LINE_CHANGE = "EDITOR_LINE_CHANGE";
 }

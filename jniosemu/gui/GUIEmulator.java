@@ -111,6 +111,7 @@ import jniosemu.emulator.*;
 	/**
 	 * Set program object to be displayed in emulator view.
 	 *
+	 * @calls     Program.getProgramLines()
 	 * @calledby  update()
 	 *
 	 * @param  prg Program object
@@ -127,8 +128,11 @@ import jniosemu.emulator.*;
 	 * the program counter is pointing to and update the
 	 * visual indication.
 	 *
+	 * @pre       setProgram() must have been called to set current
+	 *            Program instance before PC may be set.
 	 * @checks    Only ensure index is visible (by scrolling)
 	 *            if it is not negative.
+	 * @calls     Program.getLineNumber()
 	 * @calledby  update()
 	 *
 	 * @param  addr Address of program counter
