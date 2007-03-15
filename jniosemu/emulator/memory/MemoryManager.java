@@ -36,7 +36,8 @@ public class MemoryManager
 	 * @calledby EmulatorManager()
 	 * @calls MemoryBlocks()
 	 *
-	 * @param memory Program
+	 * @param program Program
+	 * @param variables Variables
 	 */
 	public MemoryManager(byte[] program, byte[] variables)
 	{

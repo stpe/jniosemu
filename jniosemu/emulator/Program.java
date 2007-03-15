@@ -47,7 +47,8 @@ public class Program
 	 *
 	 * @param lines  Sourcecode lines
 	 * @param instructions  Program in the form of binary data
-	 * @param data  The binary program
+	 * @param program  Binary program
+	 * @param variables  Variables as binary
 	 * @param startAddr  Start position in the memory (what to set pc before starting to emulate)
 	 */
 	public Program(String[] lines, ArrayList<CompilerInstruction> instructions, byte[] program, byte[] variables, int startAddr) {

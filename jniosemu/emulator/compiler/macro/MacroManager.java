@@ -48,9 +48,9 @@ public class MacroManager
 	 * @calledby MacroManager()
 	 * @calls put()
 	 *
-	 * @param aName		Name of the macro
-	 * @param aArgs		Arguments separated with ","-character
-	 * @param aLines  Lines separated with ","-character
+	 * @param name		Name of the macro
+	 * @param args		Arguments separated with ","-character
+	 * @param lines  Lines separated with ","-character
 	 * @param lineNumber  Line number where the macro is defined
 	 */
 	public Macro put(String name, String args, String lines, int lineNumber) {
