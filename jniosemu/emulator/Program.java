@@ -187,5 +187,7 @@ public class Program
 		try {
 			return this.programLines.get(lineNumber).toggleBreakpoint();
 		} catch (Exception e) {}
+
+		return false;
 	}
 }
