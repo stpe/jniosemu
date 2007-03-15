@@ -81,6 +81,7 @@ import jniosemu.emulator.*;
 		for(int i = 0; i < buttons.length; i++)
 		{
 			buttons[i] = new JLabel(icons[0]);
+			buttons[i].setToolTipText("SW" + (7 - i));
 			
 			final int buttonIndex = i;
 			

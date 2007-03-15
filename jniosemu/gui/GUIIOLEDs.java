@@ -81,6 +81,7 @@ import jniosemu.emulator.*;
 		for(int i = 0; i < leds.length; i++)
 		{
 			leds[i] = new JLabel(icons[0]);
+			leds[i].setToolTipText("" + (1 + i));
 			this.add(leds[i]);
 		}
 	}

@@ -81,6 +81,7 @@ import jniosemu.emulator.*;
 		for(int i = 0; i < dipswitches.length; i++)
 		{
 			dipswitches[i] = new JLabel(icons[0]);
+			dipswitches[i].setToolTipText("D" + (3 + i));
 			
 			final int dipswitchIndex = i;
 			
