@@ -1,13 +1,15 @@
 #####################################################################
-# test2-a.s: Enkelt program som lägger ihop två tal
+# test2-a.s: Enkelt program som lägger ihop två tal med ett fel
 #####################################################################
-		
-		.data
 
+
+		.data
+tal:		.word	3
 		.global main
 
 		.text
-main:		movi r1, 1
-		movi r2, 2
+main:		movi r1, 5
+		movia r2, tal
+		load r3, 0(r2)		# Felaktig instruktion
 
-		add r1, r2, r3
+		add r4, r1, r3
