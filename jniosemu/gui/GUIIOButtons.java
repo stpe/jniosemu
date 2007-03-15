@@ -88,10 +88,12 @@ import jniosemu.emulator.*;
 				new MouseAdapter()
       	{
         	public void mousePressed(MouseEvent e) {
+        		setButton(buttonIndex, true);
         		eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_PRESSED, new Integer(buttonIndex));
         	}
 
         	public void mouseReleased(MouseEvent e) {
+        		setButton(buttonIndex, false);
         		eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_RELEASED, new Integer(buttonIndex));
         	}
       	}
