@@ -1,6 +1,7 @@
 package jniosemu.emulator;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import jniosemu.events.EventManager;
 import jniosemu.events.Events;
@@ -43,8 +44,14 @@ public class EmulatorManager implements EventObserver
 	 * True if the emulator is running
 	 */
 	private boolean running = false;
-
+	/**
+	 * Current program
+	 */
 	private Program program;
+	/**
+	 * Breakpoints
+	 */
+	private Hashtable<Integer, Integer> breakpoints = new Hashtable<Integer, Integer>();
 
 	/**
 	 * Init EmulatorManager
@@ -132,7 +139,8 @@ public class EmulatorManager implements EventObserver
 		}
 
 		this.pcChange();
-		return true;
+		
+		return !this.breakpoints.containsKey(this.pc);
 	}
 
 	/**
@@ -188,6 +196,10 @@ public class EmulatorManager implements EventObserver
 			return;
 		}
 
+		// Add old breakpoints to this program
+		for (Integer lineNumber: this.breakpoints.values())
+			this.program.toggleBreakpoint(lineNumber.intValue());
+
 		this.eventManager.sendEvent(Events.EVENTID_COMPILATION_DONE, this.program);
 		this.load();
 	}
@@ -225,7 +237,12 @@ public class EmulatorManager implements EventObserver
 	 * @param lineNumber  Line to toggle breakpoint
 	 */
 	public void toggleBreakpoint(int lineNumber) {
-		this.program.toggleBreakpoint(lineNumber);
+		int addr = this.program.getAddress(lineNumber);
+		if (this.program.toggleBreakpoint(lineNumber)) {
+			this.breakpoints.put(addr, lineNumber);
+		} else {
+			this.breakpoints.remove(addr);
+		}
 
 		this.eventManager.sendEvent(Events.EVENTID_TOGGLE_BREAKPOINT, lineNumber);
 	}

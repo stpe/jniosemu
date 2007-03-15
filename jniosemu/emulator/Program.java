@@ -176,12 +176,16 @@ public class Program
 	/**
 	 * Toggle breakpoint
 	 *
+	 * @checks Just don't do anything if the line don't exists
 	 * @calledby EmulatorManager.toggleBreakpoint()
 	 * @calls ProgramLine.toggleBreakpoint()
 	 *
 	 * @param lineNumber  lineNumber to toggle breakpoint
+	 * @return  true if the breakpoint is set
 	 */
-	public void toggleBreakpoint(int lineNumber) {
-		this.programLines.get(lineNumber).toggleBreakpoint();
+	public boolean toggleBreakpoint(int lineNumber) {
+		try {
+			return this.programLines.get(lineNumber).toggleBreakpoint();
+		} catch (Exception e) {}
 	}
 }

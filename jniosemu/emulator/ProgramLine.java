@@ -204,15 +204,19 @@ public class ProgramLine
 	 * Else TRUE -> FALSE and FALSE -> TRUE.
 	 *
 	 * @calledby Program.toggleBreakpoint()
+	 *
+	 * @return  True if the breakpoint is set
 	 */
-	public void toggleBreakpoint() {
+	public boolean toggleBreakpoint() {
 		switch (this.breakpoint) {
 			case TRUE:
 				this.breakpoint = BREAKPOINT.FALSE;
 				break;
 			case FALSE:
 				this.breakpoint = BREAKPOINT.TRUE;
-				break;
+				return true;
 		}
+
+		return false;
 	}
 }
