@@ -157,6 +157,10 @@ public class CompilerRTypeInstruction extends CompilerInstruction
 	 * @throws InstructionException  If the immediate value can't be parsed
 	 */
 	public void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException {
-		this.imm = (int)(Compiler.parseValue(this.tImm, aLabels) & 0xFFFFFFFF);
+		try {
+			this.imm = (int)(Compiler.parseValue(this.tImm, aLabels) & 0xFFFFFFFF);
+		} catch (InstructionException e) {
+			throw new InstructionException(this.instructionInfo.getName(), "Error parsing immediate value ("+ this.tImm +")");
+		}
 	}
 }

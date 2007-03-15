@@ -184,7 +184,8 @@ public class EmulatorManager implements EventObserver
 			compiler.compile();
 			this.program = compiler.link();
 		} catch (CompilerException e) {
-			System.out.println("CompilerException: "+ e.getMessage());
+			this.eventManager.sendEvent(Events.EVENTID_COMPILE_ERROR, e.getMessage());
+			return;
 		}
 
 		this.eventManager.sendEvent(Events.EVENTID_COMPILATION_DONE, this.program);

@@ -152,7 +152,7 @@ public class InstructionManager
 			Object[] args = new Object[]{opCode};
 			return (Instruction)c.newInstance(args);
 		} catch (Exception e) {
-			throw new InstructionException(opCode, "Class missing: "+ instruction.getClassName());
+			throw new InstructionException(opCode, "Class is missing: "+ instruction.getClassName());
 		}
 	}
 
@@ -174,7 +174,7 @@ public class InstructionManager
 
 		InstructionInfo instructionInfo = nameHash.get(aName.toLowerCase());
 		if (instructionInfo == null)
-			throw new InstructionException(aName);
+			throw new InstructionException(aName, "Unknown instruction");
 
 		switch (instructionInfo.getType()) {
 			case ITYPE:

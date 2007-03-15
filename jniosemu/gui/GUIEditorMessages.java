@@ -42,7 +42,10 @@ public class GUIEditorMessages extends JPanel
 		setup();
 		
     // add events to listen to
-    this.eventManager.addEventObserver("DEBUG", this);
+		String [] events = {
+			Events.EVENTID_COMPILE_ERROR,
+			Events.EVENTID_COMPILE};
+    this.eventManager.addEventObserver(events, this);
 	}
 
 	/**
@@ -70,9 +73,12 @@ public class GUIEditorMessages extends JPanel
 
 	public void update(String eventIdentifier, Object obj)
 	{
-		String debugMessage = (String) obj;
-		
-		editorMessages.append(eventIdentifier + ": " + debugMessage + "\n");
+		if (eventIdentifier.equals(Events.EVENTID_COMPILE)) {
+			editorMessages.setText("");
+		} else if (eventIdentifier.equals(Events.EVENTID_COMPILE_ERROR)) {
+			String msg = (String) obj;
+			editorMessages.append(msg + "\n");
+		}
 	}
 
 	/**

@@ -45,10 +45,6 @@ public class Compiler
 	 */
 	private MacroManager macros = new MacroManager();
 	/**
-	 * For managing instructions.
-	 */
-	private InstructionManager instructionManager = new InstructionManager();
-	/**
 	 * True if we are in the codepart of the program.
 	 */
 	private boolean codePart = true;
@@ -299,7 +295,7 @@ public class Compiler
 								Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
 								Matcher mMacro = pMacro.matcher(mInstruction.group(3));
 								if (mMacro.matches()) {
-									this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null);
+									this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null, aLineNumber);
 								} else {
 									throw new CompilerException(aLineNumber, "Wrong syntax for a macro");
 								}
@@ -334,7 +330,7 @@ public class Compiler
 									throw new CompilerException(aLineNumber, e.getMessage());
 								}
 							} else {
-								throw new CompilerException(aLineNumber, "Unknown part: "+ name);
+								throw new CompilerException(aLineNumber, "Unknown: "+ name);
 							}
 						} else {
 							// Check if the instruction is a macro
@@ -342,16 +338,24 @@ public class Compiler
 							if (this.macros.exists(ins)) {
 								try {
 									// Parse the macro
-									ArrayList<String> lines = this.macros.get(ins, mInstruction.group(3));
+									Macro macro = this.macros.get(ins);
+									ArrayList<String> lines = macro.parse(mInstruction.group(3));
 
 									if (this.lastMacro != null) {
 										this.lastMacro.addLine(lines);
 									} else {
-										for (String line: lines)
-											this.parseLine(line, true, aLineNumber);
+										int i = 0;
+										try {
+											for (String line: lines) { 
+												i++;
+												this.parseLine(line, true, aLineNumber);
+											}
+										} catch (CompilerException e) {
+											throw new CompilerException(aLineNumber, "Macro "+ ins +": Compiler error:\n\t"+ macro.getLineNumberAsString(i) +": "+ e.getMessagePart());
+										}
 									}
 								} catch (MacroException e) {
-									throw new CompilerException(aLineNumber, "macro "+ e.getMessage());
+									throw new CompilerException(aLineNumber, e.getMessage());
 								}
 							} else {
 								if (this.lastMacro != null) {
@@ -359,10 +363,11 @@ public class Compiler
 								} else {
 									// get the CompilerInstruction for the instruction
 									try {
-										CompilerInstruction cins = this.instructionManager.get(ins, mInstruction.group(3), aLineNumber);
+										CompilerInstruction cins = InstructionManager.get(ins, mInstruction.group(3), aLineNumber);
 										this.instructions.add(cins);
 									} catch (InstructionException e) {
-										throw new CompilerException(aLineNumber, "ins "+ e.getMessage());
+										System.out.println("instruction syntax error");
+										throw new CompilerException(aLineNumber, e.getMessage());
 									}
 								}
 							}
@@ -384,7 +389,7 @@ public class Compiler
 	public void compile() throws CompilerException {
 		int i = 0;
 		for (String line: this.lines) {
-			this.parseLine(line, true, i++);
+			this.parseLine(line, true, ++i);
 		}
 	}
 
@@ -425,7 +430,7 @@ public class Compiler
 			try {
 				instruction.link(this.labels, MemoryManager.PROGRAMSTARTADDR + addr);
 			} catch (InstructionException e) {
-				throw new CompilerException(e.getMessage());
+				throw new CompilerException(instruction.getLineNumber(), e.getMessage());
 			}
 
 			int opcode = instruction.getOpcode();

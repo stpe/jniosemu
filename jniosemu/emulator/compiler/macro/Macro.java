@@ -3,41 +3,82 @@ package jniosemu.emulator.compiler.macro;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Contains information about a Macro
+ */
 public class Macro
 {
+	/**
+	 * Name of the macro
+	 */
 	private String name;
+	/**
+	 * Arguments that the macro takes
+	 */
 	private String[] args;
+	/**
+	 * Lines that the macro exists of
+	 */
 	private ArrayList<String> lines = new ArrayList<String>();
+	/**
+	 * Line number
+	 */
+	private int lineNumber = -1;
 
 	/**
-	 * Init a Macro
+	 * Init Macro
 	 *
-	 * @param aName 	Name of the macro
-	 * @param aArgs 	Arguments of the macro
-	 * @param aLines	Lines of the macro
+	 * @calledby MacroManager()
+	 *
+	 * @param name 	Name of the macro
+	 * @param args 	Arguments of the macro
+	 * @param lines	Lines of the macro
 	 */
-	public Macro(String aName, String[] aArgs, String[] aLines) {
-		this.name = aName.toLowerCase();
-		this.args = aArgs;
+	public Macro(String name, String[] args, String[] lines, int lineNumber) {
+		this.name = name.toLowerCase();
+		this.args = args;
+		this.lineNumber = lineNumber;
 
-		if (aLines != null) {
-			for (String line: aLines)
+		if (lines != null) {
+			for (String line: lines)
 				this.lines.add(line);
 		}
 	}
 
-	public Macro(String aName, String[] aArgs, ArrayList<String> aLines) {
-		this.name = aName.toLowerCase();
-		this.args = aArgs;
+	/**
+	 * Init Macro
+	 *
+	 * @param name 	Name of the macro
+	 * @param args 	Arguments of the macro
+	 * @param lines	Lines of the macro
+	 */
+	public Macro(String name, String[] args, ArrayList<String> lines, int lineNumber) {
+		this.name = name.toLowerCase();
+		this.args = args;
+		this.lineNumber = lineNumber;
 
-		this.lines = aLines;
+		this.lines = lines;
 	}
 
+	/**
+	 * Add several lines to the Macro
+	 *
+	 * @calledby Compiler.parseLine();
+	 *
+	 * @param lines  Lines that will be added
+	 */
 	public void addLine(ArrayList<String> lines) {
 		for (String line: lines)
 			this.lines.add(line);
 	}
 
+	/**
+	 * Add line to the Macro
+	 *
+	 * @calledby Compiler.parseLine();
+	 *
+	 * @param line  Line that will be added
+	 */
 	public void addLine(String line) {
 		this.lines.add(line);
 	}
@@ -45,23 +86,38 @@ public class Macro
 	/**
 	 * Gets the value of the arguments and replace the arguments with its value
 	 *
-	 * @param aArgs The arguments value
+	 * @calls parse()
+	 *
+	 * @param args Arguments separated with ","-character
+	 */
+	public ArrayList<String> parse(String args) throws MacroException {
+		String[] argsArray = null;
+		if (args != null && args.length() > 0)
+			argsArray = args.split("\\s*,\\s*");
+
+		return this.parse(argsArray);
+	}
+
+	/**
+	 * Gets the value of the arguments and replace the arguments with its value
+	 *
+	 * @param args  The arguments value
 	 * @return			The lines
 	 */
-	public ArrayList<String> get(String[] aArgs) throws MacroException {
-		if (aArgs == null ^ this.args == null)
-			throw new MacroException();
+	public ArrayList<String> parse(String[] args) throws MacroException {
+		if (args == null ^ this.args == null)
+			throw new MacroException(this.name, "Number of arguments is wrong");
 
-		if (aArgs != null && this.args != null && aArgs.length != this.args.length)
-			throw new MacroException();
+		if (args != null && this.args != null && args.length != this.args.length)
+			throw new MacroException(this.name, "Number of arguments is wrong");
 
 		ArrayList<String> lines = new ArrayList<String>(this.lines.size());
 
 		if (this.args != null && this.args.length > 0) {
 			for(String line: this.lines) {
 				String outLine = line;
-				for (int j = 0; j < aArgs.length; j++)
-					outLine = outLine.replaceAll("\\\\"+ this.args[j], aArgs[j]);
+				for (int j = 0; j < args.length; j++)
+					outLine = outLine.replaceAll("\\\\"+ this.args[j], args[j]);
 				lines.add(outLine);
 			}
 		} else {
@@ -74,9 +130,36 @@ public class Macro
 	/**
 	 * Return the name of the macro
 	 *
+	 * @calledby MacroManager(), Compiler.parseLine()
+	 *
 	 * @return	name of the macro
 	 */
 	public String getName() {
 		return this.name;
+	}
+
+	/**
+	 * Return line number where the macro is defined.
+	 *
+	 * @return Line number
+	 */
+	public int getLineNumber() {
+		return this.lineNumber;
+	}
+
+	/**
+	 * Return line string
+	 *
+	 * @checks If lineNumber < 0 return "Psuedo instruction"
+	 * @calledby Compiler.parseLine()
+	 *
+	 * @param macroLine  Line number in the macro
+	 * @return line number as string
+	 */
+	public String getLineNumberAsString(int macroLine) {
+		if (this.lineNumber <= 0)
+			return "Psuedo instruction";
+
+		return "Line "+ (this.lineNumber + macroLine);
 	}
 }

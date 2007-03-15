@@ -7,8 +7,10 @@
 	
 	.text
 
-main:	movia 	r8, 0x810	# Flytta adressen till register r8
-	movi	r9, 0b1010	# Bestäm vilka leds som ska vara tända
-	stw	r9, 0(r8)	# Skriv det binära värdet till minnet (tänd lampor)
+main:	
+	movia		r8, 0x850		# Flytta dipswitch adressen till register r8
+	ldw			r9, 0(r8)		# Läs in från minnet till r9
+	movia		r8, 0x810		# Flytta led adressen till register r8
+	stw			r9, 0(r8)		# Skriv det binära värdet till minnet (tänd lampor)
 	
 	

@@ -2,15 +2,27 @@ package jniosemu.emulator.compiler;
 
 public class CompilerException extends Exception
 {
+	private int lineNumber = -1;
+	private String message = "";
+
 	public CompilerException() {
 		super();
 	}
 
-	public CompilerException(String aMsg) {
-		super(aMsg);
+	public CompilerException(String msg) {
+		super("Line Unknown: "+ msg);
+
+		this.message = msg;
 	}
 
-	public CompilerException(int aLineNumber, String aMsg) {
-		super("Line "+ aLineNumber +": "+ aMsg);
+	public CompilerException(int lineNumber, String msg) {
+		super("Line "+ lineNumber +": "+ msg);
+
+		this.lineNumber = lineNumber;
+		this.message = msg;
+	}
+
+	public String getMessagePart() {
+		return this.message;
 	}
 }

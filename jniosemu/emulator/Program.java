@@ -55,7 +55,7 @@ public class Program
 		this.program = program;
 		this.variables = variables;
 
-		int sourceCodeLineNumber = 0;
+		int sourceCodeLineNumber = 1;
 		int addr = MemoryManager.PROGRAMSTARTADDR;
 		int programLineCount = 0;
 		ProgramLine programLineParent = null;

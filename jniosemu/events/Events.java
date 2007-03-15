@@ -158,5 +158,13 @@ public class Events {
 	 */
 	public static final String EVENTID_GUI_DIPSWITCHES = "GUI_DIPSWITCHES";
 
+	/**
+	 * Event sent when the compilation goes wrong
+	 */
+	public static final String EVENTID_COMPILE_ERROR = "COMPILE_ERROR";
 
+	/**
+	 * Event sent when the emulations goes wrong
+	 */
+	public static final String EVENTID_EMULATE_ERROR = "EMULATE_ERROR";
 }
