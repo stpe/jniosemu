@@ -88,8 +88,8 @@ public class GUIMenuBar extends JMenuBar
 		menu = new JMenu("View");
 		this.add(menu);
 
-		menu.add( createMenuItem("Memory...", Events.EVENTID_VIEW_MEMORY) );
 		menu.add( createMenuItem("Variables...", Events.EVENTID_VIEW_VARIABLES) );
+		menu.add( createMenuItem("Memory...", Events.EVENTID_VIEW_MEMORY) );
 
 		menu.addSeparator();
 		menu.add( createMenuItem("Toggle Editor/Emulator", Events.EVENTID_TOGGLE_TAB,

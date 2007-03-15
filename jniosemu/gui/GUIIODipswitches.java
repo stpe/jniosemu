@@ -13,7 +13,7 @@ import jniosemu.emulator.*;
  * Creates and manages the GUI component of the dipswitches.
  */
  public class GUIIODipswitches extends JPanel
-											 implements ActionListener, EventObserver {
+											 implements EventObserver {
 
 	/**
 	 * Reference to EventManager used to receive
@@ -21,10 +21,19 @@ import jniosemu.emulator.*;
 	 */
 	private EventManager eventManager;
 
+	/**
+	 * Number of dipswitches to display.
+	 */
 	private static int DIPSWITCH_COUNT = 4;
 
+	/**
+	 * Array for GUI representation of each dipswitch.
+	 */
 	private JLabel[] dipswitches = new JLabel[DIPSWITCH_COUNT];
 
+	/**
+	 * Contains graphical icon image for dipswitch.
+	 */
 	private ImageIcon[] icons = new ImageIcon[2];
 
 	/**
@@ -72,6 +81,19 @@ import jniosemu.emulator.*;
 		for(int i = 0; i < dipswitches.length; i++)
 		{
 			dipswitches[i] = new JLabel(icons[0]);
+			
+			final int dipswitchIndex = i;
+			
+			dipswitches[i].addMouseListener(
+				new MouseAdapter()
+      	{
+        	public void mouseClicked(MouseEvent e) {
+        		// send event to toggle dipswitch
+        		eventManager.sendEvent(Events.EVENTID_GUI_DIPSWITCHES, new Integer(dipswitchIndex));
+        	}
+      	}
+      );
+			
 			this.add(dipswitches[i]);
 		}
 	}
@@ -88,6 +110,7 @@ import jniosemu.emulator.*;
 	 */
 	public void setDipswitch(int dipswitchIndex, boolean state)
 	{
+		System.out.println("dip: " + dipswitchIndex);
 		if (dipswitchIndex < 0 || dipswitchIndex >= DIPSWITCH_COUNT)
 		{
 			System.out.println("GUIIODipswitches.setDipswitch(): Invalid dipswitchIndex " + dipswitchIndex);
@@ -122,18 +145,6 @@ import jniosemu.emulator.*;
 		{
 			updateDipswitches( (Vector<Boolean>) obj );
 		}
-	}
-
-	/**
-	 * Invoked when a GUI action occurs, forwards it as
-	 * an event to the EventManager object.
-	 *
-	 * @calls     EventManager.sendEvent()
-	 *
-	 * @param  e  action event object
-	 */
-	public void actionPerformed(ActionEvent e) {
-			eventManager.sendEvent(e.getActionCommand());
 	}
 
 }

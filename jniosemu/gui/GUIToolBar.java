@@ -77,7 +77,7 @@ public class GUIToolBar extends JToolBar
 		this.add(button);
 
 		button = makeButton("pause", Events.EVENTID_PAUSE,
-												"Pause emulation.",
+												"Pause emulation",
 												"Pause");
 		this.add(button);
 
@@ -94,7 +94,7 @@ public class GUIToolBar extends JToolBar
 		this.addSeparator();
 
 		button = makeButton("variable_view", Events.EVENTID_VIEW_VARIABLES,
-												"View used variables",
+												"View variables",
 												"Variable View");
 		this.add(button);
 

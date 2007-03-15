@@ -100,8 +100,12 @@ public class EventManager
 		
 		if (eventObservers == null)
 		{
+			String objValue = ".";
+			if (obj != null)
+				objValue = ": " + obj;
+			
 			// debug (omit println)
-			System.out.println("EventManger.sendEvent(): No observers listening to '" + eventIdentifier + "'.");
+			System.out.println("EventManger.sendEvent(): No observers listening to '" + eventIdentifier + "'" + objValue);
 			return;
 		}
 		

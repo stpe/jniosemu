@@ -13,7 +13,7 @@ import jniosemu.emulator.*;
  * Creates and manages the GUI component of the buttons.
  */
  public class GUIIOButtons extends JPanel
-											 implements ActionListener, EventObserver {
+											 implements EventObserver {
 
 	/**
 	 * Reference to EventManager used to receive
@@ -21,10 +21,19 @@ import jniosemu.emulator.*;
 	 */
 	private EventManager eventManager;
 
+	/**
+	 * Number of buttons to display.
+	 */
 	private static int BUTTON_COUNT = 4;
 
+	/**
+	 * Array for GUI representation of each button.
+	 */
 	private JLabel[] buttons = new JLabel[BUTTON_COUNT];
 
+	/**
+	 * Contains graphical icon image for button.
+	 */
 	private ImageIcon[] icons = new ImageIcon[2];
 
 	/**
@@ -72,6 +81,22 @@ import jniosemu.emulator.*;
 		for(int i = 0; i < buttons.length; i++)
 		{
 			buttons[i] = new JLabel(icons[0]);
+			
+			final int buttonIndex = i;
+			
+			buttons[i].addMouseListener(
+				new MouseAdapter()
+      	{
+        	public void mousePressed(MouseEvent e) {
+        		eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_PRESSED, new Integer(buttonIndex));
+        	}
+
+        	public void mouseReleased(MouseEvent e) {
+        		eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_RELEASED, new Integer(buttonIndex));
+        	}
+      	}
+      );			
+			
 			this.add(buttons[i]);
 		}
 	}
@@ -122,18 +147,6 @@ import jniosemu.emulator.*;
 		{
 			updateButtons( (Vector<Boolean>) obj );
 		}
-	}
-
-	/**
-	 * Invoked when a GUI action occurs, forwards it as
-	 * an event to the EventManager object.
-	 *
-	 * @calls     EventManager.sendEvent()
-	 *
-	 * @param  e  action event object
-	 */
-	public void actionPerformed(ActionEvent e) {
-			eventManager.sendEvent(e.getActionCommand());
 	}
 
 }

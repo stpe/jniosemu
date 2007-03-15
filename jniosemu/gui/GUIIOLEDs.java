@@ -13,7 +13,7 @@ import jniosemu.emulator.*;
  * Creates and manages the GUI component of the LEDs.
  */
  public class GUIIOLEDs extends JPanel
-											 implements ActionListener, EventObserver {
+											 implements EventObserver {
 
 	/**
 	 * Reference to EventManager used to receive
@@ -21,10 +21,19 @@ import jniosemu.emulator.*;
 	 */
 	private EventManager eventManager;
 
+	/**
+	 * Number of LEDs to display.
+	 */
 	private static int LED_COUNT = 4;
 
+	/**
+	 * Array for GUI representation of each LED.
+	 */
 	private JLabel[] leds = new JLabel[LED_COUNT];
 
+	/**
+	 * Contains graphical icon image for LED.
+	 */
 	private ImageIcon[] icons = new ImageIcon[2];
 
 	/**
@@ -123,17 +132,4 @@ import jniosemu.emulator.*;
 			updateLeds( (Vector<Boolean>) obj );
 		}
 	}
-
-	/**
-	 * Invoked when a GUI action occurs, forwards it as
-	 * an event to the EventManager object.
-	 *
-	 * @calls     EventManager.sendEvent()
-	 *
-	 * @param  e  action event object
-	 */
-	public void actionPerformed(ActionEvent e) {
-			eventManager.sendEvent(e.getActionCommand());
-	}
-
 }

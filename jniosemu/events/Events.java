@@ -149,9 +149,14 @@ public class Events {
 	public static final String EVENTID_UPDATE_DIPSWITCHES = "UPDATE_DIPSWITCHES";
 
 	/**
-	 * IO button in GUI has changed.
+	 * IO button in GUI was pressed.
 	 */
-	public static final String EVENTID_GUI_BUTTONS = "GUI_BUTTON";
+	public static final String EVENTID_GUI_BUTTON_PRESSED = "GUI_BUTTON_PRESSED";
+
+	/**
+	 * IO button in GUI was released.
+	 */
+	public static final String EVENTID_GUI_BUTTON_RELEASED = "GUI_BUTTON_RELEASED";
 
 	/**
 	 * IO dipswitches in GUI has changed.
@@ -172,4 +177,11 @@ public class Events {
 	 * Cursor changed line in editor.
 	 */
 	public static final String EVENTID_EDITOR_LINE_CHANGE = "EDITOR_LINE_CHANGE";
+
+/**
+	 * Insert instruction using insert menu.
+	 */
+	public static final String EVENTID_INSERT_INSTRUCTION = "INSERT_INSTRUCTION";
+
 }
+
