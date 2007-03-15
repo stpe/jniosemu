@@ -56,7 +56,7 @@ public class IOManager
 			this.eventManager = eventManager;
 
 		this.ioDevices.add(new LedDevice(this.memory, this.eventManager));
-		// this.ioDevices.add(new ButtonDevice(this.memory, this.eventManager));
+		this.ioDevices.add(new ButtonDevice(this.memory, this.eventManager));
 		this.ioDevices.add(new DipSwitchDevice(this.memory, this.eventManager));
 	}
 }
