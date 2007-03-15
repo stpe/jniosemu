@@ -94,7 +94,6 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 
 	public void update(String eventIdentifier, Object obj) {
 		if (eventIdentifier.equals(Events.EVENTID_GUI_DIPSWITCHES)) {
-			System.out.println("Event mottaget!");
 			int index = ((Integer)obj).intValue();
 			this.state.set(index, !this.state.get(index));
 			this.memory.writeInt(MEMORYADDR, this.vectorToInt(this.state), false);

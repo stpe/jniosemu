@@ -110,7 +110,6 @@ import jniosemu.emulator.*;
 	 */
 	public void setDipswitch(int dipswitchIndex, boolean state)
 	{
-		System.out.println("dip: " + dipswitchIndex);
 		if (dipswitchIndex < 0 || dipswitchIndex >= DIPSWITCH_COUNT)
 		{
 			System.out.println("GUIIODipswitches.setDipswitch(): Invalid dipswitchIndex " + dipswitchIndex);
