@@ -22,7 +22,7 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * PC address
 	 */
-	private int pc = MemoryManager.PROGRAMSTART;
+	private int pc = MemoryManager.PROGRAMSTARTADDR;
 	/**
 	 * MemoryManager that is used
 	 */
@@ -207,7 +207,7 @@ public class EmulatorManager implements EventObserver
 	 * @calls RegisterManager.reset(), MemoryManager.reset()
 	 */
 	public void load() {
-		this.memory = new MemoryManager(program.getData());
+		this.memory = new MemoryManager(program.getBinaryProgram(), program.getBinaryVariables());
 		this.io = new IOManager(this.memory, this.eventManager);
 		this.pc = this.program.getStartAddr();
 		this.register = new RegisterManager();

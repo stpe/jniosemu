@@ -237,7 +237,7 @@ public class Compiler
 	 * @return Current memory address
 	 */
 	private int getCurrentAddr() {
-		return MemoryManager.PROGRAMSTART + (this.instructions.size()*4);
+		return MemoryManager.PROGRAMSTARTADDR + (this.instructions.size()*4);
 	}
 
 	/**
@@ -398,22 +398,23 @@ public class Compiler
 	 * @throws CompilerException  If an instruction can't link
 	 */
 	public Program link() throws CompilerException {
-		int size = this.instructions.size()*4+8;
+		int size = 4;
 		for (Variable variable: this.variables)
 			size += variable.getValue().length;
+		byte[] binaryVariables = new byte[size];
 
-		byte[] memory = new byte[size];
+		size = this.instructions.size()*4+4;
+		byte[] binaryProgram = new byte[size];
 
 		// Add variables in the memory
-		int addr = this.instructions.size()*4+4;
+		int addr = 0;
 		for (Variable variable: this.variables) {
-			if (variable.getName() != null) {
-				this.labels.put(variable.getName(), MemoryManager.PROGRAMSTART + addr);
-			}
+			if (variable.getName() != null)
+				this.labels.put(variable.getName(), MemoryManager.VARIABLESTARTADDR + addr);
 
 			byte[] value = variable.getValue();
 			for (int i = 0; i < value.length; i++)
-				memory[addr+i] = value[i];
+				binaryVariables[addr+i] = value[i];
 
 			addr += value.length;
 		}
@@ -422,25 +423,26 @@ public class Compiler
 		addr = 0;
 		for (CompilerInstruction instruction: this.instructions) {
 			try {
-				instruction.link(this.labels, MemoryManager.PROGRAMSTART + addr);
+				instruction.link(this.labels, MemoryManager.PROGRAMSTARTADDR + addr);
 			} catch (InstructionException e) {
 				throw new CompilerException(e.getMessage());
 			}
 
 			int opcode = instruction.getOpcode();
-			memory[addr]     = (byte)(opcode        & 0xFF);
-			memory[addr + 1] = (byte)(opcode >>> 8  & 0xFF);
-			memory[addr + 2] = (byte)(opcode >>> 16 & 0xFF);
-			memory[addr + 3] = (byte)(opcode >>> 24 & 0xFF);
+			binaryProgram[addr]     = (byte)(opcode        & 0xFF);
+			binaryProgram[addr + 1] = (byte)(opcode >>> 8  & 0xFF);
+			binaryProgram[addr + 2] = (byte)(opcode >>> 16 & 0xFF);
+			binaryProgram[addr + 3] = (byte)(opcode >>> 24 & 0xFF);
 
 			addr += 4;
 		}
 
-		int pc = MemoryManager.PROGRAMSTART;
+		int pc = MemoryManager.PROGRAMSTARTADDR;
 		try {
 			pc = this.getGlobal("main");
 		} catch (CompilerException e) {}
-		return new Program(this.lines, this.instructions, memory, pc);
+
+		return new Program(this.lines, this.instructions, binaryProgram, binaryVariables, pc);
 	}
 
 	/**

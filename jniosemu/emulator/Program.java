@@ -18,7 +18,11 @@ public class Program
 	/**
 	 * Binary representation of the program
 	 */
-	private final byte[] data;
+	private final byte[] program;
+	/**
+	 * Binary representation of the variables
+	 */
+	private final byte[] variables;
 	/**
 	 * Start address
 	 */
@@ -46,12 +50,13 @@ public class Program
 	 * @param data  The binary program
 	 * @param startAddr  Start position in the memory (what to set pc before starting to emulate)
 	 */
-	public Program(String[] lines, ArrayList<CompilerInstruction> instructions, byte[] data, int startAddr) {
+	public Program(String[] lines, ArrayList<CompilerInstruction> instructions, byte[] program, byte[] variables, int startAddr) {
 		this.startAddr = startAddr;
-		this.data = data;
+		this.program = program;
+		this.variables = variables;
 
 		int sourceCodeLineNumber = 0;
-		int addr = MemoryManager.PROGRAMSTART;
+		int addr = MemoryManager.PROGRAMSTARTADDR;
 		int programLineCount = 0;
 		ProgramLine programLineParent = null;
 		ProgramLine programLine = null;
@@ -142,8 +147,19 @@ public class Program
 	 *
 	 * @return Program in the form of binary data
 	 */
-	public byte[] getData() {
-		return this.data;
+	public byte[] getBinaryProgram() {
+		return this.program;
+	}
+
+	/**
+	 * Get the variable memory
+	 *
+	 * @calledby EmulatorManager.load()
+	 *
+	 * @return Variables in the form of binary data
+	 */
+	public byte[] getBinaryVariables() {
+		return this.variables;
 	}
 
 	/**

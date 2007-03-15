@@ -9,36 +9,40 @@ import jniosemu.emulator.io.IODevice;
 public class MemoryManager
 {
 	/**
-	 * The default program start memory address.
+	 * Address in the memory where the program is placed.
 	 */
-	public static int PROGRAMSTART = 0x20000;
+	public static int PROGRAMSTARTADDR  = 0x20000;
+	/**
+	 * Address in the memory where the variables is placed.
+	 */
+	public static int VARIABLESTARTADDR = 0x30000;
+	/**
+	 * Address in the memory where the stack is placed.
+	 */
+	public static int STACKSTARTADDR    = 0x40000;
+	/**
+	 * Size of the stack
+	 */
+	public static int STACKSIZE         = 0x08000;
 	/**
 	 * Contains the different MemoryBlocks
 	 */
 	private ArrayList<MemoryBlock> memoryBlocks = new ArrayList<MemoryBlock>();
 
 	/**
-	 * Init MemoryManager without any program.
-	 *
-	 * @post add SRAM MemoryBlock
-	 * @calls MemoryBlocks()
-	 */
-	public MemoryManager() {
-		this.memoryBlocks.add(new MemoryBlock("SRAM", PROGRAMSTART, 50, null, null));
-	}
-
-	/**
 	 * Init MemoryManager with program.
 	 *
-	 * @post add SRAM MemoryBlock
+	 * @post add program, variables and stack MemoryBlock
 	 * @calledby EmulatorManager()
 	 * @calls MemoryBlocks()
 	 *
 	 * @param memory Program
 	 */
-	public MemoryManager(byte[] memory)
+	public MemoryManager(byte[] program, byte[] variables)
 	{
-		this.memoryBlocks.add(new MemoryBlock("SRAM", PROGRAMSTART, memory.length, null, memory));
+		this.memoryBlocks.add(new MemoryBlock("PROGRAM", PROGRAMSTARTADDR, program.length, null, program));
+		this.memoryBlocks.add(new MemoryBlock("VARIABLES", VARIABLESTARTADDR, variables.length, null, variables));
+		this.memoryBlocks.add(new MemoryBlock("STACK", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null, null));
 	}
 
 	/**
