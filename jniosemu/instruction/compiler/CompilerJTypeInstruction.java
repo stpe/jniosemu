@@ -81,12 +81,10 @@ public class CompilerJTypeInstruction extends CompilerInstruction
 	 */
 	public void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException {
 		try {
-			long imm = Compiler.parseValue(this.tImm, aLabels) & 0xFFFFFFFF;
+			this.imm = (int)((Compiler.parseValue(this.tImm, aLabels) & 0xFFFFFFFF) / 4);
 		} catch (InstructionException e) {
 			throw new InstructionException(this.instructionInfo.getName(), "Error parsing immediate value ("+ this.tImm +")");
 		}
-
-		this.imm = (int)(imm / 4);
 	}
 }
 
