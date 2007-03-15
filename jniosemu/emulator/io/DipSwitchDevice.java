@@ -67,7 +67,7 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 		for (int i = 0; i < COUNT; i++)
 			this.state.add(i, false);
 
-		this.eventManager.sendEvent(Events.EVENTID_UPDATE_DIPSWITCHES, this.state);
+		this.sendEvent();
 	}
 
 	/**
@@ -83,11 +83,23 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 		this.memory.writeInt(MEMORYADDR + 12, 0, false);
 	}
 
+	/**
+	 * Send states to eventManager
+	 *
+	 * @calledby reset(), update()
+	 */
+	private void sendEvent() {
+		this.eventManager.sendEvent(Events.EVENTID_UPDATE_DIPSWITCHES, this.state);
+	}
+
 	public void update(String eventIdentifier, Object obj) {
 		if (eventIdentifier.equals(Events.EVENTID_GUI_DIPSWITCHES)) {
+			System.out.println("Event mottaget!");
 			int index = ((Integer)obj).intValue();
 			this.state.set(index, !this.state.get(index));
 			this.memory.writeInt(MEMORYADDR, this.vectorToInt(this.state), false);
+
+			this.sendEvent();
 		}
 	}
 }
