@@ -36,7 +36,7 @@ public class ButtonDevice extends IODevice implements EventObserver
 	private EventManager eventManager;
 
 	/**
-	 * Init DipSwitchDevice
+	 * Init ButtonDevice
 	 *
 	 * @post Add events. Init states.
 	 * @calledby IOManager.reset()
@@ -51,7 +51,7 @@ public class ButtonDevice extends IODevice implements EventObserver
 	/**
 	 * Reset
 	 *
-	 * @calledby  DipSwitchDevice()
+	 * @calledby  ButtonDevice()
 	 *
 	 * @param memory current MemoryManager
 	 * @param eventManager current EventManager
