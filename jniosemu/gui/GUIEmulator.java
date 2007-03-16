@@ -97,7 +97,9 @@ import jniosemu.emulator.*;
 		listView.addMouseListener(this);
 
 		// scrollbars
-		JScrollPane scrollPane = new JScrollPane(listView);
+		JScrollPane scrollPane = new JScrollPane(listView,
+		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);		
 
 		// get breakpoint images
 		breakPointSetIcon = new ImageIcon("graphics/emulator/breakpoint_set.png");

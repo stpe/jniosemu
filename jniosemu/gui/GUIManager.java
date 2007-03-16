@@ -127,8 +127,16 @@ public class GUIManager
 		editorPanel.add(editor, BorderLayout.CENTER);
 
 		// editor messages
+		JPanel editorMessagePanel = new JPanel(new BorderLayout());
+		
 		GUIEditorMessages editorMessages = new GUIEditorMessages(this.eventManager);
-		editorPanel.add(editorMessages, BorderLayout.PAGE_END);
+		editorMessagePanel.add(editorMessages, BorderLayout.CENTER);
+		
+		// status bar
+		GUIStatusBar statusBar = new GUIStatusBar(this.eventManager);
+		editorMessagePanel.add(statusBar, BorderLayout.PAGE_END);
+		
+		editorPanel.add(editorMessagePanel, BorderLayout.PAGE_END);
 
 		// emulator panel
 		JPanel emulatorPanel = new JPanel(new BorderLayout());

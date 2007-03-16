@@ -2,6 +2,7 @@ package jniosemu.gui;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.text.Utilities;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
@@ -12,7 +13,7 @@ import jniosemu.editor.*;
  * Creates and manages the GUI component of the editor view.
  */
 public class GUIEditor extends JPanel
-                       implements DocumentListener, EventObserver {
+                       implements DocumentListener, CaretListener, EventObserver {
 
 	/**
 	 * Document name used for unsaved documents.
@@ -88,6 +89,7 @@ public class GUIEditor extends JPanel
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		textArea.getDocument().addDocumentListener(this);
+		textArea.addCaretListener(this);
 
 		// put scrollbars around editor text area
 		JScrollPane editorScrollPane =
@@ -131,22 +133,66 @@ public class GUIEditor extends JPanel
 		}
 	}
 
+	/**
+	 * Exists due to DocumentListener interface. Detects
+	 * when something is updated in the editor.
+	 *
+	 * @calls textChanged()
+	 */
 	public void changedUpdate(DocumentEvent e)
 	{
-		// implemented due to DocumentListener interface
 		textChanged(true);
 	}
 
+	/**
+	 * Exists due to DocumentListener interface. Detects
+	 * when something is inserted in the editor.
+	 *
+	 * @calls textChanged()
+	 */
 	public void insertUpdate(DocumentEvent e)
 	{
-		// implemented due to DocumentListener interface
 		textChanged(true);
 	}
 
+	/**
+	 * Exists due to DocumentListener interface. Detects
+	 * when something is removed in the editor.
+	 *
+	 * @calls textChanged()
+	 */
 	public void removeUpdate(DocumentEvent e)
 	{
-		// implemented due to DocumentListener interface
 		textChanged(true);
+	}
+
+	/**
+	 * Exists due to CaretListener interface. Detects
+	 * when cursor position is changed.
+	 *
+	 * @calls EventManager.sendEvent()
+	 *
+	 * @param  e  event when cursor does change position
+	 */
+	public void caretUpdate(CaretEvent e)
+	{
+		int row = 0;
+		int column = 0;
+		
+		try {
+			// calculate row
+			int y = textArea.modelToView(e.getDot()).y;
+			int rowHeight = textArea.getFontMetrics( textArea.getFont() ).getHeight();
+
+			row = y/rowHeight + 1;
+			
+			// calculate offset
+			int offset = e.getDot();
+			column = offset - Utilities.getRowStart(textArea, offset) + 1;
+			
+		} catch (Exception ex) { }
+		
+		this.eventManager.sendEvent(Events.EVENTID_EDITOR_CURSOR_CHANGE, new Point(row, column));
 	}
 
 	public void update(String eventIdentifier, Object obj)

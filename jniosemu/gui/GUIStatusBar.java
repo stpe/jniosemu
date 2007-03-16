@@ -1,6 +1,7 @@
 package jniosemu.gui;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.*;
@@ -8,9 +9,9 @@ import java.util.*;
 import jniosemu.events.*;
 
 /**
- * Creates and manages the GUI component of the PC (Program Counter) view.
+ * Creates and manages the GUI component of the status bar.
  */
- public class GUIPCView extends JPanel
+ public class GUIStatusBar extends JPanel
 											  implements EventObserver {
 
 	/**
@@ -20,9 +21,9 @@ import jniosemu.events.*;
 	private EventManager eventManager;
 
 	/**
-	 * Label that displays the Program Counter address.
+	 * Label that display current cursor position in editor.
 	 */
-	private JLabel pcLabel;
+	private JLabel cursorLabel;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -34,56 +35,57 @@ import jniosemu.events.*;
 	 *
 	 * @param  eventManager  The Event Manager object.
 	 */
-	public GUIPCView(EventManager eventManager)
+	public GUIStatusBar(EventManager eventManager)
 	{
 		super();
 
 		this.eventManager = eventManager;
 
 		setup();
-		setPC(0);
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_PC_CHANGE, this);
-		this.eventManager.addEventObserver(Events.EVENTID_RESET, this);
+		this.eventManager.addEventObserver(Events.EVENTID_EDITOR_CURSOR_CHANGE, this);
 	}
 
 	/**
 	 * Setup GUI components and attributes.
 	 *
 	 * @post      components created and added to panel
-	 * @calledby  GUIPCView
+	 * @calledby  GUIStatusBar
 	 */
 	private void setup()
 	{
 		this.setLayout(new FlowLayout(FlowLayout.LEADING));
+		this.setBorder(
+			BorderFactory.createCompoundBorder(
+				BorderFactory.createEmptyBorder(2, 0, 0, 0),
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
+			)
+		);
+				
+		cursorLabel = new JLabel();
+		setCursorLabel(new Point(1,1));
 		
-		pcLabel = new JLabel();
-		
-		this.add(pcLabel);
+		this.add(cursorLabel);
 	}
 
 	/**
-	 * Set Program Counter address in GUI.
+	 * Update displayed cursor coordinates in status bar.
 	 *
 	 * @calledby update();
 	 *
-	 * @param  addr  Address of program counter
+	 * @param  p  point representing row and column of cursor
 	 */
-	public void setPC(int addr)
+	public void setCursorLabel(Point p)
 	{
-		pcLabel.setText("PC: " + addr);
+		cursorLabel.setText("Line " + (int) p.getX() + ", Column " + (int) p.getY());
 	}
 
 	public void update(String eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_PC_CHANGE))
+		if (eventIdentifier.equals(Events.EVENTID_EDITOR_CURSOR_CHANGE))
 		{
-			setPC( ((Integer) obj).intValue());
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_RESET))
-		{
-			setPC(0);
+			setCursorLabel( (Point) obj );
 		}
 	}
 
