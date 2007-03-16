@@ -171,12 +171,12 @@ public class Events {
 	/**
 	 * Error occured during emulation.
 	 */
-	public static final String EVENTID_EMULATE_ERROR = "EMULATE_ERROR";
+	public static final String EVENTID_RUNTIME_ERROR = "RUNTIME_ERROR";
 
 	/**
-	 * Cursor changed line in editor.
+	 * Cursor changed in editor.
 	 */
-	public static final String EVENTID_EDITOR_LINE_CHANGE = "EDITOR_LINE_CHANGE";
+	public static final String EVENTID_EDITOR_CURSOR_CHANGE = "EDITOR_CURSOR_CHANGE";
 
 /**
 	 * Insert instruction using insert menu.
