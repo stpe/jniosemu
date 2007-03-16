@@ -106,7 +106,7 @@ public class Events {
 	/**
 	 * Compilation of current source code successfully done.
 	 */
-	public static final String EVENTID_COMPILATION_DONE = "COMPILATION_DONE";	
+	public static final String EVENTID_EMULATION_READY = "EMULATION_READY";
 
 	/**
 	 * Program counter in emulated program has changed.
@@ -178,10 +178,23 @@ public class Events {
 	 */
 	public static final String EVENTID_EDITOR_CURSOR_CHANGE = "EDITOR_CURSOR_CHANGE";
 
-/**
+	/**
 	 * Insert instruction using insert menu.
 	 */
 	public static final String EVENTID_INSERT_INSTRUCTION = "INSERT_INSTRUCTION";
 
-}
+	/**
+	 * Emulation started.
+	 */
+	public static final String EVENTID_EMULATION_START = "EMULATION_START";
 
+	/**
+	 * Emulation stoped.
+	 */
+	public static final String EVENTID_EMULATION_STOP = "EMULATION_STOP";
+
+	/**
+	 * Emulation ended.
+	 */
+	public static final String EVENTID_EMULATION_END = "EMULATION_END";
+}

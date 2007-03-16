@@ -71,7 +71,7 @@ import jniosemu.emulator.*;
 
 		// add events to listen to
 		String[] events = {
-			Events.EVENTID_COMPILATION_DONE,
+			Events.EVENTID_EMULATION_READY,
 			Events.EVENTID_PC_CHANGE,
 			Events.EVENTID_TOGGLE_BREAKPOINT
 		};
@@ -153,7 +153,7 @@ import jniosemu.emulator.*;
 
 	public void update(String eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_COMPILATION_DONE))
+		if (eventIdentifier.equals(Events.EVENTID_EMULATION_READY))
 		{
 			setProgram( (Program) obj );
 		}

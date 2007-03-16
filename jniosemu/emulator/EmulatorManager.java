@@ -19,11 +19,14 @@ import jniosemu.instruction.emulator.Instruction;
  */
 public class EmulatorManager implements EventObserver
 {
-	private EventManager eventManager;
 	/**
-	 * PC address
+	 * Program counter address
 	 */
 	private int pc = MemoryManager.PROGRAMSTARTADDR;
+	/**
+	 * EventManager that is used
+	 */
+	private EventManager eventManager;
 	/**
 	 * MemoryManager that is used
 	 */
@@ -45,6 +48,10 @@ public class EmulatorManager implements EventObserver
 	 */
 	private boolean running = false;
 	/**
+	 * True if emulation ended
+	 */
+	private boolean ended = true;
+	/**
 	 * Current program
 	 */
 	private Program program;
@@ -56,9 +63,9 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * Init EmulatorManager
 	 *
-	 * @post Emulator, memory and pc is set
+	 * @post emulator and eventManager is set and eventlistener is added
 	 * @calledby JNiosEmu.main()
-	 * @calls Emulator(), MemoryManager()
+	 * @calls Emulator(), EventManager.addEventObserver()
 	 */
 	public EmulatorManager(EventManager eventManager) {
 		this.emulator = new Emulator(this);
@@ -86,7 +93,7 @@ public class EmulatorManager implements EventObserver
 	}
 
 	/**
-	 * Return the PC address
+	 * Change PC address
 	 *
 	 * @calledby Emulator
 	 *
@@ -95,7 +102,7 @@ public class EmulatorManager implements EventObserver
 	 */
 	public void writePC(int value) throws EmulatorException {
 		if (value % 4 != 0)
-			throw new EmulatorException();
+			throw new EmulatorException("Program counter address must be a multiplier of 4");
 
 		this.pc = value;
 	}
@@ -104,23 +111,45 @@ public class EmulatorManager implements EventObserver
 	 * Run instructions as long as there are any or program is stopped
 	 *
 	 * @calledby update()
-	 * @calls step()
-	 *
-	 * @throws EmulatorException  If something goes wrong when trying to run a instruction
+	 * @calls startEvent, stopEvent(), step()
 	 */
-	public void run() {
+	public void runAll() {
+		this.running = true;
+		this.startEvent();
+
 		while (this.step());
+
+		this.running = false;
+		this.stopEvent();
+	}
+
+	/**
+	 * Run one instruction
+	 *
+	 * @calledby update()
+	 * @calls startEvent, stopEvent(), step()
+	 */
+	public void runOne() {
+		this.running = true;
+		this.startEvent();
+
+		this.step();
+
+		this.running = false;
+		this.stopEvent();
 	}
 
 	/**
 	 * Run next instruction
 	 *
+	 * @pre program must be loaded
 	 * @post update pc to next instruction
-	 * @calledby update(), run()
-	 * @calls MemoryManager.readInt(), InstructionManager.get(), Instruction.run()
+	 * @checks If Instruction.run() throws an error send EVENTID_RUNTIME_ERROR
+	 * @calledby runAll(), runOne()
+	 * @calls MemoryManager.readInt(), InstructionManager.get(), Instruction.run(), pcChange(), EventManager.sendEvent()
 	 *
-	 * @throws EmulatorException  If it can't get an opcode from MemoryManager, an instruction from InstructionManager or run() on Instruction
-	 */	
+	 * @return True if the emulation can continue
+	 */
 	public boolean step() {
 		this.register.resetState();
 
@@ -128,6 +157,7 @@ public class EmulatorManager implements EventObserver
 			int opCode = this.memory.readInt(this.pc);
 			if (opCode == 0) {
 				this.pcChange();
+				this.ended = true;
 				return false;
 			}
 
@@ -135,11 +165,13 @@ public class EmulatorManager implements EventObserver
 			instruction.run(this.emulator);
 			this.pc += 4;
 		} catch (EmulatorException e) {
-			System.out.println("ERROR");
+			this.eventManager.sendEvent(Events.EVENTID_RUNTIME_ERROR, e.getMessage());
+			this.ended = true;
+			return false;
 		}
 
 		this.pcChange();
-		
+
 		return !this.breakpoints.containsKey(this.pc);
 	}
 
@@ -147,6 +179,8 @@ public class EmulatorManager implements EventObserver
 	 * Helpfunction that returns the current MemoryManager
 	 *
 	 * @calledby Emulator
+	 *
+	 * @return Current MemoryManager
 	 */
 	public MemoryManager getMemoryManager() {
 		return this.memory;
@@ -156,6 +190,8 @@ public class EmulatorManager implements EventObserver
 	 * Helpfunction that returns the current RegisterManager
 	 *
 	 * @calledby Emulator
+	 *
+	 * @return Current RegisterManager
 	 */
 	public RegisterManager getRegisterManager() {
 		return this.register;
@@ -164,7 +200,7 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * Get the current compiled program
 	 *
-	 * @return program
+	 * @return Current program
 	 */
 	public Program getProgram() {
 		return this.program;
@@ -179,10 +215,14 @@ public class EmulatorManager implements EventObserver
 	}
 
 	/**
-	 * Compile the sourcecode that exists in the editor
+	 * Compile the sourcecode
 	 *
+	 * @post Event should be sent. Both if an error has occured or not.
+	 * @checks If an error occured during compile or link send EVENTID_COMPILE_ERROR
 	 * @calledby update()
-	 * @calls Compiler(), Compiler.compile(), Compiler.link()
+	 * @calls Compiler(), Compiler.compile(), Compiler.link(), EventManager.sendEvent(), Program.toggleBreakpoint, load()
+	 *
+	 * @param lines Sourcecode of the program
 	 */
 	public void compile(String lines) {
 		Compiler compiler = new Compiler(lines);
@@ -200,7 +240,6 @@ public class EmulatorManager implements EventObserver
 		for (Integer lineNumber: this.breakpoints.values())
 			this.program.toggleBreakpoint(lineNumber.intValue());
 
-		this.eventManager.sendEvent(Events.EVENTID_COMPILATION_DONE, this.program);
 		this.load();
 	}
 
@@ -217,7 +256,7 @@ public class EmulatorManager implements EventObserver
 	 * Reset the emulation
 	 *
 	 * @calledby update()
-	 * @calls RegisterManager.reset(), MemoryManager.reset()
+	 * @calls RegisterManager(), MemoryManager(), IOManager(), Program.getStartAddr(), EventManager.sendEvent(), pcChange()
 	 */
 	public void load() {
 		this.memory = new MemoryManager(program.getBinaryProgram(), program.getBinaryVariables());
@@ -225,12 +264,16 @@ public class EmulatorManager implements EventObserver
 		this.pc = this.program.getStartAddr();
 		this.register = new RegisterManager();
 
+		this.ended = false;
+		this.eventManager.sendEvent(Events.EVENTID_EMULATION_READY, this.program);
+
 		this.pcChange();
 	}
 
 	/**
 	 * Toggle breakpoint
 	 *
+	 * @post Add breakpoint to breakpoints and update Program
 	 * @calledby update()
 	 * @calls Program.toggleBreakpoint(), EVENTID_TOGGLE_BREAKPOINT
 	 *
@@ -250,16 +293,19 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * Listen for events and acts on them
 	 *
-	 * @calledby EVENTID_COMPILE, EVENTID_RUN, EVENTID_PAUSE, EVENTID_STEP, EVENTID_RESET
-	 * @calls compile(), run(), pause(), step(), reset()
+	 * @calledby EVENTID_COMPILE, EVENTID_RUN, EVENTID_PAUSE, EVENTID_STEP, EVENTID_RESET, EVENTID_GUI_TOGGLE_BREAKPOINT
+	 * @calls compile(), runAll(), pause(), runOne(), load(), toggleBreakpoint()
+	 *
+	 * @param eventIdentifier Event identifier
+	 * @param obj Argument depending of which event
 	 */
 	public void update(String eventIdentifier, Object obj) {
 		if (eventIdentifier.equals(Events.EVENTID_COMPILE)) {
 			this.compile((String)obj);
 		} else if (eventIdentifier.equals(Events.EVENTID_STEP)) {
-			this.step();
+			this.runOne();
 		} else if (eventIdentifier.equals(Events.EVENTID_RUN)) {
-			this.run();
+			this.runAll();
 		} else if (eventIdentifier.equals(Events.EVENTID_PAUSE)) {
 			this.pause();
 		} else if (eventIdentifier.equals(Events.EVENTID_RESET)) {
@@ -277,5 +323,30 @@ public class EmulatorManager implements EventObserver
 	private void pcChange() {
 		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, new Integer(this.pc));
 		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());
+	}
+
+	/**
+	 * Sends event when compilation starts end
+	 *
+	 * @calledby runAll(), runOne()
+	 * @calls EVENTID_EMULATION_START
+	 */
+	private void startEvent() {
+		this.eventManager.sendEvent(Events.EVENTID_EMULATION_START, null);
+	}
+
+	/**
+	 * Sends event and set status when the emulation ended
+	 *
+	 * @checks  If program ended send EVENTID_EMULATION_END
+	 * @calledby runAll(), runOne()
+	 * @calls EVENTID_EMULATION_END, EVENTID_EMULATION_STOP
+	 */
+	private void stopEvent() {
+		if (this.ended) {
+			this.eventManager.sendEvent(Events.EVENTID_EMULATION_END, null);
+		} else {
+			this.eventManager.sendEvent(Events.EVENTID_EMULATION_STOP, null);
+		}
 	}
 }

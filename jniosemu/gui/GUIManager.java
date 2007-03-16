@@ -62,7 +62,7 @@ public class GUIManager
 			Events.EVENTID_TOGGLE_TAB,
 			Events.EVENTID_EXIT,
 			Events.EVENTID_ABOUT,
-			Events.EVENTID_COMPILATION_DONE,
+			Events.EVENTID_EMULATION_READY,
 			Events.EVENTID_CHANGE_WINDOW_TITLE,
 			Events.EVENTID_VIEW_VARIABLES,
 			Events.EVENTID_VIEW_MEMORY
@@ -214,7 +214,7 @@ public class GUIManager
 			if (eventIdentifier.equals(Events.EVENTID_TOGGLE_TAB))
 				toggleTab();
 		else
-			if (eventIdentifier.equals(Events.EVENTID_COMPILATION_DONE))
+			if (eventIdentifier.equals(Events.EVENTID_EMULATION_READY))
 				changeTab( new Integer(TAB_EMULATOR) );
 		else
 			if (eventIdentifier.equals(Events.EVENTID_CHANGE_WINDOW_TITLE))

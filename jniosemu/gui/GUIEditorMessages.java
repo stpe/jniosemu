@@ -56,7 +56,7 @@ public class GUIEditorMessages extends JPanel
 	 */
 	private void setup()
 	{
-		editorMessages = new JTextArea("Editor messages...\n", 5, 60);
+		editorMessages = new JTextArea("", 5, 60);
 		editorMessages.setEditable(false);
 		editorMessages.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
@@ -69,15 +69,18 @@ public class GUIEditorMessages extends JPanel
 		// put everything into the editor panel
 		this.setLayout(new BorderLayout());
 		this.add(editorMessagesScrollPane, BorderLayout.CENTER);
+		this.setVisible(false);
 	}
 
 	public void update(String eventIdentifier, Object obj)
 	{
 		if (eventIdentifier.equals(Events.EVENTID_COMPILE)) {
 			editorMessages.setText("");
+			this.setVisible(false);
 		} else if (eventIdentifier.equals(Events.EVENTID_COMPILE_ERROR)) {
 			String msg = (String) obj;
 			editorMessages.append(msg + "\n");
+			this.setVisible(true);
 		}
 	}
 
