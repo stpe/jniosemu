@@ -54,7 +54,7 @@ public class ProgramLine
 	public ProgramLine(int opCode, Instruction instruction, String sourceCodeLine, int lineNumber, ProgramLine parent) {
 		this.opCode = opCode;
 		this.instruction = instruction;
-		this.sourceCodeLine = sourceCodeLine;
+		this.sourceCodeLine = this.replaceTabWithSpaces(sourceCodeLine, 8);
 		this.lineNumber = lineNumber;
 		this.parent = parent;
 
@@ -64,6 +64,34 @@ public class ProgramLine
 	 	} else {
 			this.childs = 1;
 		}
+	}
+
+	/**
+	 * Replace tab with spaces
+	 *
+	 * @calledby ProgramLine()
+	 *
+	 * @param str Original string
+	 * @param spacesPerTab spaces per tab
+	 * @return New string
+	 */
+	public static String replaceTabWithSpaces(String str, int spacesPerTab) {
+		if (str == null)
+			return null;
+
+		String ret = "";
+		int addedChars = 0;
+		for (int i = 0; i < str.length(); i++) {
+			if (str.charAt(i) == '\t') {
+				int spaces = spacesPerTab - ((i + addedChars) % spacesPerTab);
+				for (int j = 0; j < spaces; j++)
+					ret = ret.concat(" ");
+				addedChars += spaces - 1;
+			} else {
+				ret = ret.concat(str.substring(i, i+1));
+			}
+		}
+		return ret;
 	}
 
 	/**
