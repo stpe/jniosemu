@@ -26,37 +26,33 @@ public class IOManager
 	 * Init IOManager
 	 *
 	 * @post Populate ioDevices.
-	 * @calledby EmulatorManager
+	 * @calledby EmulatorManager.load()
+	 * @calls LedDevice(), ButtonDevice(), DipSwitchDevice()
 	 *
-	 * @param memory  The MemoryManager that is currently used
+	 * @param memory  MemoryManager currently used
+	 * @param eventManager EventManager currently used
 	 */
 	public IOManager(MemoryManager memory, EventManager eventManager) {
-		this.reset(memory, eventManager);
-	}
-
-	/**
-	 * Reset
-	 *
-	 * @param memory Current MemoryManager
-	 */
-	public void reset(MemoryManager memory) {
-		this.reset(memory, null);
-	}
-
-	/**
-	 * Reset
-	 *
-	 * @param memory Current MemoryManager
-	 * @param eventManager Current EventManager
-	 */
-	public void reset(MemoryManager memory, EventManager eventManager) {
 		this.memory = memory;
-
-		if (eventManager != null)
-			this.eventManager = eventManager;
+		this.eventManager = eventManager;
 
 		this.ioDevices.add(new LedDevice(this.memory, this.eventManager));
 		this.ioDevices.add(new ButtonDevice(this.memory, this.eventManager));
 		this.ioDevices.add(new DipSwitchDevice(this.memory, this.eventManager));
+	}
+
+	/**
+	 * Reset
+	 *
+	 * @calledby EmulatorManager.load();
+	 * @calls IODevice.reset()
+	 *
+	 * @param memory Current MemoryManager
+	 */
+	public void reset(MemoryManager memory) {
+		this.memory = memory;
+
+		for (IODevice ioDevice: this.ioDevices)
+			ioDevice.reset(this.memory);
 	}
 }

@@ -38,7 +38,7 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * IOManager that is used
 	 */
-	private IOManager io;
+	private IOManager io = null;
 	/**
 	 * Emulator that is used
 	 */
@@ -260,7 +260,13 @@ public class EmulatorManager implements EventObserver
 	 */
 	public void load() {
 		this.memory = new MemoryManager(program.getBinaryProgram(), program.getBinaryVariables());
-		this.io = new IOManager(this.memory, this.eventManager);
+		
+		if (this.io == null) {
+			this.io = new IOManager(this.memory, this.eventManager);
+		} else {
+			this.io.reset(this.memory);
+		}
+
 		this.pc = this.program.getStartAddr();
 		this.register = new RegisterManager();
 

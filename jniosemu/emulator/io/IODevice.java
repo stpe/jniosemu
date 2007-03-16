@@ -29,5 +29,5 @@ public abstract class IODevice
 
 	public abstract void memoryChange();
 
-	public abstract void reset(MemoryManager memory, EventManager eventManager);
+	public abstract void reset(MemoryManager memory);
 }

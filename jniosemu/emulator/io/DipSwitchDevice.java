@@ -19,6 +19,10 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 	 */
 	public static int MEMORYLENGTH = 16;
 	/**
+	 * Name of memoryblock
+	 */
+	public static String MEMORYNAME = "DipSwitches";
+	/**
 	 * Number of dipswitches
 	 */
 	public static int COUNT = 4;
@@ -39,29 +43,17 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 	 * Init DipSwitchDevice
 	 *
 	 * @post Add events. Init states.
-	 * @calledby IOManager.reset()
+	 * @calledby IOManager()
 	 *
 	 * @param memory  current MemoryManager
 	 * @param eventManager current EventManager
 	 */
 	public DipSwitchDevice(MemoryManager memory, EventManager eventManager) {
-		this.reset(memory, eventManager);
-	}
-
-	/**
-	 * Reset
-	 *
-	 * @calledby  DipSwitchDevice()
-	 *
-	 * @param memory current MemoryManager
-	 * @param eventManager current EventManager
-	 */
-	public void reset(MemoryManager memory, EventManager eventManager) {
 		this.memory = memory;
 		this.eventManager = eventManager;
 
 		this.eventManager.addEventObserver(Events.EVENTID_GUI_DIPSWITCHES, this);
-		this.memory.register("DipSwitches", MEMORYADDR, MEMORYLENGTH, this);
+		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
 
 		this.state = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
@@ -71,10 +63,26 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 	}
 
 	/**
+	 * Reset
+	 *
+	 * @calledby  IOManager.reset()
+	 *
+	 * @param memory current MemoryManager
+	 */
+	public void reset(MemoryManager memory) {
+		this.memory = memory;
+
+		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
+		this.memoryChange();
+		this.sendEvent();
+	}
+
+	/**
 	 * When memory change in in this region this method is called. And then we
 	 * want to restore the memory.
 	 *
-	 * @calledby MemoryManager.memoryChange()
+	 * @calledby MemoryManager.memoryChange(), reset()
+	 * @calls MemoryManager.writeInt(), vectorToInt()
 	 */
 	public void memoryChange() {
 		this.memory.writeInt(MEMORYADDR     , this.vectorToInt(this.state), false);
@@ -87,6 +95,7 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 	 * Send states to eventManager
 	 *
 	 * @calledby reset(), update()
+	 * @calls EVENTID_UPDATE_DIPSWITCHES
 	 */
 	private void sendEvent() {
 		this.eventManager.sendEvent(Events.EVENTID_UPDATE_DIPSWITCHES, this.state);

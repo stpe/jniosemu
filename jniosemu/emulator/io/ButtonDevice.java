@@ -19,6 +19,10 @@ public class ButtonDevice extends IODevice implements EventObserver
 	 */
 	public static int MEMORYLENGTH = 16;
 	/**
+	 * Name of memoryblock
+	 */
+	public static String MEMORYNAME = "Buttons";
+	/**
 	 * Number of dipswitches
 	 */
 	public static int COUNT = 4;
@@ -39,24 +43,12 @@ public class ButtonDevice extends IODevice implements EventObserver
 	 * Init ButtonDevice
 	 *
 	 * @post Add events. Init states.
-	 * @calledby IOManager.reset()
+	 * @calledby IOManager()
 	 *
 	 * @param memory  current MemoryManager
 	 * @param eventManager current EventManager
 	 */
 	public ButtonDevice(MemoryManager memory, EventManager eventManager) {
-		this.reset(memory, eventManager);
-	}
-
-	/**
-	 * Reset
-	 *
-	 * @calledby  ButtonDevice()
-	 *
-	 * @param memory current MemoryManager
-	 * @param eventManager current EventManager
-	 */
-	public void reset(MemoryManager memory, EventManager eventManager) {
 		this.memory = memory;
 		this.eventManager = eventManager;
 
@@ -64,12 +56,29 @@ public class ButtonDevice extends IODevice implements EventObserver
 			Events.EVENTID_GUI_BUTTON_RELEASED,
 			Events.EVENTID_GUI_BUTTON_PRESSED};
 		this.eventManager.addEventObserver(events, this);
-		this.memory.register("Button", MEMORYADDR, MEMORYLENGTH, this);
+		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
 
 		this.state = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
 			this.state.add(i, false);
 
+		this.sendEvent();
+	}
+
+	/**
+	 * Reset
+	 *
+	 * @calledby  IOManager.reset()
+	 *
+	 * @param memory current MemoryManager
+	 */
+	public void reset(MemoryManager memory) {
+		this.memory = memory;
+
+		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
+		for (int i = 0; i < COUNT; i++)
+			this.state.add(i, false);
+		this.memoryChange();
 		this.sendEvent();
 	}
 
@@ -89,7 +98,7 @@ public class ButtonDevice extends IODevice implements EventObserver
 	/**
 	 * Send states to eventManager
 	 *
-	 * @calledby reset(), update()
+	 * @calledby ButtonDevice(), reset(), update()
 	 */
 	private void sendEvent() {
 		this.eventManager.sendEvent(Events.EVENTID_UPDATE_BUTTONS, this.state);

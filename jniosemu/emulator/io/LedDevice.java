@@ -20,6 +20,10 @@ public class LedDevice extends IODevice
 	 */
 	public static int MEMORYLENGTH = 16;
 	/**
+	 * Name of memoryblock
+	 */
+	public static String MEMORYNAME = "Leds";
+	/**
 	 * Number of leds
 	 */
 	public static int COUNT = 4;
@@ -46,7 +50,11 @@ public class LedDevice extends IODevice
 	 * @param eventManager Current EventManager
 	 */
 	public LedDevice(MemoryManager memory, EventManager eventManager) {
-		this.reset(memory, eventManager);
+		this.memory = memory;
+		this.eventManager = eventManager;
+
+		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
+		this.memoryChange();
 	}
 
 	/**
@@ -55,25 +63,22 @@ public class LedDevice extends IODevice
 	 * @calledby LedDevice()
 	 *
 	 * @param memory Current MemoryManager
-	 * @param eventManager Current EventManager
 	 */
-	public void reset(MemoryManager memory, EventManager eventManager) {
+	public void reset(MemoryManager memory) {
 		this.memory = memory;
-		this.eventManager = eventManager;
 
-		this.memory.register("Leds", MEMORYADDR, MEMORYLENGTH, this);
-
-		this.state = new Vector<Boolean>(COUNT);
-		for (int i = 0; i < COUNT; i++)
-			this.state.add(i, false);
-
-		this.eventManager.sendEvent(Events.EVENTID_UPDATE_LEDS, this.state);
+		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
+		this.memoryChange();
 	}
 
 	public void memoryChange() {
 		int value = this.memory.readInt(MEMORYADDR, false);
 		this.state = this.intToVector(value, COUNT);
 
+		this.sendEvent();
+	}
+
+	public void sendEvent() {
 		this.eventManager.sendEvent(Events.EVENTID_UPDATE_LEDS, this.state);
 	}
 }
