@@ -86,6 +86,7 @@ public class GUIManager
 		// create and set up the window.
 		frame = new JFrame("JNiosEmu");
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setIconImage((new ImageIcon("graphics/icon.png")).getImage());
 		frame.setContentPane(mainPanel);
 
 		// add listener for window close
