@@ -22,6 +22,11 @@ public class Events {
 	public static final String EVENTID_SAVE = "SAVE";
 
 	/**
+	 * Save document as different file name.
+	 */	
+	public static final String EVENTID_SAVE_AS = "SAVE_AS";
+
+	/**
 	 * New document created.
 	 */	
 	public static final String EVENTID_NEW_DONE = "NEW_DONE";

@@ -60,7 +60,6 @@ public class GUIManager
 			Events.EVENTID_EXCEPTION,
 			Events.EVENTID_CHANGE_TAB,
 			Events.EVENTID_TOGGLE_TAB,
-			Events.EVENTID_EXIT,
 			Events.EVENTID_ABOUT,
 			Events.EVENTID_EMULATION_READY,
 			Events.EVENTID_CHANGE_WINDOW_TITLE,
@@ -86,8 +85,25 @@ public class GUIManager
 
 		// create and set up the window.
 		frame = new JFrame("JNiosEmu");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setContentPane(mainPanel);
+
+		// add listener for window close
+		frame.addWindowListener(
+			new WindowAdapter()
+    	{
+    		/**
+    		 * Send event when user is trying to close the window.
+    		 *
+    		 * @calls  EventManager.sendEvent()
+    		 *
+    		 * @param  e  event when window is closing
+    		 */
+      	public void windowClosing(WindowEvent e) {
+      		eventManager.sendEvent(Events.EVENTID_EXIT);
+      	}
+    	}
+    );
 
 		setup(mainPanel);
 
@@ -199,10 +215,7 @@ public class GUIManager
 
 	public void update(String eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_EXIT))
-			exitFile();
-		else
-			if (eventIdentifier.equals(Events.EVENTID_ABOUT))
+		if (eventIdentifier.equals(Events.EVENTID_ABOUT))
 				showAbout();
 		else
 			if (eventIdentifier.equals(Events.EVENTID_EXCEPTION))
@@ -225,18 +238,6 @@ public class GUIManager
 		else
 			if (eventIdentifier.equals(Events.EVENTID_VIEW_VARIABLES))
 				showVariableView();
-	}
-
-	/**
-	 * Exit the application.
-	 *
-	 * @post      Application is shutdown.
-	 * @calledby  update()
-	 * @calls     EventManager.sendEvent()
-	 */
-	private void exitFile()
-	{
-		System.exit(0);
 	}
 
 	/**

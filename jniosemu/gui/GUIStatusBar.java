@@ -9,7 +9,9 @@ import java.util.*;
 import jniosemu.events.*;
 
 /**
- * Creates and manages the GUI component of the status bar.
+ * Creates and manages the GUI component of the status bar in
+ * the editor tab. The status bar is used to display the current
+ * position (row and column) of the cursor.
  */
  public class GUIStatusBar extends JPanel
 											  implements EventObserver {
@@ -52,6 +54,7 @@ import jniosemu.events.*;
 	 *
 	 * @post      components created and added to panel
 	 * @calledby  GUIStatusBar
+	 * @calls     setCursorLabel()
 	 */
 	private void setup()
 	{
@@ -72,7 +75,7 @@ import jniosemu.events.*;
 	/**
 	 * Update displayed cursor coordinates in status bar.
 	 *
-	 * @calledby update();
+	 * @calledby update()
 	 *
 	 * @param  p  point representing row and column of cursor
 	 */

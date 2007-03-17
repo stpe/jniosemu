@@ -76,6 +76,7 @@ public class GUIEditor extends JPanel
 		this.eventManager.addEventObserver(Events.EVENTID_OPEN, this);
 		this.eventManager.addEventObserver(Events.EVENTID_SAVE, this);
 		this.eventManager.addEventObserver(Events.EVENTID_GUI_COMPILE, this);
+		this.eventManager.addEventObserver(Events.EVENTID_EXIT, this);
 	}
 
 	/**
@@ -105,6 +106,19 @@ public class GUIEditor extends JPanel
 		fc.setCurrentDirectory(new File("."));
 
 		textChanged(false);
+	}
+
+	/**
+	 * Returns true if current document has changed since
+	 * last save.
+	 *
+	 * @calledby GUIManager.exit()
+	 *
+	 * @return   true if document changed since last save
+	 */
+	public boolean hasChanged()
+	{
+		return this.textHasChanged;
 	}
 
 	/**
@@ -213,6 +227,10 @@ public class GUIEditor extends JPanel
 		{
 			prepareCompile();
 		}
+		else if (eventIdentifier.equals(Events.EVENTID_EXIT))
+		{
+			exitApplication();
+		}
 	}
 
 	/**
@@ -272,10 +290,12 @@ public class GUIEditor extends JPanel
 	 * if file is successful selected.
 	 *
 	 * @pre       Instance of FileChooser fc is created.
-	 * @calledby  update()
+	 * @calledby  update(), exitApplication()
 	 * @calls     EventManager.sendEvent(), Editor.write()
+	 *
+	 * @return  true if successfully saved
 	 */
-	private void saveDocument()
+	private boolean saveDocument()
 	{
 		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
@@ -292,12 +312,17 @@ public class GUIEditor extends JPanel
 				eventManager.sendEvent(Events.EVENTID_SAVED);
 				// change tab to editor tab (if not current)
 				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, new Integer(GUIManager.TAB_EDITOR));
+				
+				return true;
 			}
 			catch (IOException e)
 			{
 				eventManager.sendEvent(Events.EVENTID_EXCEPTION, e);
+				return false;
 			}
 		}
+		
+		return false;
 	}
 
 	/**
@@ -311,6 +336,51 @@ public class GUIEditor extends JPanel
 	{
 		// send source code with event
 		eventManager.sendEvent(Events.EVENTID_COMPILE, textArea.getText());
+	}
+
+	/**
+	 * Exit the application.
+	 *
+	 * @post      Application is shutdown.
+	 * @checks    If current document has been modified since last save
+	 *            the user is given the option save it before exiting,
+	 *            cancel the exit operation or exit without saving.
+	 * @calledby  update()
+	 * @calls     hasChanged(), saveDocument()
+	 */
+	private void exitApplication()
+	{
+		if (hasChanged())
+		{
+			// show option dialog
+			int n = JOptionPane.showOptionDialog(
+					this,
+					"Save changes to " + this.documentTitle + "?",
+					"JNiosEmu",
+					JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.WARNING_MESSAGE,
+					null,
+					null,
+					null
+			);
+			
+			// check user response
+			switch (n)
+			{
+				case JOptionPane.YES_OPTION:
+					if (saveDocument() == false)
+					{
+						// don't exit if save wasn't successfull
+						return;
+					}
+					break;
+				case JOptionPane.CANCEL_OPTION:
+					return;
+			}
+		}
+		
+		// exit application
+		System.exit(0);		
 	}
 
 }

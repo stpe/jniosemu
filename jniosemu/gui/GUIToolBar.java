@@ -50,18 +50,23 @@ public class GUIToolBar extends JToolBar
 		JButton button = null;
 
 		button = makeButton("new", Events.EVENTID_NEW,
-												"Create new empty source file",
+												"Create new document",
 												"New");
 		this.add(button);
 
 		button = makeButton("open", Events.EVENTID_OPEN,
-												"Open existing source file",
-												"Open");
+												"Open document",
+												"Open...");
 		this.add(button);
 
 		button = makeButton("save", Events.EVENTID_SAVE,
-												"Save source file",
+												"Save document as",
 												"Save");
+		this.add(button);
+
+		button = makeButton("saveas", Events.EVENTID_SAVE_AS,
+												"Save as different file name",
+												"Save As...");
 		this.add(button);
 
 		this.addSeparator();
