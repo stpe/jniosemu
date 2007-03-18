@@ -3,7 +3,9 @@ package jniosemu.editor;
 import java.io.*;
 
 /**
- * Utility class for editor. Read and write files.
+ * This is a utility class for the editor where the user is editing
+ * the source code. This class provides I/O access through read and
+ * write methods for opening and saving source documents.
  */
 public class Editor
 {
