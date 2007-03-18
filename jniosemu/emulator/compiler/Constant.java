@@ -11,6 +11,7 @@ public class Constant
 	 * @param aLine  line of code containing name and value
 	 */
 	public Constant(String aLine) {
+		System.out.println("Constant: "+ aLine);
 		String[] value = aLine.split("\\s*,\\s*", 2);
 		this.name = value[0];
 		this.value = value[1];

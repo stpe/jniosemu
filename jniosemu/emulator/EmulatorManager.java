@@ -152,6 +152,7 @@ public class EmulatorManager implements EventObserver
 	 */
 	public boolean step() {
 		this.register.resetState();
+		int lastPc = this.pc;
 
 		try {
 			int opCode = this.memory.readInt(this.pc);
@@ -170,8 +171,14 @@ public class EmulatorManager implements EventObserver
 			return false;
 		}
 
-		this.pcChange();
+		if (this.pc == lastPc) {
+			this.pc = 0;
+			this.pcChange();
+			this.ended = true;
+			return false;
+		}
 
+		this.pcChange();
 		return !this.breakpoints.containsKey(this.pc);
 	}
 

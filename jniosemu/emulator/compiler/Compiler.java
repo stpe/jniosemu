@@ -114,7 +114,7 @@ public class Compiler
 
 		// Translate all labels into memory addresses
 		if (aLabels != null) {
-			Pattern pLabels = Pattern.compile("[A-Za-z]+");
+			Pattern pLabels = Pattern.compile("[\\w\\_]+");
 			Matcher mLabels = pLabels.matcher(aValue);
 			while (mLabels.find()) {
 				String match = mLabels.group(0);
@@ -261,7 +261,7 @@ public class Compiler
 			String match = mRemoveWhitespace.group(1);
 			if (match.length() > 0) {
 				// Find labels
-				Pattern pLabel = Pattern.compile("([A-Za-z]+):\\s*(.*?)");
+				Pattern pLabel = Pattern.compile("([\\w\\_]+):\\s*(.*?)");
 				Matcher mLabel = pLabel.matcher(match);
 				if (mLabel.matches()) {
 					// Depending if we are in the codepart or not we handle labels different
@@ -329,6 +329,8 @@ public class Compiler
 								} catch (InstructionException e) {
 									throw new CompilerException(aLineNumber, e.getMessage());
 								}
+							} else if (name.equals("end")) {
+								// Not sure if we have to do anything but we have it here so we don't get an error
 							} else {
 								throw new CompilerException(aLineNumber, "Unknown: "+ name);
 							}
