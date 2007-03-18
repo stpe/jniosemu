@@ -1,3 +1,7 @@
+#####################################################################
+# test7.s: Allmänt program som testar lite allt möjligt
+#####################################################################
+
 	.text
 	.equ TEST_NUM, 0x90abcdef	# The number to be tested
 	.global start
