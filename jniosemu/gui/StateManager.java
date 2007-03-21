@@ -43,18 +43,19 @@ public class StateManager implements EventObserver
 	}
 	
 	/**
-	 * Add event observer that listens to given event identifier.
+	 * Add item that is associated with identifier.
 	 *
 	 * @pre       stateTable instance must exist.
 	 * @post      Item added to stateTable.
-	 * @calledby  GUIToolBar.setup(), GUIMenuBar.setup()
+	 * @calledby  GUIToolBar.setup(), GUIMenuBar.setup(),
+	 *            GUIMenuBar.setupInstructions()
 	 *
 	 * @param  eventIdentifier  String identifying the event
 	 * @param  obj              Object that is associated with the event
 	 */
 	public void addItem(String eventIdentifier, AbstractButton obj)
 	{
-		// create list of observers if it doesn't exist		
+		// create list of items if it doesn't exist		
 		if (!stateTable.containsKey(eventIdentifier))
 		{
 			stateTable.put(
@@ -63,11 +64,11 @@ public class StateManager implements EventObserver
 			);
 		}
 		
-		// get list of existing observers
-		ArrayList<AbstractButton> AbstractButtons = stateTable.get(eventIdentifier);
+		// get list of existing items
+		ArrayList<AbstractButton> itemList = stateTable.get(eventIdentifier);
 		
-		// add observer to list
-		AbstractButtons.add(obj);
+		// add item to list
+		itemList.add(obj);
 	}
 
 	/**
@@ -90,14 +91,15 @@ public class StateManager implements EventObserver
 	 */	
 	private void setEnabled(String eventIdentifier, boolean state)
 	{
-		// get list of observers
-		ArrayList<AbstractButton> items = stateTable.get(eventIdentifier);
+		// get list of items
+		ArrayList<AbstractButton> itemList = stateTable.get(eventIdentifier);
 		
-		if (items == null)
+		// if no items associated with event, do nothing
+		if (itemList == null)
 			return;
 		
 		// iterate over all items associated with event
-		for (AbstractButton item : items)
+		for (AbstractButton item : itemList)
 		{
 			item.setEnabled(state);
 		}

@@ -24,7 +24,7 @@ public class GUIMenuBar extends JMenuBar
 	 * @calledby  GUIManager.initGUI()
 	 * @calls     setup()
 	 *
-	 * @param  eventManager  the Event Manager objec.
+	 * @param  eventManager  the Event Manager object
 	 * @param  stateManager  the State Manager object
 	 */
 	public GUIMenuBar(EventManager eventManager, StateManager stateManager)
@@ -33,9 +33,7 @@ public class GUIMenuBar extends JMenuBar
 
 		this.eventManager = eventManager;
 
-		setup();
-		
-		registerWithStateManager(stateManager);
+		setup(stateManager);
 	}
 
 	/**
@@ -43,9 +41,11 @@ public class GUIMenuBar extends JMenuBar
 	 *
 	 * @post      menu items created and added to menu bar
 	 * @calledby  GUIMenuBar
-	 * @calls     createMenuItem(), setupInstructions()
+	 * @calls     createMenuItem(), setupInstructions(), StateManager.addItem()
+	 *
+	 * @param  stateManager  reference to State Manager
 	 */
-	private void setup()
+	private void setup(StateManager stateManager)
 	{
 		JMenu menu;
 
@@ -53,46 +53,84 @@ public class GUIMenuBar extends JMenuBar
 		menu = new JMenu("File");
 		this.add(menu);
 
-		menu.add( createMenuItem("New", Events.EVENTID_NEW, 
-		          KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)) );
-		menu.add( createMenuItem("Open...", Events.EVENTID_OPEN,
-		          KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK)) );
-		menu.add( createMenuItem("Save", Events.EVENTID_SAVE,
-		          KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK)) );
-		menu.add( createMenuItem("Save As...", Events.EVENTID_SAVE_AS,
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0)) );
+		JMenuItem item;
+
+		item = createMenuItem("New", Events.EVENTID_NEW, 
+		          KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		stateManager.addItem(Events.EVENTID_NEW, item);
+		menu.add(item);
+		
+		item = createMenuItem("Open...", Events.EVENTID_OPEN,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+		stateManager.addItem(Events.EVENTID_OPEN, item);
+		menu.add(item);
+		
+		item = createMenuItem("Save", Events.EVENTID_SAVE,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+		stateManager.addItem(Events.EVENTID_SAVE, item);
+		menu.add(item);
+		
+		item = createMenuItem("Save As...", Events.EVENTID_SAVE_AS,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
+		stateManager.addItem(Events.EVENTID_SAVE_AS, item);
+		menu.add(item);
+		
 
 		menu.addSeparator();
-		menu.add( createMenuItem("Exit", Events.EVENTID_EXIT) );
+		item = createMenuItem("Exit", Events.EVENTID_EXIT);
+		menu.add(item);
 
 		// Insert instruction menu
 		
-		this.add( setupInstructions() );
+		this.add( setupInstructions(stateManager) );
 
 		// Emulator menu
 		menu = new JMenu("Emulator");
 		this.add(menu);
 
-		menu.add( createMenuItem("Compile", Events.EVENTID_GUI_COMPILE,
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F9, ActionEvent.CTRL_MASK)) );
-		menu.add( createMenuItem("Run", Events.EVENTID_RUN,
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0)) );
-		menu.add( createMenuItem("Pause", Events.EVENTID_PAUSE) );
-		menu.add( createMenuItem("Step", Events.EVENTID_STEP,
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0)) );
-		menu.add( createMenuItem("Reset", Events.EVENTID_RESET,
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F2, ActionEvent.CTRL_MASK)) );
+		item = createMenuItem("Compile", Events.EVENTID_GUI_COMPILE,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_F9, ActionEvent.CTRL_MASK));
+		stateManager.addItem(Events.EVENTID_GUI_COMPILE, item);
+		menu.add(item);
+		
+		item = createMenuItem("Run", Events.EVENTID_RUN,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
+		stateManager.addItem(Events.EVENTID_RUN, item);
+		menu.add(item);
+		
+		item = createMenuItem("Pause", Events.EVENTID_PAUSE);
+		stateManager.addItem(Events.EVENTID_PAUSE, item);
+		menu.add(item);
+		
+		item = createMenuItem("Step", Events.EVENTID_STEP,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0));
+		stateManager.addItem(Events.EVENTID_STEP, item);
+		menu.add(item);
+		
+		item = createMenuItem("Reset", Events.EVENTID_RESET,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_F2, ActionEvent.CTRL_MASK));
+		stateManager.addItem(Events.EVENTID_RESET, item);
+		menu.add(item);
+		
 
 		// View menu
 		menu = new JMenu("View");
 		this.add(menu);
 
-		menu.add( createMenuItem("Variables...", Events.EVENTID_VIEW_VARIABLES) );
-		menu.add( createMenuItem("Memory...", Events.EVENTID_VIEW_MEMORY) );
+		item = createMenuItem("Variables...", Events.EVENTID_VIEW_VARIABLES);
+		stateManager.addItem(Events.EVENTID_VIEW_VARIABLES, item);
+		menu.add(item);
+		
+		item = createMenuItem("Memory...", Events.EVENTID_VIEW_MEMORY);
+		stateManager.addItem(Events.EVENTID_VIEW_MEMORY, item);
+		menu.add(item);
+		
 
 		menu.addSeparator();
-		menu.add( createMenuItem("Toggle Editor/Emulator", Events.EVENTID_TOGGLE_TAB,
-		          KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK)) );
+		item = createMenuItem("Toggle Editor/Emulator", Events.EVENTID_TOGGLE_TAB,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+		stateManager.addItem(Events.EVENTID_TOGGLE_TAB, item);
+		menu.add(item);
 		
 		this.add(Box.createHorizontalGlue());
 
@@ -100,7 +138,8 @@ public class GUIMenuBar extends JMenuBar
 		menu = new JMenu("Help");
 		this.add(menu);
 
-		menu.add( createMenuItem("About...", Events.EVENTID_ABOUT) );
+		item = createMenuItem("About...", Events.EVENTID_ABOUT);
+		menu.add(item);
 	}
 
 	/**
@@ -110,10 +149,12 @@ public class GUIMenuBar extends JMenuBar
 	 * into the editor.
 	 *
 	 * @calledby  setup()
+	 * @calls     StateManager.addItem()
 	 *
+	 * @param  stateManager  reference to State Manager
 	 * @return  Instruction menu
 	 */
-	private JMenu setupInstructions()
+	private JMenu setupInstructions(StateManager stateManager)
 	{
 		JMenu menu = new JMenu("Instruction");
 		
@@ -191,28 +232,6 @@ public class GUIMenuBar extends JMenuBar
 	private JMenuItem createMenuItem(String text, String actionCommand)
 	{
 		return createMenuItem(text, actionCommand, null);
-	}
-
-	/**
-	 * Register menu items with state manager.
-	 *
-	 * @calledby  GUIMenuBar()
-	 * @calls     StateManager.addItem()
-	 *
-	 * @param  stateManager  reference to State Manager
-	 */
-	private void registerWithStateManager(StateManager stateManager)
-	{
-/*
-		for (int i = 0; i < this.getComponentCount(); i++)
-		{
-			Component comp = this.getComponentAtIndex(i);
-			
-			// if it's a JButton (and not a separator), then update state
-			if (comp.getClass().getName().equals("javax.swing.JButton"))
-					System.out.println("Update state: " + ((JButton) comp).getActionCommand() );
-		}
-*/
 	}
 
 	/**

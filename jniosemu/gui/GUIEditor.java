@@ -234,13 +234,35 @@ public class GUIEditor extends JPanel
 	}
 
 	/**
-	 * Clear editor and start with new document.
+	 * Clear editor and start with new document. If current
+	 * document has been modified since last saved, then an
+	 * option to save the current document is offered to the
+	 * user to prevent unintential loss of data.
 	 *
 	 * @calledby  update()
-	 * @calls     EventManager.sendEvent()
+	 * @calls     EventManager.sendEvent(), hasChanged(), 
+	 *            showSaveChangesDialog(), saveDocument()
 	 */
 	private void newDocument()
 	{
+		// notify user if changes has been made to current document
+		if (hasChanged())
+		{
+			// show option dialog and check user response
+			switch ( showSaveChangesDialog() )
+			{
+				case JOptionPane.YES_OPTION:
+					if (saveDocument() == false)
+					{
+						// don't proceed if save wasn't successfull
+						return;
+					}
+					break;
+				case JOptionPane.CANCEL_OPTION:
+					return;
+			}
+		}		
+		
 		// clear editor
 		textArea.setText("");
 		this.documentTitle = DEFAULT_DOCUMENT_NAME;
@@ -253,14 +275,37 @@ public class GUIEditor extends JPanel
 
 	/**
 	 * Show open file dialog and triggers file open event
-	 * if file is successful selected.
+	 * if file is successful selected. If current document
+	 * has been modified since last saved, then an option
+	 * to save the current document is offered to the user
+	 * to prevent unintential loss of data.
 	 *
 	 * @pre       Instance of FileChooser fc is created.
 	 * @calledby  update()
-	 * @calls     EventManager.sendEvent(), Editor.read()
+	 * @calls     EventManager.sendEvent(), Editor.read(), 
+	 *            hasChanged(), showSaveChangesDialog(), saveDocument()
 	 */
 	private void openDocument()
 	{
+		// notify user if changes has been made to current document
+		if (hasChanged())
+		{
+			// show option dialog and check user response
+			switch ( showSaveChangesDialog() )
+			{
+				case JOptionPane.YES_OPTION:
+					if (saveDocument() == false)
+					{
+						// don't proceed if save wasn't successfull
+						return;
+					}
+					break;
+				case JOptionPane.CANCEL_OPTION:
+					return;
+			}
+		}		
+		
+		// show file dialog
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
 			java.io.File file = fc.getSelectedFile();
@@ -346,26 +391,14 @@ public class GUIEditor extends JPanel
 	 *            the user is given the option save it before exiting,
 	 *            cancel the exit operation or exit without saving.
 	 * @calledby  update()
-	 * @calls     hasChanged(), saveDocument()
+	 * @calls     hasChanged(), saveDocument(), showSaveChangesDialog()
 	 */
 	private void exitApplication()
 	{
 		if (hasChanged())
 		{
-			// show option dialog
-			int n = JOptionPane.showOptionDialog(
-					this,
-					"Save changes to " + this.documentTitle + "?",
-					"JNiosEmu",
-					JOptionPane.YES_NO_CANCEL_OPTION,
-					JOptionPane.WARNING_MESSAGE,
-					null,
-					null,
-					null
-			);
-			
-			// check user response
-			switch (n)
+			// show option dialog and check user response
+			switch ( showSaveChangesDialog() )
 			{
 				case JOptionPane.YES_OPTION:
 					if (saveDocument() == false)
@@ -381,6 +414,27 @@ public class GUIEditor extends JPanel
 		
 		// exit application
 		System.exit(0);		
+	}
+
+	/** 
+   * Show dialog window offering user to save changes of
+   * current document.
+   *
+   * @return  option user selected
+   */
+	private int showSaveChangesDialog()
+	{
+			// show option dialog
+			return JOptionPane.showOptionDialog(
+					this,
+					"Save changes to " + this.documentTitle + "?",
+					"JNiosEmu",
+					JOptionPane.YES_NO_CANCEL_OPTION,
+					JOptionPane.WARNING_MESSAGE,
+					null,
+					null,
+					null
+			);		
 	}
 
 }
