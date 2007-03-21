@@ -164,6 +164,11 @@ public class Events {
 	public static final String EVENTID_GUI_BUTTON_RELEASED = "GUI_BUTTON_RELEASED";
 
 	/**
+	 * IO button in GUI was toggled.
+	 */
+	public static final String EVENTID_GUI_BUTTON_TOGGLE = "GUI_BUTTON_TOGGLE";
+
+	/**
 	 * IO dipswitches in GUI has changed.
 	 */
 	public static final String EVENTID_GUI_DIPSWITCHES = "GUI_DIPSWITCHES";

@@ -23,7 +23,7 @@ public class ButtonDevice extends IODevice implements EventObserver
 	 */
 	public static String MEMORYNAME = "Buttons";
 	/**
-	 * Number of dipswitches
+	 * Number of buttons
 	 */
 	public static int COUNT = 4;
 	/**
@@ -49,20 +49,15 @@ public class ButtonDevice extends IODevice implements EventObserver
 	 * @param eventManager current EventManager
 	 */
 	public ButtonDevice(MemoryManager memory, EventManager eventManager) {
-		this.memory = memory;
 		this.eventManager = eventManager;
 
 		String[] events = {
 			Events.EVENTID_GUI_BUTTON_RELEASED,
-			Events.EVENTID_GUI_BUTTON_PRESSED};
+			Events.EVENTID_GUI_BUTTON_PRESSED,
+			Events.EVENTID_GUI_BUTTON_TOGGLE};
 		this.eventManager.addEventObserver(events, this);
-		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
 
-		this.state = new Vector<Boolean>(COUNT);
-		for (int i = 0; i < COUNT; i++)
-			this.state.add(i, false);
-
-		this.sendEvent();
+		this.reset(memory);
 	}
 
 	/**
@@ -74,10 +69,12 @@ public class ButtonDevice extends IODevice implements EventObserver
 	 */
 	public void reset(MemoryManager memory) {
 		this.memory = memory;
-
 		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
+
+		this.state = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
 			this.state.add(i, false);
+
 		this.memoryChange();
 		this.sendEvent();
 	}
@@ -104,19 +101,29 @@ public class ButtonDevice extends IODevice implements EventObserver
 		this.eventManager.sendEvent(Events.EVENTID_UPDATE_BUTTONS, this.state);
 	}
 
+	/**
+	 * Set state of a button
+	 *
+	 * @calledby update()
+	 *
+	 * @param index button index
+	 * @param state new state
+	 */
+	private void setState(int index, boolean state) {
+		this.state.set(index, state);
+		this.memory.writeInt(MEMORYADDR, this.vectorToInt(this.state), false);
+
+		this.sendEvent();
+	}
+
 	public void update(String eventIdentifier, Object obj) {
 		if (eventIdentifier.equals(Events.EVENTID_GUI_BUTTON_RELEASED)) {
-			int index = ((Integer)obj).intValue();
-			this.state.set(index, false);
-			this.memory.writeInt(MEMORYADDR, this.vectorToInt(this.state), false);
-
-			this.sendEvent();
+			this.setState(((Integer)obj).intValue(), false);
 		} else if (eventIdentifier.equals(Events.EVENTID_GUI_BUTTON_PRESSED)) {
+			this.setState(((Integer)obj).intValue(), true);
+		} else if (eventIdentifier.equals(Events.EVENTID_GUI_BUTTON_TOGGLE)) {
 			int index = ((Integer)obj).intValue();
-			this.state.set(index, true);
-			this.memory.writeInt(MEMORYADDR, this.vectorToInt(this.state), false);
-
-			this.sendEvent();
+			this.setState(index, !this.state.get(index));
 		}
 	}
 }

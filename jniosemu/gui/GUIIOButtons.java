@@ -91,23 +91,48 @@ import jniosemu.emulator.*;
       		/**
       		 * Send event when button is pressed.
       		 *
+      		 * @checks Only send event if it is the left
+      		 *         mouse button that is pressed.
       		 * @calls  EventManager.sendEvent()
       		 *
       		 * @param  e  event when mouse button is pressed
       		 */
         	public void mousePressed(MouseEvent e) {
-        		eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_PRESSED, new Integer(buttonIndex));
+        		if (e.getButton() == MouseEvent.BUTTON1) {
+        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_PRESSED, new Integer(buttonIndex));
+        		}
         	}
         	
       		/**
       		 * Send event when button is released.
       		 *
+      		 * @checks Only send event if it is the left
+      		 *         mouse button that is released.
       		 * @calls  EventManager.sendEvent()
       		 *
       		 * @param  e  event when mouse button is released
       		 */
         	public void mouseReleased(MouseEvent e) {
-        		eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_RELEASED, new Integer(buttonIndex));
+        		if (e.getButton() == MouseEvent.BUTTON1) {
+        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_RELEASED, new Integer(buttonIndex));
+        		}
+        	}
+        	
+      		/**
+      		 * Send event when right mouse button is clicked. Used
+      		 * to toggle state for button so user don't have to manually
+      		 * press the button while stepping through code.
+      		 *
+      		 * @checks Only send event if it is the right
+      		 *         mouse button that is clicked.
+      		 * @calls  EventManager.sendEvent()
+      		 *
+      		 * @param  e  event when mouse button is clicked
+      		 */
+        	public void mouseClicked(MouseEvent e) {
+        		if (e.getButton() == MouseEvent.BUTTON3) {
+        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_TOGGLE, new Integer(buttonIndex));
+        		}
         	}
       	}
       );			
