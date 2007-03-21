@@ -5,11 +5,26 @@ import jniosemu.emulator.EmulatorException;
 import jniosemu.instruction.InstructionInfo;
 import jniosemu.instruction.InstructionManager;
 
+/**
+ * Used for running an instruction of type R
+ */
 public abstract class RTypeInstruction extends Instruction
 {
+	/**
+	 * rA register
+	 */
 	protected int rA;
+	/**
+	 * rB register
+	 */
 	protected int rB;
+	/**
+	 * rC register
+	 */
 	protected int rC;
+	/**
+	 * imm part of the instruction
+	 */
 	protected int imm;
 
 	public RTypeInstruction(int opCode) {

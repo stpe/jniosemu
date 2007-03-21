@@ -18,7 +18,7 @@ public class RegisterManager
 	/**
 	 * Init RegisterManager
 	 *
-	 * @post Populate this.register
+	 * @post Populate this.registers
 	 */
 	public RegisterManager() {
 		this.reset();
@@ -58,7 +58,7 @@ public class RegisterManager
 	/**
 	 * Read the value of an index
 	 *
-	 * @calledby Emulator
+	 * @calledby Emulator.readRegister()
 	 *
 	 * @param index  Register you want to read
 	 * @return Value of the register
@@ -71,7 +71,7 @@ public class RegisterManager
 	/**
 	 * Write the value to an index
 	 *
-	 * @calledby Emulator
+	 * @calledby Emulator.writeRegister()
 	 *
 	 * @param index  Register you want to read
 	 * @param value you want to set

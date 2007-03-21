@@ -73,7 +73,6 @@ public class MemoryManager
 	public byte readByte(int addr, boolean notify) throws MemoryException {
 		for (MemoryBlock block: this.memoryBlocks) {
 			if (block.inRange(addr)) {
-				// System.out.println("read: "+ block.getName() +" ("+ addr +")");
 				return block.readByte(addr, notify);
 			}
 		}

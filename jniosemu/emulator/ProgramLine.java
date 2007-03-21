@@ -50,6 +50,14 @@ public class ProgramLine
 	 * Init ProgramLine
 	 *
 	 * @checks If opcode == 0 then breakpoint = DISABLED
+	 * @calledby Program()
+	 * @calls replaceTabWithSpaces()
+	 *
+	 * @param opCode  Opcode of the instruction
+	 * @param instruction  Info about the instruction
+	 * @param sourceCodeLine  Sourcecode line
+	 * @param lineNumber  Program line number
+	 * @param parent  Parent programLine
 	 */
 	public ProgramLine(int opCode, Instruction instruction, String sourceCodeLine, int lineNumber, ProgramLine parent) {
 		this.opCode = opCode;

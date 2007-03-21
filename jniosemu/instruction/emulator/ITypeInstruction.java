@@ -5,10 +5,22 @@ import jniosemu.emulator.EmulatorException;
 import jniosemu.instruction.InstructionInfo;
 import jniosemu.instruction.InstructionManager;
 
+/**
+ * Used for running instructions of type I
+ */
 public abstract class ITypeInstruction extends Instruction
 {
+	/**
+	 * rA register
+	 */
 	protected int rA;
+	/**
+	 * rB register
+	 */
 	protected int rB;
+	/**
+	 * imm part of the instruction
+	 */
 	protected short imm;
 
 	public ITypeInstruction(int opCode) {

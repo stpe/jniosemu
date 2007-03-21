@@ -28,7 +28,7 @@ public class Register
 	/**
 	 * Init register
 	 *
-	 * @post Set number
+	 * @post Set number, state and value.
 	 * @checks if register isn't implemented set state to DISABLED
 	 * @calledby RegisterManager
 	 *
@@ -47,6 +47,7 @@ public class Register
 	/**
 	 * Reset state
 	 *
+	 * @checks Set state to NONE if state != DISABLED
 	 * @calledby RegisterManager
 	 */
 	public void resetState() {
@@ -66,7 +67,7 @@ public class Register
 	}
 
 	/**
-	 * Get value
+	 * Get string representation of value
 	 *
 	 * @calledby GUIRegister
 	 *

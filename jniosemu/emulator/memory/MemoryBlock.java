@@ -3,7 +3,7 @@ package jniosemu.emulator.memory;
 import jniosemu.emulator.io.IODevice;
 
 /**
- * Contains info about a part of the memory.
+ * Contains a part of the memory.
  */
 public class MemoryBlock
 {
@@ -19,9 +19,13 @@ public class MemoryBlock
 	 * Length of the memory part.
 	 */
 	private final int length;
-
+	/**
+	 * Contains the memory data
+	 */
 	private byte[] memory;
-
+	/**
+	 * If there is a IODevice attached to this memory
+	 */
 	private final IODevice device;
 
 	/**
@@ -87,6 +91,14 @@ public class MemoryBlock
 		return this.length;
 	}
 
+	/**
+	 * Checks if a memory address exists in this memoryBlock
+	 *
+	 * @calledby MemoryManager.readByte(), MemoryManager.writeByte()
+	 *
+	 * @param addr Memory address
+	 * @return If the memory address exists in this memoryBlock
+	 */
 	public boolean inRange(int addr) {
 		if (this.start <= addr && this.start + this.length > addr)
 			return true;
@@ -94,25 +106,71 @@ public class MemoryBlock
 		return false;
 	}
 
-	public int mapAddr(int addr) {
+	/**
+	 * Map an address to an internal index
+	 *
+	 * @calledby readByte(), writeByte()
+	 *
+	 * @param addr Memory address
+	 * @return internal index
+	 */
+	private int mapAddr(int addr) {
 		return addr - this.start;
 	}
 
+	/**
+	 * Return a byte from a specific memory address
+	 *
+	 * @calledby MemoryManager.readByte()
+	 * @calls mapAddr(), notifyDevice()
+	 *
+	 * @param addr Memory address
+	 * @param notify True if the IO device that is connected to this memoryblock should be notified
+	 * @return Requested byte
+	 * @throws MemoryException  If the address don't exits in this memoryBlock
+	 */
 	public byte readByte(int addr, boolean notify) throws MemoryException {
-		byte value = memory[mapAddr(addr)];
+		byte value = 0;
+		try {
+			value = memory[mapAddr(addr)];
+		} catch (Exception e) {
+			throw new MemoryException(addr);
+		}
 
 		if (notify)
 			this.notifyDevice();
 		return value;
 	}
 
+	/**
+	 * Write a byte to memory
+	 *
+	 * @calledby MemoryManager.writeByte()
+	 * @calls mapAddr(), notifyDevice()
+	 *
+	 * @param addr  Memory address where to place the byte
+	 * @param value Byte that should be placed in the memory
+	 * @param notify True if the IO device that is connected to this memoryblock should be notified
+	 * @throws MemoryException  If the address don't exits in this memoryBlock
+	 */
 	public void writeByte(int addr, byte value, boolean notify) throws MemoryException {
-		memory[mapAddr(addr)] = value;
+		try {
+			memory[mapAddr(addr)] = value;
+		} catch (Exception e) {
+			throw new MemoryException(addr);
+		}
 
 		if (notify)
 			this.notifyDevice();
 	}
 
+	/**
+	 * Notify the IO Device that the memory has been read of written to
+	 *
+	 * @checks If there isn't any connected IO Device 
+	 * @calledby readByte(), writeByte()
+	 * @calls IODevice.memoryChange()
+	 */
 	public void notifyDevice() {
 		if (this.device != null)
 			this.device.memoryChange();

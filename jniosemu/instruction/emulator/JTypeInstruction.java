@@ -5,8 +5,14 @@ import jniosemu.emulator.EmulatorException;
 import jniosemu.instruction.InstructionInfo;
 import jniosemu.instruction.InstructionManager;
 
+/**
+ * Used for running an instruction of type J
+ */
 public abstract class JTypeInstruction extends Instruction
 {
+	/**
+	 * imm part of the instruction
+	 */
 	protected int imm;
 
 	public JTypeInstruction(int opCode) {

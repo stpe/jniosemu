@@ -116,6 +116,8 @@ public class Program
 	/**
 	 * Return the linenumber of an address
 	 *
+	 * @calledby Program()
+	 *
 	 * @param address  Memory address
 	 * @return Linenumber
 	 */
@@ -129,7 +131,7 @@ public class Program
 	/**
 	 * Return the memory address where a line is placed
 	 *
-	 * @calledby EmulatorManager
+	 * @calledby EmulatorManager.toggleBreakpoint()
 	 *
 	 * @param lineNumber  line number
 	 * @return memory address
