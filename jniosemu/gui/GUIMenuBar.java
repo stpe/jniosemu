@@ -18,27 +18,24 @@ public class GUIMenuBar extends JMenuBar
 	private EventManager eventManager;
 
 	/**
-	 * GUI component constructor.
-	 *
-	 * @param  eventManager
-	 */
-
-	/**
 	 * Initiates the creation of this GUI component.
 	 *
 	 * @post      eventManager reference is set for this object.
 	 * @calledby  GUIManager.initGUI()
 	 * @calls     setup()
 	 *
-	 * @param  eventManager  The Event Manager object.
+	 * @param  eventManager  the Event Manager objec.
+	 * @param  stateManager  the State Manager object
 	 */
-	public GUIMenuBar(EventManager eventManager)
+	public GUIMenuBar(EventManager eventManager, StateManager stateManager)
 	{
 		super();
 
 		this.eventManager = eventManager;
 
 		setup();
+		
+		registerWithStateManager(stateManager);
 	}
 
 	/**
@@ -58,11 +55,13 @@ public class GUIMenuBar extends JMenuBar
 
 		menu.add( createMenuItem("New", Events.EVENTID_NEW, 
 		          KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK)) );
-		menu.add( createMenuItem("Open", Events.EVENTID_OPEN,
+		menu.add( createMenuItem("Open...", Events.EVENTID_OPEN,
 		          KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK)) );
 		menu.add( createMenuItem("Save", Events.EVENTID_SAVE,
 		          KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK)) );
-		          
+		menu.add( createMenuItem("Save As...", Events.EVENTID_SAVE_AS,
+		          KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0)) );
+
 		menu.addSeparator();
 		menu.add( createMenuItem("Exit", Events.EVENTID_EXIT) );
 
@@ -195,6 +194,28 @@ public class GUIMenuBar extends JMenuBar
 	}
 
 	/**
+	 * Register menu items with state manager.
+	 *
+	 * @calledby  GUIMenuBar()
+	 * @calls     StateManager.addItem()
+	 *
+	 * @param  stateManager  reference to State Manager
+	 */
+	private void registerWithStateManager(StateManager stateManager)
+	{
+/*
+		for (int i = 0; i < this.getComponentCount(); i++)
+		{
+			Component comp = this.getComponentAtIndex(i);
+			
+			// if it's a JButton (and not a separator), then update state
+			if (comp.getClass().getName().equals("javax.swing.JButton"))
+					System.out.println("Update state: " + ((JButton) comp).getActionCommand() );
+		}
+*/
+	}
+
+	/**
 	 * Invoked when a GUI action occurs, forwards it as
 	 * an event to the EventManager object.
 	 *
@@ -203,7 +224,7 @@ public class GUIMenuBar extends JMenuBar
 	 * @param  e  action event object
 	 */
 	public void actionPerformed(ActionEvent e) {
-			eventManager.sendEvent(e.getActionCommand());
+		eventManager.sendEvent(e.getActionCommand());
 	}
 
 }

@@ -72,6 +72,9 @@ import jniosemu.emulator.*;
 		tmp.add("sak");
 		
 		memoryList = new JList(tmp);
+		memoryList.setBackground(Color.WHITE);
+		memoryList.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		
 		listPanel.add(memoryList);
 
     // button
@@ -88,7 +91,6 @@ import jniosemu.emulator.*;
     
     contentPane.add(listPanel, BorderLayout.CENTER);
     contentPane.add(buttonPanel, BorderLayout.PAGE_END);
-    
 	}
 
 	public void update(String eventIdentifier, Object obj)

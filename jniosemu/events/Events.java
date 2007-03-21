@@ -7,6 +7,11 @@ package jniosemu.events;
 public class Events {
 
 	/**
+	 * Application is started.
+	 */	
+	public static final String EVENTID_APPLICATION_START = "APPLICATION_START";
+
+	/**
 	 * New document.
 	 */	
 	public static final String EVENTID_NEW = "NEW";
@@ -46,12 +51,10 @@ public class Events {
 	 */	
 	public static final String EVENTID_EXIT = "EXIT";
 
-
 	/**
 	 * Show About window of application.
 	 */	
 	public static final String EVENTID_ABOUT = "ABOUT";
-	
 
 	/**
 	 * Start compiling.
@@ -199,7 +202,7 @@ public class Events {
 	public static final String EVENTID_EMULATION_START = "EMULATION_START";
 
 	/**
-	 * Emulation stoped.
+	 * Emulation stopped.
 	 */
 	public static final String EVENTID_EMULATION_STOP = "EMULATION_STOP";
 
@@ -207,4 +210,9 @@ public class Events {
 	 * Emulation ended.
 	 */
 	public static final String EVENTID_EMULATION_END = "EMULATION_END";
+
+	/**
+	 * Update state (disabled/enabled) of elements in menu and toolbar.
+	 */
+	public static final String EVENTID_GUI_UPDATE_STATE = "GUI_UPDATE_STATE";
 }

@@ -26,5 +26,7 @@ public class JNiosEmu
 		// start
     new GUIManager(eventManager);
     new EmulatorManager(eventManager);
+    
+    eventManager.sendEvent(Events.EVENTID_APPLICATION_START);
 	}
 }

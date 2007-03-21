@@ -72,6 +72,9 @@ import jniosemu.emulator.*;
 		tmp.add("dig");
 		
 		variableList = new JList(tmp);
+		variableList.setBackground(Color.WHITE);
+		variableList.setFont(new Font("Monospaced", Font.PLAIN, 12));
+
 		listPanel.add(variableList);
 
     // button

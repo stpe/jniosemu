@@ -39,12 +39,10 @@ public class EventManager
 	 *
 	 * @pre       eventTable instance must exist.
 	 * @post      Observer added to eventTable.
-	 * @checks
 	 * @calledby  <i>EventObserver</i>
-	 * @calls
 	 *
-	 * @param  eventIdentifier  String identifying the event
-	 * @param  obj              Object that listens to the event
+	 * @param  eventIdentifier  string identifying the event
+	 * @param  obj              object that listens to the event
 	 */
 	public void addEventObserver(String eventIdentifier, EventObserver obj)
 	{
@@ -68,8 +66,8 @@ public class EventManager
 	 * Overloaded variant of addEventObserver that takes multiple
 	 * eventIdentifiers.
 	 *
-	 * @param  eventIdentifiers  Array of string identifying the events
-	 * @param  obj               Object that listens to the event
+	 * @param  eventIdentifiers  array of string identifying the events
+	 * @param  obj               object that listens to the event
 	 */	
 	public void addEventObserver(String[] eventIdentifiers, EventObserver obj)
 	{
@@ -83,15 +81,14 @@ public class EventManager
 	 * Notifies all observers that listens to given event identifier.
 	 *
 	 * @pre       Observers must be added eventTable.
-	 * @post 
 	 * @checks    That there are <i>EventObservers</i> listening to
 	 *            to the particular event. If none, the event is
 	 *            not sent.
 	 * @calledby  <i>All objects that sends an event</i>
 	 * @calls     update() method of all <i>EventObservers</i>
 	 *
-	 * @param  eventIdentifier  String identifying the event
-	 * @param  obj              Object to pass along to the observer
+	 * @param  eventIdentifier  string identifying the event
+	 * @param  obj              object to pass along to the observer
 	 */	
 	public void sendEvent(String eventIdentifier, Object obj)
 	{
@@ -105,9 +102,11 @@ public class EventManager
 				objValue = ": " + obj;
 			
 			// debug (omit println)
-			System.out.println("EventManger.sendEvent(): No observers listening to '" + eventIdentifier + "'" + objValue);
+//			System.out.println("EventManger.sendEvent(): No observers listening to '" + eventIdentifier + "'" + objValue);
 			return;
 		}
+
+//		System.out.println("EventManger.sendEvent(): " + eventIdentifier);
 		
 		// iterate over all listening observers
 		for (EventObserver eventObserver : eventObservers)
@@ -122,7 +121,7 @@ public class EventManager
 	 *
 	 * @calls    sendEvent() (overloaded method)
 	 *	 
-	 * @param  eventIdentifier  String identifying the event
+	 * @param  eventIdentifier  string identifying the event
 	 */
 	public void sendEvent(String eventIdentifier)
 	{

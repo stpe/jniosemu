@@ -2,6 +2,7 @@ package jniosemu.gui;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.Component;
 
 import jniosemu.events.*;
 
@@ -24,21 +25,23 @@ public class GUIToolBar extends JToolBar
 	 * @calledby  GUIManager.setup()
 	 * @calls     setup()
 	 *
-	 * @param  eventManager  The Event Manager object.
+	 * @param  eventManager  the Event Manager object
 	 */
-	public GUIToolBar(EventManager eventManager)
+	public GUIToolBar(EventManager eventManager, StateManager stateManager)
 	{
 		super();
 
 		this.eventManager = eventManager;
 
 		setup();
+		
+		registerWithStateManager(stateManager);
 	}
 
 	/**
 	 * Setup GUI components and attributes.
 	 *
-	 * @post      buttons created and added to toolbar
+	 * @post      Buttons created and added to toolbar.
 	 * @calledby  GUIToolBar
 	 * @calls     makeButton()
 	 */
@@ -56,17 +59,12 @@ public class GUIToolBar extends JToolBar
 
 		button = makeButton("open", Events.EVENTID_OPEN,
 												"Open document",
-												"Open...");
+												"Open");
 		this.add(button);
 
 		button = makeButton("save", Events.EVENTID_SAVE,
-												"Save document as",
+												"Save document",
 												"Save");
-		this.add(button);
-
-		button = makeButton("saveas", Events.EVENTID_SAVE_AS,
-												"Save as different file name",
-												"Save As...");
 		this.add(button);
 
 		this.addSeparator();
@@ -138,6 +136,26 @@ public class GUIToolBar extends JToolBar
 			button.setIcon(new ImageIcon(imgLocation, altText));
 
 			return button;
+	}
+
+	/**
+	 * Register toolbar buttons with state manager.
+	 *
+	 * @calledby  GUIToolBar()
+	 * @calls     StateManager.addItem()
+	 *
+	 * @param  stateManager  reference to State Manager
+	 */
+	private void registerWithStateManager(StateManager stateManager)
+	{
+		for (int i = 0; i < this.getComponentCount(); i++)
+		{
+			Component comp = this.getComponentAtIndex(i);
+			
+			// if it's a JButton (and not a separator), then update state
+			if (comp.getClass().getName().equals("javax.swing.JButton"))
+				stateManager.addItem(((JButton) comp).getActionCommand(), (AbstractButton) comp);
+		}
 	}
 
 	/**

@@ -82,6 +82,8 @@ public class GUIManager
 	{
 		// the main panel will include all components
 		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
 		// create and set up the window.
 		frame = new JFrame("JNiosEmu");
@@ -106,11 +108,18 @@ public class GUIManager
     	}
     );
 
-		setup(mainPanel);
+		StateManager stateManager = new StateManager(this.eventManager);
+		
+		// toolbar
+		GUIToolBar toolBar = new GUIToolBar(this.eventManager, stateManager);
+		mainPanel.add(toolBar, BorderLayout.PAGE_START);
 
 		// menu
-		GUIMenuBar menubar = new GUIMenuBar(eventManager);
+		GUIMenuBar menubar = new GUIMenuBar(eventManager, stateManager);
 		frame.setJMenuBar(menubar);
+
+		// all other components
+		setup(mainPanel);
 
 		frame.setSize(800, 600);
 		frame.setVisible(true);
@@ -128,13 +137,6 @@ public class GUIManager
 	 */
 	private void setup(JPanel mainPanel)
 	{
-		mainPanel.setLayout(new BorderLayout());
-		mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-
-		// toolbar
-		GUIToolBar toolBar = new GUIToolBar(this.eventManager);
-		mainPanel.add(toolBar, BorderLayout.PAGE_START);
-
 		// editor panel
 		JPanel editorPanel = new JPanel(new BorderLayout());
 		editorPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -311,29 +313,34 @@ public class GUIManager
 	}
 
 	/**
-	 * Show Variables View window.
+	 * Show Variables View window positioned in center
+	 * of main window.
 	 *
 	 * @calls     GUIVariableyView
 	 * @calledby  update()
 	 */
 	private void showVariableView()
 	{
-		GUIVariableView frame = new GUIVariableView(this.eventManager);
-		frame.setSize(new Dimension(200, 260));
-		frame.setVisible(true);
+		GUIVariableView windowFrame = new GUIVariableView(this.eventManager);
+		windowFrame.setSize(new Dimension(200, 260));
+		windowFrame.setLocationRelativeTo(this.frame);
+		windowFrame.setVisible(true);
 	}
 	
 	/**
-	 * Show Memory View window.
+	 * Show Memory View window positioned in center
+	 * of main window.
 	 *
 	 * @calls     GUIMemoryView
 	 * @calledby  update()
 	 */	
 	private void showMemoryView()
 	{
-		GUIMemoryView frame = new GUIMemoryView(this.eventManager);
-		frame.setSize(new Dimension(200, 260));
-		frame.setVisible(true);		
+		GUIMemoryView windowFrame = new GUIMemoryView(this.eventManager);
+
+		windowFrame.setSize(new Dimension(200, 260));
+		windowFrame.setLocationRelativeTo(this.frame);
+		windowFrame.setVisible(true);		
 	}
 
 }
