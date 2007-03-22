@@ -19,7 +19,7 @@ import jniosemu.emulator.*;
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
+	private transient EventManager eventManager;
 
 	/**
 	 * Number of LEDs to display.

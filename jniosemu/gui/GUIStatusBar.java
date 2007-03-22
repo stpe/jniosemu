@@ -20,7 +20,7 @@ import jniosemu.events.*;
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
+	private transient EventManager eventManager;
 
 	/**
 	 * Label that display current cursor position in editor.

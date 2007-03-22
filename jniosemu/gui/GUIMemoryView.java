@@ -19,8 +19,11 @@ import jniosemu.emulator.*;
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
+	private transient EventManager eventManager;
 
+	/**
+	 * List object used to display the memory content.
+	 */
 	private JList memoryList;
 
 	/**

@@ -24,7 +24,7 @@ import jniosemu.emulator.*;
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
+	private transient EventManager eventManager;
 
 	/**
 	 * List component used to display emulator code.
@@ -39,7 +39,7 @@ import jniosemu.emulator.*;
 	/**
 	 * Current program that is emulated.
 	 */
-	private Program program;
+	private transient Program program;
 
 	/**
 	 * Icon for breakpoint that is set (active).

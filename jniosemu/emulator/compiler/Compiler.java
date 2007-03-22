@@ -127,6 +127,7 @@ public class Compiler
 		}
 
 		// Find all parentheses and macron 
+		StringBuffer sb = new StringBuffer(128);	// used to avoid string concatination
 		boolean found;
 		do {
 			found = false;
@@ -157,16 +158,17 @@ public class Compiler
 		// Translate all binary and hexdecimal values into decimal values
 		Pattern pHexBin = Pattern.compile("(-)?0((x)([0-9A-Fa-f]+)|(b)([0-1]+))");
 		Matcher mHexBin = pHexBin.matcher(aValue);
-
+		
 		while (mHexBin.find()) {
-			String newValue = (mHexBin.group(1) != null) ? "-" : "";
+			sb.setLength(0);
+			sb.append( (mHexBin.group(1) != null) ? "-" : "" );
 
 			if (mHexBin.group(3) != null) {
-				newValue += Long.toString(Long.parseLong(mHexBin.group(4), 16));
+				sb.append( Long.toString(Long.parseLong(mHexBin.group(4), 16)) );
 			} else {
-				newValue += Long.toString(Long.parseLong(mHexBin.group(6), 2));
+				sb.append( Long.toString(Long.parseLong(mHexBin.group(6), 2)) );
 			}
-			aValue = stringReplace(aValue, mHexBin.group(0), newValue);
+			aValue = stringReplace(aValue, mHexBin.group(0), sb.toString());
 		}
 
 		// Take care of the "not"-operation

@@ -34,7 +34,7 @@ public class GUIManager
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
+	private transient EventManager eventManager;
 
 	/**
 	 * The tabbed pane for the editor/emulator views.

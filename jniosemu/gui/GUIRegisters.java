@@ -18,7 +18,7 @@ public class GUIRegisters extends JPanel
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
+	private transient EventManager eventManager;
 
 	/**
 	 * List component used to display register values.

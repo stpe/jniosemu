@@ -24,12 +24,7 @@ public class GUIEditor extends JPanel
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
-
-	/**
-	 * Editor is the utility class to manage I/O.
-	 */
-	private Editor editor;
+	private transient EventManager eventManager;
 
 	/**
 	 * The text area component.
@@ -66,8 +61,6 @@ public class GUIEditor extends JPanel
 		super();
 
 		this.eventManager = eventManager;
-
-		this.editor = new Editor();
 
 		setup();
 
@@ -315,7 +308,7 @@ public class GUIEditor extends JPanel
 
 			try
 			{
-				String content = editor.read(file.toString());
+				String content = Editor.read(file.toString());
 				
 				this.documentTitle = file.getName();
 				textArea.setText(content);
@@ -351,7 +344,7 @@ public class GUIEditor extends JPanel
 
 			try
 			{
-				editor.write(file.toString(), textArea.getText());
+				Editor.write(file.toString(), textArea.getText());
 				
 				this.documentTitle = file.getName();
 				textChanged(false);

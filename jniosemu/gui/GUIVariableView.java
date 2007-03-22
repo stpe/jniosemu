@@ -19,8 +19,11 @@ import jniosemu.emulator.*;
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
+	private transient EventManager eventManager;
 
+	/**
+	 * List object used to show variables with values.
+	 */
 	private JList variableList;
 
 	/**

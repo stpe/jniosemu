@@ -16,7 +16,7 @@ public class GUIEditorMessages extends JPanel
 	 * Reference to EventManager used to receive
 	 * and send events.
 	 */
-	private EventManager eventManager;
+	private transient EventManager eventManager;
 	
 	/**
 	 * The text area used to display messages.

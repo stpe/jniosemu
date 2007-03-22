@@ -3,9 +3,9 @@ package jniosemu.editor;
 import java.io.*;
 
 /**
- * This is a utility class for the editor where the user is editing
- * the source code. This class provides I/O access through read and
- * write methods for opening and saving source documents.
+ * This is a utility class for the GUIEditor where the user is editing
+ * the source code. This class provides I/O access through static read
+ * and write methods for opening and saving source documents.
  */
 public class Editor
 {
@@ -20,7 +20,7 @@ public class Editor
 	 * @return              content of file as string
 	 * @throws IOException  when given file is invalid
 	 */
-  public String read(String filename) throws IOException
+  public static String read(String filename) throws IOException
 	{
 		BufferedReader in = null;
 		StringBuffer sb = new StringBuffer();
@@ -53,7 +53,7 @@ public class Editor
 	 * @throws IOException  when given file is invalid or
 	 *                      permission is denied to write to disk
 	 */
-	public void write(String filename, String content) throws IOException
+	public static void write(String filename, String content) throws IOException
 	{
 		PrintWriter out = null;
 
