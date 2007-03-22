@@ -33,6 +33,6 @@ public abstract class JTypeInstruction extends Instruction
 			}
 		}
 
-		return null;
+		return "Invalid JType Instruction!";
 	}
 }

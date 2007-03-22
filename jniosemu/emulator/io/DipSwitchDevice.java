@@ -13,19 +13,19 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 	/**
 	 * Address to memory where this is placed
 	 */
-	public static int MEMORYADDR = 0x850;
+	private static final int MEMORYADDR = 0x850;
 	/**
 	 * Length of memory that is used
 	 */
-	public static int MEMORYLENGTH = 16;
+	private static final int MEMORYLENGTH = 16;
 	/**
 	 * Name of memoryblock
 	 */
-	public static String MEMORYNAME = "DipSwitches";
+	private static final String MEMORYNAME = "DipSwitches";
 	/**
 	 * Number of dipswitches
 	 */
-	public static int COUNT = 4;
+	private static final int COUNT = 4;
 	/**
 	 * Containing the states of each dipswitch
 	 */

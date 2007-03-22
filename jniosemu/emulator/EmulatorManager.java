@@ -334,7 +334,7 @@ public class EmulatorManager implements EventObserver
 	 * @calledby load(), step()
 	 */
 	private void pcChange() {
-		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, new Integer(this.pc));
+		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, Integer.valueOf(this.pc));
 		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());
 	}
 

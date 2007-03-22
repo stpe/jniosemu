@@ -204,7 +204,10 @@ public class GUIEditor extends JPanel
 			int offset = e.getDot();
 			column = offset - Utilities.getRowStart(textArea, offset) + 1;
 			
-		} catch (Exception ex) { }
+		} catch (javax.swing.text.BadLocationException ex) { 
+			row = 0;
+			column = 0;
+		}
 		
 		this.eventManager.sendEvent(Events.EVENTID_EDITOR_CURSOR_CHANGE, new Point(row, column));
 	}
@@ -270,7 +273,7 @@ public class GUIEditor extends JPanel
 
 		eventManager.sendEvent(Events.EVENTID_NEW_DONE);
 		// change tab to editor tab (if not current)
-		eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, new Integer(GUIManager.TAB_EDITOR));
+		eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, Integer.valueOf(GUIManager.TAB_EDITOR));
 	}
 
 	/**
@@ -321,7 +324,7 @@ public class GUIEditor extends JPanel
 				// send event of successfully opened document
 				eventManager.sendEvent(Events.EVENTID_OPENED);
 				// change tab to editor tab (if not current)
-				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, new Integer(GUIManager.TAB_EDITOR));
+				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, Integer.valueOf(GUIManager.TAB_EDITOR));
 			}
 			catch (IOException e)
 			{
@@ -356,7 +359,7 @@ public class GUIEditor extends JPanel
 				// send event of successfully saved document
 				eventManager.sendEvent(Events.EVENTID_SAVED);
 				// change tab to editor tab (if not current)
-				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, new Integer(GUIManager.TAB_EDITOR));
+				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, Integer.valueOf(GUIManager.TAB_EDITOR));
 				
 				return true;
 			}

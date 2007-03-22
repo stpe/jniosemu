@@ -99,7 +99,7 @@ import jniosemu.emulator.*;
       		 */
         	public void mousePressed(MouseEvent e) {
         		if (e.getButton() == MouseEvent.BUTTON1) {
-        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_PRESSED, new Integer(buttonIndex));
+        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_PRESSED, Integer.valueOf(buttonIndex));
         		}
         	}
         	
@@ -114,7 +114,7 @@ import jniosemu.emulator.*;
       		 */
         	public void mouseReleased(MouseEvent e) {
         		if (e.getButton() == MouseEvent.BUTTON1) {
-        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_RELEASED, new Integer(buttonIndex));
+        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_RELEASED, Integer.valueOf(buttonIndex));
         		}
         	}
         	
@@ -131,7 +131,7 @@ import jniosemu.emulator.*;
       		 */
         	public void mouseClicked(MouseEvent e) {
         		if (e.getButton() == MouseEvent.BUTTON3) {
-        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_TOGGLE, new Integer(buttonIndex));
+        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_TOGGLE, Integer.valueOf(buttonIndex));
         		}
         	}
       	}

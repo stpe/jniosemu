@@ -49,6 +49,6 @@ public abstract class ITypeInstruction extends Instruction
 			}
 		}
 
-		return null;
+		return "Invalid IType Instruction!";
 	}
 }

@@ -19,7 +19,7 @@ import java.util.*;
  * Any object may send an event by simply calling the sendEvent
  * method.
  */
-public class EventManager 
+public class EventManager
 {
 	/**
 	 * Manages which observers are listening to which event.
@@ -102,7 +102,7 @@ public class EventManager
 				objValue = ": " + obj;
 			
 			// debug (omit println)
-//			System.out.println("EventManger.sendEvent(): No observers listening to '" + eventIdentifier + "'" + objValue);
+			System.out.println("EventManger.sendEvent(): No observers listening to '" + eventIdentifier + "'" + objValue);
 			return;
 		}
 

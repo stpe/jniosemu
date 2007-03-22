@@ -181,7 +181,7 @@ import jniosemu.emulator.*;
 		if (e.getX() <= BREAKPOINT_AREA_WIDTH)
 		{
 			int index = listView.locationToIndex(e.getPoint());
-			eventManager.sendEvent(Events.EVENTID_GUI_TOGGLE_BREAKPOINT, new Integer(index));
+			eventManager.sendEvent(Events.EVENTID_GUI_TOGGLE_BREAKPOINT, Integer.valueOf(index));
 		}
 	}
 

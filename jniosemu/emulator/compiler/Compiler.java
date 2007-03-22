@@ -85,8 +85,9 @@ public class Compiler
 	 */
 	public static String stringReplace(String aValue, String aReplace, String aNew) {
 		int start = aValue.indexOf(aReplace);
+		StringBuffer replace;
 		while (start >= 0) {
-			StringBuffer replace = new StringBuffer(aValue);
+			replace = new StringBuffer(aValue);
 			replace.replace(start, start+aReplace.length(), aNew);
 			aValue = replace.toString();
 			start = aValue.indexOf(aReplace, start);
@@ -156,6 +157,7 @@ public class Compiler
 		// Translate all binary and hexdecimal values into decimal values
 		Pattern pHexBin = Pattern.compile("(-)?0((x)([0-9A-Fa-f]+)|(b)([0-1]+))");
 		Matcher mHexBin = pHexBin.matcher(aValue);
+
 		while (mHexBin.find()) {
 			String newValue = (mHexBin.group(1) != null) ? "-" : "";
 

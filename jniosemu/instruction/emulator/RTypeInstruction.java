@@ -58,6 +58,6 @@ public abstract class RTypeInstruction extends Instruction
 			}
 		}
 
-		return null;
+		return "Invalid RType Instruction!";
 	}
 }

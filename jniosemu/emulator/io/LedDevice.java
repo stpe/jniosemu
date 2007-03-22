@@ -14,19 +14,19 @@ public class LedDevice extends IODevice
 	/**
 	 * Memory address which this uses
 	 */
-	public static int MEMORYADDR = 0x810;
+	private static final int MEMORYADDR = 0x810;
 	/**
 	 * Memory length it uses
 	 */
-	public static int MEMORYLENGTH = 16;
+	private static final int MEMORYLENGTH = 16;
 	/**
 	 * Name of memoryblock
 	 */
-	public static String MEMORYNAME = "Leds";
+	private static String MEMORYNAME = "Leds";
 	/**
 	 * Number of leds
 	 */
-	public static int COUNT = 4;
+	private static final int COUNT = 4;
 
 	/**
 	 * Contains the state of all leds

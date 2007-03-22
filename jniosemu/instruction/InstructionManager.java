@@ -151,8 +151,18 @@ public class InstructionManager
 			Constructor c = Class.forName(instruction.getClassName()).getConstructors()[0];
 			Object[] args = new Object[]{opCode};
 			return (Instruction)c.newInstance(args);
-		} catch (Exception e) {
+		} 
+		// catch are done per exception instead of one Exception in order to
+		// not by mistake catch RuntimeException that may hide potential bugs
+		catch (ClassNotFoundException e) {
 			throw new InstructionException(opCode, "Class is missing: "+ instruction.getClassName());
+		} catch (InstantiationException e) {
+			// does only happen if trying to make instance of interface or abstract class
+			throw new InstructionException(opCode, "Cannot make instance of class: "+ instruction.getClassName());
+		} catch (IllegalAccessException e) {
+			throw new InstructionException(opCode, "No access to class: "+ instruction.getClassName());
+		} catch (java.lang.reflect.InvocationTargetException e) {
+			throw new InstructionException(opCode, "Invocation target exception: "+ instruction.getClassName());
 		}
 	}
 

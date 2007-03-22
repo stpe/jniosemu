@@ -90,7 +90,7 @@ import jniosemu.emulator.*;
       	{
         	public void mouseClicked(MouseEvent e) {
         		// send event to toggle dipswitch
-        		eventManager.sendEvent(Events.EVENTID_GUI_DIPSWITCHES, new Integer(dipswitchIndex));
+        		eventManager.sendEvent(Events.EVENTID_GUI_DIPSWITCHES, Integer.valueOf(dipswitchIndex));
         	}
       	}
       );

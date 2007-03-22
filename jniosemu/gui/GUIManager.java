@@ -231,7 +231,7 @@ public class GUIManager
 				toggleTab();
 		else
 			if (eventIdentifier.equals(Events.EVENTID_EMULATION_READY))
-				changeTab( new Integer(TAB_EMULATOR) );
+				changeTab( Integer.valueOf(TAB_EMULATOR) );
 		else
 			if (eventIdentifier.equals(Events.EVENTID_CHANGE_WINDOW_TITLE))
 				setFrameTitle( (String) obj );

@@ -11,19 +11,19 @@ public class MemoryManager
 	/**
 	 * Address in the memory where the program is placed.
 	 */
-	public static int PROGRAMSTARTADDR  = 0x20000;
+	public static final int PROGRAMSTARTADDR  = 0x20000;
 	/**
 	 * Address in the memory where the variables is placed.
 	 */
-	public static int VARIABLESTARTADDR = 0x30000;
+	public static final int VARIABLESTARTADDR = 0x30000;
 	/**
 	 * Address in the memory where the stack is placed.
 	 */
-	public static int STACKSTARTADDR    = 0x40000;
+	public static final int STACKSTARTADDR    = 0x40000;
 	/**
 	 * Size of the stack
 	 */
-	public static int STACKSIZE         = 0x08000;
+	public static final int STACKSIZE         = 0x08000;
 	/**
 	 * Contains the different MemoryBlocks
 	 */

@@ -13,19 +13,19 @@ public class ButtonDevice extends IODevice implements EventObserver
 	/**
 	 * Address to memory where this is placed
 	 */
-	public static int MEMORYADDR = 0x840;
+	private static final int MEMORYADDR = 0x840;
 	/**
 	 * Length of memory that is used
 	 */
-	public static int MEMORYLENGTH = 16;
+	private static final int MEMORYLENGTH = 16;
 	/**
 	 * Name of memoryblock
 	 */
-	public static String MEMORYNAME = "Buttons";
+	private static final String MEMORYNAME = "Buttons";
 	/**
 	 * Number of buttons
 	 */
-	public static int COUNT = 4;
+	private static final int COUNT = 4;
 	/**
 	 * Containing the states of each dipswitch
 	 */
