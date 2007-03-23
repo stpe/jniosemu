@@ -2,7 +2,6 @@ package jniosemu.emulator.io;
 
 import java.util.Vector;
 import jniosemu.emulator.memory.MemoryManager;
-import jniosemu.events.Events;
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
 /**
@@ -52,7 +51,7 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 		this.memory = memory;
 		this.eventManager = eventManager;
 
-		this.eventManager.addEventObserver(Events.EVENTID_GUI_DIPSWITCHES, this);
+		this.eventManager.addEventObserver(EventManager.EVENT.DIPSWITCH_TOGGLE, this);
 		this.memory.register(MEMORYNAME, MEMORYADDR, MEMORYLENGTH, this);
 
 		this.state = new Vector<Boolean>(COUNT);
@@ -98,16 +97,19 @@ public class DipSwitchDevice extends IODevice implements EventObserver
 	 * @calls EVENTID_UPDATE_DIPSWITCHES
 	 */
 	private void sendEvent() {
-		this.eventManager.sendEvent(Events.EVENTID_UPDATE_DIPSWITCHES, this.state);
+		this.eventManager.sendEvent(EventManager.EVENT.DIPSWITCH_UPDATE, this.state);
 	}
 
-	public void update(String eventIdentifier, Object obj) {
-		if (eventIdentifier.equals(Events.EVENTID_GUI_DIPSWITCHES)) {
-			int index = ((Integer)obj).intValue();
-			this.state.set(index, !this.state.get(index));
-			this.memory.writeInt(MEMORYADDR, this.vectorToInt(this.state), false);
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
+	{
+		switch(eventIdentifier) {
+			case DIPSWITCH_TOGGLE:
+				int index = ((Integer)obj).intValue();
+				this.state.set(index, !this.state.get(index));
+				this.memory.writeInt(MEMORYADDR, this.vectorToInt(this.state), false);
 
-			this.sendEvent();
+				this.sendEvent();
+				break;
 		}
 	}
 }

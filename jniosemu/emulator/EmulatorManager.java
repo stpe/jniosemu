@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import jniosemu.events.EventManager;
-import jniosemu.events.Events;
 import jniosemu.events.EventObserver;
 import jniosemu.emulator.compiler.Compiler;
 import jniosemu.emulator.compiler.CompilerException;
@@ -71,13 +70,15 @@ public class EmulatorManager implements EventObserver
 		this.emulator = new Emulator(this);
 		this.eventManager = eventManager;
 
-		String[] events = {
-			Events.EVENTID_COMPILE,
-			Events.EVENTID_RUN,
-			Events.EVENTID_STEP,
-			Events.EVENTID_PAUSE,
-			Events.EVENTID_RESET,
-			Events.EVENTID_GUI_TOGGLE_BREAKPOINT};
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.COMPILER_COMPILE,
+			EventManager.EVENT.EMULATOR_PAUSE,
+			EventManager.EVENT.EMULATOR_STEP,
+			EventManager.EVENT.EMULATOR_RESET,
+			EventManager.EVENT.EMULATOR_RUN,
+			EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE
+		};
+
 		eventManager.addEventObserver(events, this);
 	}
 
@@ -166,7 +167,7 @@ public class EmulatorManager implements EventObserver
 			instruction.run(this.emulator);
 			this.pc += 4;
 		} catch (EmulatorException e) {
-			this.eventManager.sendEvent(Events.EVENTID_RUNTIME_ERROR, e.getMessage());
+			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_ERROR, e.getMessage());
 			this.ended = true;
 			return false;
 		}
@@ -225,7 +226,7 @@ public class EmulatorManager implements EventObserver
 	 * Compile the sourcecode
 	 *
 	 * @post Event should be sent. Both if an error has occured or not.
-	 * @checks If an error occured during compile or link send EVENTID_COMPILE_ERROR
+	 * @checks If an error occured during compile or link send COMPILER_ERROR
 	 * @calledby update()
 	 * @calls Compiler(), Compiler.compile(), Compiler.link(), EventManager.sendEvent(), Program.toggleBreakpoint, load()
 	 *
@@ -239,7 +240,7 @@ public class EmulatorManager implements EventObserver
 			compiler.compile();
 			this.program = compiler.link();
 		} catch (CompilerException e) {
-			this.eventManager.sendEvent(Events.EVENTID_COMPILE_ERROR, e.getMessage());
+			this.eventManager.sendEvent(EventManager.EVENT.COMPILER_ERROR, e.getMessage());
 			return;
 		}
 
@@ -278,7 +279,7 @@ public class EmulatorManager implements EventObserver
 		this.register = new RegisterManager();
 
 		this.ended = false;
-		this.eventManager.sendEvent(Events.EVENTID_EMULATION_READY, this.program);
+		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_READY, this.program);
 
 		this.pcChange();
 	}
@@ -288,7 +289,7 @@ public class EmulatorManager implements EventObserver
 	 *
 	 * @post Add breakpoint to breakpoints and update Program
 	 * @calledby update()
-	 * @calls Program.toggleBreakpoint(), EVENTID_TOGGLE_BREAKPOINT
+	 * @calls Program.toggleBreakpoint(), EMULATOR_BREAKPOINT_TOGGLE
 	 *
 	 * @param lineNumber  Line to toggle breakpoint
 	 */
@@ -300,31 +301,39 @@ public class EmulatorManager implements EventObserver
 			this.breakpoints.remove(addr);
 		}
 
-		this.eventManager.sendEvent(Events.EVENTID_TOGGLE_BREAKPOINT, lineNumber);
+		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE, lineNumber);
 	}
 
 	/**
 	 * Listen for events and acts on them
 	 *
-	 * @calledby EVENTID_COMPILE, EVENTID_RUN, EVENTID_PAUSE, EVENTID_STEP, EVENTID_RESET, EVENTID_GUI_TOGGLE_BREAKPOINT
+	 * @calledby COMPILER_COMPILE, EMULATOR_RUN, EMULATOR_PAUSE, EMULATOR_STEP, EMULATOR_RESET, EMULATOR_BREAK_POINT_TOGGLE
 	 * @calls compile(), runAll(), pause(), runOne(), load(), toggleBreakpoint()
 	 *
 	 * @param eventIdentifier Event identifier
 	 * @param obj Argument depending of which event
 	 */
-	public void update(String eventIdentifier, Object obj) {
-		if (eventIdentifier.equals(Events.EVENTID_COMPILE)) {
-			this.compile((String)obj);
-		} else if (eventIdentifier.equals(Events.EVENTID_STEP)) {
-			this.runOne();
-		} else if (eventIdentifier.equals(Events.EVENTID_RUN)) {
-			this.runAll();
-		} else if (eventIdentifier.equals(Events.EVENTID_PAUSE)) {
-			this.pause();
-		} else if (eventIdentifier.equals(Events.EVENTID_RESET)) {
-			this.load();
-		} else if (eventIdentifier.equals(Events.EVENTID_GUI_TOGGLE_BREAKPOINT)) {
-			this.toggleBreakpoint(((Integer)obj).intValue());
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
+	{
+		switch(eventIdentifier) {
+			case COMPILER_COMPILE:
+				this.compile((String)obj);
+				break;
+			case EMULATOR_STEP:
+				this.runOne();
+				break;
+			case EMULATOR_RUN:
+				this.runAll();
+				break;
+			case EMULATOR_PAUSE:
+				this.pause();
+				break;
+			case EMULATOR_RESET:
+				this.load();
+				break;
+			case EMULATOR_BREAKPOINT_TOGGLE:
+				this.toggleBreakpoint(((Integer)obj).intValue());
+				break;
 		}
 	}
 
@@ -334,8 +343,8 @@ public class EmulatorManager implements EventObserver
 	 * @calledby load(), step()
 	 */
 	private void pcChange() {
-		this.eventManager.sendEvent(Events.EVENTID_PC_CHANGE, Integer.valueOf(this.pc));
-		this.eventManager.sendEvent(Events.EVENTID_REGISTER_CHANGE, this.register.get());
+		this.eventManager.sendEvent(EventManager.EVENT.PROGRAMCOUNTER_CHANGE, Integer.valueOf(this.pc));
+		this.eventManager.sendEvent(EventManager.EVENT.REGISTER_CHANGE, this.register.get());
 	}
 
 	/**
@@ -345,7 +354,7 @@ public class EmulatorManager implements EventObserver
 	 * @calls EVENTID_EMULATION_START
 	 */
 	private void startEvent() {
-		this.eventManager.sendEvent(Events.EVENTID_EMULATION_START, null);
+		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_START);
 	}
 
 	/**
@@ -357,9 +366,9 @@ public class EmulatorManager implements EventObserver
 	 */
 	private void stopEvent() {
 		if (this.ended) {
-			this.eventManager.sendEvent(Events.EVENTID_EMULATION_END, null);
+			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_END);
 		} else {
-			this.eventManager.sendEvent(Events.EVENTID_EMULATION_STOP, null);
+			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_STOP);
 		}
 	}
 }

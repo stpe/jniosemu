@@ -55,7 +55,7 @@ import jniosemu.emulator.*;
 		setup();
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_UPDATE_DIPSWITCHES, this);
+		this.eventManager.addEventObserver(EventManager.EVENT.DIPSWITCH_UPDATE, this);
 	}
 
 	/**
@@ -90,7 +90,7 @@ import jniosemu.emulator.*;
       	{
         	public void mouseClicked(MouseEvent e) {
         		// send event to toggle dipswitch
-        		eventManager.sendEvent(Events.EVENTID_GUI_DIPSWITCHES, Integer.valueOf(dipswitchIndex));
+        		eventManager.sendEvent(EventManager.EVENT.DIPSWITCH_TOGGLE, Integer.valueOf(dipswitchIndex));
         	}
       	}
       );
@@ -139,11 +139,12 @@ import jniosemu.emulator.*;
 		}
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_UPDATE_DIPSWITCHES))
-		{
-			updateDipswitches( (Vector<Boolean>) obj );
+		switch (eventIdentifier) {
+			case DIPSWITCH_UPDATE:
+				updateDipswitches( (Vector<Boolean>) obj );
+				break;
 		}
 	}
 

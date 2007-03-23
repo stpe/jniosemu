@@ -56,15 +56,15 @@ public class GUIManager
 		this.eventManager = eventManager;
 
 		// add events to listen to
-		String[] events = {
-			Events.EVENTID_EXCEPTION,
-			Events.EVENTID_CHANGE_TAB,
-			Events.EVENTID_TOGGLE_TAB,
-			Events.EVENTID_ABOUT,
-			Events.EVENTID_EMULATION_READY,
-			Events.EVENTID_CHANGE_WINDOW_TITLE,
-			Events.EVENTID_VIEW_VARIABLES,
-			Events.EVENTID_VIEW_MEMORY
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.ABOUT_VIEW,
+			EventManager.EVENT.APPLICATION_TITLE_CHANGE,
+			EventManager.EVENT.APPLICATION_TAB_CHANGE,
+			EventManager.EVENT.APPLICATION_TAB_TOGGLE,
+			EventManager.EVENT.EMULATOR_READY,
+			EventManager.EVENT.EXCEPTION,
+			EventManager.EVENT.MEMORY_VIEW,
+			EventManager.EVENT.VARIABLE_VIEW
 		};
 		this.eventManager.addEventObserver(events, this);
 
@@ -103,7 +103,7 @@ public class GUIManager
     		 * @param  e  event when window is closing
     		 */
       	public void windowClosing(WindowEvent e) {
-      		eventManager.sendEvent(Events.EVENTID_EXIT);
+      		eventManager.sendEvent(EventManager.EVENT.APPLICATION_EXIT);
       	}
     	}
     );
@@ -216,31 +216,34 @@ public class GUIManager
 		mainPanel.add(tabbedPane, BorderLayout.CENTER);
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_ABOUT))
+		switch(eventIdentifier) {
+			case ABOUT_VIEW:
 				showAbout();
-		else
-			if (eventIdentifier.equals(Events.EVENTID_EXCEPTION))
-				showException( (Exception) obj );
-		else
-			if (eventIdentifier.equals(Events.EVENTID_CHANGE_TAB))
+				break;
+			case APPLICATION_TAB_CHANGE:
 				changeTab( ((Integer) obj).intValue() );
-		else
-			if (eventIdentifier.equals(Events.EVENTID_TOGGLE_TAB))
+				break;
+			case APPLICATION_TAB_TOGGLE:
 				toggleTab();
-		else
-			if (eventIdentifier.equals(Events.EVENTID_EMULATION_READY))
-				changeTab( Integer.valueOf(TAB_EMULATOR) );
-		else
-			if (eventIdentifier.equals(Events.EVENTID_CHANGE_WINDOW_TITLE))
+				break;
+			case APPLICATION_TITLE_CHANGE:
 				setFrameTitle( (String) obj );
-		else
-			if (eventIdentifier.equals(Events.EVENTID_VIEW_MEMORY))
+				break;
+			case EMULATOR_READY:
+				changeTab( Integer.valueOf(TAB_EMULATOR) );
+				break;
+			case EXCEPTION:
+				showException( (Exception) obj );
+				break;
+			case MEMORY_VIEW:
 				showMemoryView();
-		else
-			if (eventIdentifier.equals(Events.EVENTID_VIEW_VARIABLES))
+				break;
+			case VARIABLE_VIEW:
 				showVariableView();
+				break;
+		}
 	}
 
 	/**

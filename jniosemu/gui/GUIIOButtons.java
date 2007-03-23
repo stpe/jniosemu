@@ -55,7 +55,7 @@ import jniosemu.emulator.*;
 		setup();
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_UPDATE_BUTTONS, this);
+		this.eventManager.addEventObserver(EventManager.EVENT.BUTTON_UPDATE, this);
 	}
 
 	/**
@@ -99,7 +99,7 @@ import jniosemu.emulator.*;
       		 */
         	public void mousePressed(MouseEvent e) {
         		if (e.getButton() == MouseEvent.BUTTON1) {
-        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_PRESSED, Integer.valueOf(buttonIndex));
+        			eventManager.sendEvent(EventManager.EVENT.BUTTON_PRESS, Integer.valueOf(buttonIndex));
         		}
         	}
         	
@@ -114,7 +114,7 @@ import jniosemu.emulator.*;
       		 */
         	public void mouseReleased(MouseEvent e) {
         		if (e.getButton() == MouseEvent.BUTTON1) {
-        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_RELEASED, Integer.valueOf(buttonIndex));
+        			eventManager.sendEvent(EventManager.EVENT.BUTTON_RELEASE, Integer.valueOf(buttonIndex));
         		}
         	}
         	
@@ -131,7 +131,7 @@ import jniosemu.emulator.*;
       		 */
         	public void mouseClicked(MouseEvent e) {
         		if (e.getButton() == MouseEvent.BUTTON3) {
-        			eventManager.sendEvent(Events.EVENTID_GUI_BUTTON_TOGGLE, Integer.valueOf(buttonIndex));
+        			eventManager.sendEvent(EventManager.EVENT.BUTTON_TOGGLE, Integer.valueOf(buttonIndex));
         		}
         	}
       	}
@@ -181,11 +181,12 @@ import jniosemu.emulator.*;
 		}
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_UPDATE_BUTTONS))
-		{
-			updateButtons( (Vector<Boolean>) obj );
+		switch (eventIdentifier) {
+			case BUTTON_UPDATE:
+				updateButtons( (Vector<Boolean>) obj );
+				break;
 		}
 	}
 

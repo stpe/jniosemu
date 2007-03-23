@@ -46,7 +46,7 @@ import jniosemu.events.*;
 		setup();
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_EDITOR_CURSOR_CHANGE, this);
+		this.eventManager.addEventObserver(EventManager.EVENT.EDITOR_CURSOR_CHANGE, this);
 	}
 
 	/**
@@ -84,11 +84,12 @@ import jniosemu.events.*;
 		cursorLabel.setText("Line " + (int) p.getX() + ", Column " + (int) p.getY());
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_EDITOR_CURSOR_CHANGE))
-		{
-			setCursorLabel( (Point) obj );
+		switch (eventIdentifier) {
+			case EDITOR_CURSOR_CHANGE:
+				setCursorLabel( (Point) obj );
+				break;
 		}
 	}
 

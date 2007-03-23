@@ -44,7 +44,7 @@ public class GUIRegisters extends JPanel
 		setup();
 		
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_REGISTER_CHANGE, this);		
+		this.eventManager.addEventObserver(EventManager.EVENT.REGISTER_CHANGE, this);		
 	}
 
 	/**
@@ -76,12 +76,13 @@ public class GUIRegisters extends JPanel
 		registerList.setListData(registers);
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_REGISTER_CHANGE))
-		{
-			Vector<Register> tmp = (Vector<Register>) obj;
-			setRegisters( tmp );
+		switch (eventIdentifier) {
+			case REGISTER_CHANGE:
+				Vector<Register> tmp = (Vector<Register>) obj;
+				setRegisters( tmp );
+				break;
 		}
 	}
 

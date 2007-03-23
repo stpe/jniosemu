@@ -65,11 +65,15 @@ public class GUIEditor extends JPanel
 		setup();
 
 		// add events to listen to
-    this.eventManager.addEventObserver(Events.EVENTID_NEW, this);
-		this.eventManager.addEventObserver(Events.EVENTID_OPEN, this);
-		this.eventManager.addEventObserver(Events.EVENTID_SAVE, this);
-		this.eventManager.addEventObserver(Events.EVENTID_GUI_COMPILE, this);
-		this.eventManager.addEventObserver(Events.EVENTID_EXIT, this);
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.APPLICATION_EXIT,
+			EventManager.EVENT.COMPILER_COMPILE_INIT,
+			EventManager.EVENT.DOCUMENT_NEW,
+			EventManager.EVENT.DOCUMENT_OPEN,
+			EventManager.EVENT.DOCUMENT_SAVE
+		};
+
+    this.eventManager.addEventObserver(events, this);
 	}
 
 	/**
@@ -136,7 +140,7 @@ public class GUIEditor extends JPanel
 			if (textHasChanged)
 				title = title + "*";
 
-			eventManager.sendEvent(Events.EVENTID_CHANGE_WINDOW_TITLE, title);
+			eventManager.sendEvent(EventManager.EVENT.APPLICATION_TITLE_CHANGE, title);
 		}
 	}
 
@@ -202,30 +206,27 @@ public class GUIEditor extends JPanel
 			column = 0;
 		}
 		
-		this.eventManager.sendEvent(Events.EVENTID_EDITOR_CURSOR_CHANGE, new Point(row, column));
+		this.eventManager.sendEvent(EventManager.EVENT.EDITOR_CURSOR_CHANGE, new Point(row, column));
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_NEW))
-		{
-			newDocument();
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_OPEN))
-		{
-			openDocument();
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_SAVE))
-		{
-			saveDocument();
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_GUI_COMPILE))
-		{
-			prepareCompile();
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_EXIT))
-		{
-			exitApplication();
+		switch(eventIdentifier) {
+			case APPLICATION_EXIT:
+				exitApplication();
+				break;
+			case COMPILER_COMPILE_INIT:
+				prepareCompile();
+				break;
+			case DOCUMENT_NEW:
+				newDocument();
+				break;
+			case DOCUMENT_OPEN:
+				openDocument();
+				break;
+			case DOCUMENT_SAVE:
+				saveDocument();
+				break;
 		}
 	}
 
@@ -264,9 +265,9 @@ public class GUIEditor extends JPanel
 		this.documentTitle = DEFAULT_DOCUMENT_NAME;
 		textChanged(false);
 
-		eventManager.sendEvent(Events.EVENTID_NEW_DONE);
+		eventManager.sendEvent(EventManager.EVENT.DOCUMENT_NEW_DONE);
 		// change tab to editor tab (if not current)
-		eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, Integer.valueOf(GUIManager.TAB_EDITOR));
+		eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
 	}
 
 	/**
@@ -315,13 +316,13 @@ public class GUIEditor extends JPanel
 				textChanged(false);
 
 				// send event of successfully opened document
-				eventManager.sendEvent(Events.EVENTID_OPENED);
+				eventManager.sendEvent(EventManager.EVENT.DOCUMENT_OPEN_DONE);
 				// change tab to editor tab (if not current)
-				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, Integer.valueOf(GUIManager.TAB_EDITOR));
+				eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
 			}
 			catch (IOException e)
 			{
-				eventManager.sendEvent(Events.EVENTID_EXCEPTION, e);
+				eventManager.sendEvent(EventManager.EVENT.EXCEPTION, e);
 			}
 		}
 	}
@@ -350,15 +351,15 @@ public class GUIEditor extends JPanel
 				textChanged(false);
 
 				// send event of successfully saved document
-				eventManager.sendEvent(Events.EVENTID_SAVED);
+				eventManager.sendEvent(EventManager.EVENT.DOCUMENT_SAVE_DONE);
 				// change tab to editor tab (if not current)
-				eventManager.sendEvent(Events.EVENTID_CHANGE_TAB, Integer.valueOf(GUIManager.TAB_EDITOR));
+				eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
 				
 				return true;
 			}
 			catch (IOException e)
 			{
-				eventManager.sendEvent(Events.EVENTID_EXCEPTION, e);
+				eventManager.sendEvent(EventManager.EVENT.EXCEPTION, e);
 				return false;
 			}
 		}
@@ -376,7 +377,7 @@ public class GUIEditor extends JPanel
 	private void prepareCompile()
 	{
 		// send source code with event
-		eventManager.sendEvent(Events.EVENTID_COMPILE, textArea.getText());
+		eventManager.sendEvent(EventManager.EVENT.COMPILER_COMPILE, textArea.getText());
 	}
 
 	/**

@@ -44,8 +44,12 @@ import jniosemu.events.*;
 		setPC(0);
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_PC_CHANGE, this);
-		this.eventManager.addEventObserver(Events.EVENTID_RESET, this);
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.PROGRAMCOUNTER_CHANGE,
+			EventManager.EVENT.EMULATOR_RESET
+		};
+
+		this.eventManager.addEventObserver(events, this);
 	}
 
 	/**
@@ -75,15 +79,15 @@ import jniosemu.events.*;
 		pcLabel.setText("PC: " + addr);
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_PC_CHANGE))
-		{
-			setPC( ((Integer) obj).intValue());
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_RESET))
-		{
-			setPC(0);
+		switch (eventIdentifier) {
+			case PROGRAMCOUNTER_CHANGE:
+				setPC( ((Integer) obj).intValue());
+				break;
+			case EMULATOR_RESET:
+				setPC(0);
+				break;
 		}
 	}
 

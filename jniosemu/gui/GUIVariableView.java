@@ -45,8 +45,12 @@ import jniosemu.emulator.*;
 		setup();
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_PC_CHANGE, this);
-		this.eventManager.addEventObserver(Events.EVENTID_RESET, this);
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.PROGRAMCOUNTER_CHANGE,
+			EventManager.EVENT.EMULATOR_RESET
+		};
+
+		this.eventManager.addEventObserver(events, this);
 	}
 
 	/**
@@ -97,11 +101,12 @@ import jniosemu.emulator.*;
     
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_PC_CHANGE))
-		{
-			//
+		switch (eventIdentifier) {
+			case PROGRAMCOUNTER_CHANGE:
+				//
+				break;
 		}
 	}
 

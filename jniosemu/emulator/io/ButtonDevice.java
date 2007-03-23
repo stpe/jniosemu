@@ -2,7 +2,6 @@ package jniosemu.emulator.io;
 
 import java.util.Vector;
 import jniosemu.emulator.memory.MemoryManager;
-import jniosemu.events.Events;
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
 /**
@@ -51,10 +50,12 @@ public class ButtonDevice extends IODevice implements EventObserver
 	public ButtonDevice(MemoryManager memory, EventManager eventManager) {
 		this.eventManager = eventManager;
 
-		String[] events = {
-			Events.EVENTID_GUI_BUTTON_RELEASED,
-			Events.EVENTID_GUI_BUTTON_PRESSED,
-			Events.EVENTID_GUI_BUTTON_TOGGLE};
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.BUTTON_RELEASE,
+			EventManager.EVENT.BUTTON_PRESS,
+			EventManager.EVENT.BUTTON_TOGGLE
+		};
+
 		this.eventManager.addEventObserver(events, this);
 
 		this.reset(memory);
@@ -98,7 +99,7 @@ public class ButtonDevice extends IODevice implements EventObserver
 	 * @calledby ButtonDevice(), reset(), update()
 	 */
 	private void sendEvent() {
-		this.eventManager.sendEvent(Events.EVENTID_UPDATE_BUTTONS, this.state);
+		this.eventManager.sendEvent(EventManager.EVENT.BUTTON_UPDATE, this.state);
 	}
 
 	/**
@@ -116,14 +117,19 @@ public class ButtonDevice extends IODevice implements EventObserver
 		this.sendEvent();
 	}
 
-	public void update(String eventIdentifier, Object obj) {
-		if (eventIdentifier.equals(Events.EVENTID_GUI_BUTTON_RELEASED)) {
-			this.setState(((Integer)obj).intValue(), false);
-		} else if (eventIdentifier.equals(Events.EVENTID_GUI_BUTTON_PRESSED)) {
-			this.setState(((Integer)obj).intValue(), true);
-		} else if (eventIdentifier.equals(Events.EVENTID_GUI_BUTTON_TOGGLE)) {
-			int index = ((Integer)obj).intValue();
-			this.setState(index, !this.state.get(index));
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
+	{
+		switch(eventIdentifier) {
+			case BUTTON_RELEASE:
+				this.setState(((Integer)obj).intValue(), false);
+				break;
+			case BUTTON_PRESS:
+				this.setState(((Integer)obj).intValue(), true);
+				break;
+			case BUTTON_TOGGLE:
+				int index = ((Integer)obj).intValue();
+				this.setState(index, !this.state.get(index));
+				break;
 		}
 	}
 }

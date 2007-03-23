@@ -14,7 +14,7 @@ public class StateManager implements EventObserver
 	/**
 	 * Manages which items are associated to which event.
 	 */
-	Hashtable<String, ArrayList<AbstractButton>> stateTable;
+	Hashtable<EventManager.EVENT, ArrayList<AbstractButton>> stateTable = new Hashtable<EventManager.EVENT, ArrayList<AbstractButton>>();
 
 	/**
 	 * Reference to EventManager used to receive
@@ -27,18 +27,17 @@ public class StateManager implements EventObserver
 	 */
 	public StateManager(EventManager eventManager)
 	{
-		stateTable = new Hashtable<String, ArrayList<AbstractButton>>();
-		
 		this.eventManager = eventManager;
-		
+
 		// add events to listen to
-		String[] events = {
-			Events.EVENTID_APPLICATION_START,
-			Events.EVENTID_EMULATION_READY,
-			Events.EVENTID_EMULATION_START,
-			Events.EVENTID_EMULATION_STOP,
-			Events.EVENTID_EMULATION_END
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.APPLICATION_START,
+			EventManager.EVENT.EMULATOR_END,
+			EventManager.EVENT.EMULATOR_READY,
+			EventManager.EVENT.EMULATOR_START,
+			EventManager.EVENT.EMULATOR_STOP
 		};
+
 		this.eventManager.addEventObserver(events, this);		
 	}
 	
@@ -53,7 +52,7 @@ public class StateManager implements EventObserver
 	 * @param  eventIdentifier  String identifying the event
 	 * @param  obj              Object that is associated with the event
 	 */
-	public void addItem(String eventIdentifier, AbstractButton obj)
+	public void addItem(EventManager.EVENT eventIdentifier, AbstractButton obj)
 	{
 		// create list of items if it doesn't exist		
 		if (!stateTable.containsKey(eventIdentifier))
@@ -78,9 +77,9 @@ public class StateManager implements EventObserver
 	 * @param  eventIdentifiers  Array of string identifying the events
 	 * @param  obj               Object that is associated with the event
 	 */	
-	public void addItem(String[] eventIdentifiers, AbstractButton obj)
+	public void addItem(EventManager.EVENT[] eventIdentifiers, AbstractButton obj)
 	{
-		for(String eventIdentifier : eventIdentifiers)
+		for(EventManager.EVENT eventIdentifier : eventIdentifiers)
 		{
 			addItem(eventIdentifier, obj);
 		}
@@ -89,7 +88,7 @@ public class StateManager implements EventObserver
 	/**
 	 *
 	 */	
-	private void setEnabled(String eventIdentifier, boolean state)
+	private void setEnabled(EventManager.EVENT eventIdentifier, boolean state)
 	{
 		// get list of items
 		ArrayList<AbstractButton> itemList = stateTable.get(eventIdentifier);
@@ -105,42 +104,39 @@ public class StateManager implements EventObserver
 		}
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_APPLICATION_START))
-		{
-			setEnabled(Events.EVENTID_RUN, false);
-			setEnabled(Events.EVENTID_PAUSE, false);
-			setEnabled(Events.EVENTID_STEP, false);
-			setEnabled(Events.EVENTID_RESET, false);
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_EMULATION_READY))
-		{
-			setEnabled(Events.EVENTID_RUN, true);
-			setEnabled(Events.EVENTID_PAUSE, false);
-			setEnabled(Events.EVENTID_STEP, true);
-			setEnabled(Events.EVENTID_RESET, false);
-		} 
-		else if (eventIdentifier.equals(Events.EVENTID_EMULATION_END))
-		{
-			setEnabled(Events.EVENTID_RUN, false);
-			setEnabled(Events.EVENTID_PAUSE, false);
-			setEnabled(Events.EVENTID_STEP, false);
-			setEnabled(Events.EVENTID_RESET, true);
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_EMULATION_START))
-		{
-			setEnabled(Events.EVENTID_RUN, false);
-			setEnabled(Events.EVENTID_PAUSE, true);
-			setEnabled(Events.EVENTID_STEP, false);
-			setEnabled(Events.EVENTID_RESET, true);
-		}
-		else if (eventIdentifier.equals(Events.EVENTID_EMULATION_STOP))
-		{
-			setEnabled(Events.EVENTID_RUN, true);
-			setEnabled(Events.EVENTID_PAUSE, false);
-			setEnabled(Events.EVENTID_STEP, true);
-			setEnabled(Events.EVENTID_RESET, false);
+		switch (eventIdentifier) {
+			case APPLICATION_START:
+				setEnabled(EventManager.EVENT.EMULATOR_RUN, false);
+				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP, false);
+				setEnabled(EventManager.EVENT.EMULATOR_RESET, false);
+				break;
+			case EMULATOR_END:
+				setEnabled(EventManager.EVENT.EMULATOR_RUN, false);
+				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP, false);
+				setEnabled(EventManager.EVENT.EMULATOR_RESET, true);
+				break;
+			case EMULATOR_READY:
+				setEnabled(EventManager.EVENT.EMULATOR_RUN, true);
+				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP, true);
+				setEnabled(EventManager.EVENT.EMULATOR_RESET, false);
+				break;
+			case EMULATOR_START:
+				setEnabled(EventManager.EVENT.EMULATOR_RUN, false);
+				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, true);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP, false);
+				setEnabled(EventManager.EVENT.EMULATOR_RESET, true);
+				break;
+			case EMULATOR_STOP:
+				setEnabled(EventManager.EVENT.EMULATOR_RUN, true);
+				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP, true);
+				setEnabled(EventManager.EVENT.EMULATOR_RESET, false);
+				break;
 		}
 	}	
 }

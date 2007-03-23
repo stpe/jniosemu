@@ -55,7 +55,7 @@ import jniosemu.emulator.*;
 		setup();
 
 		// add events to listen to
-		this.eventManager.addEventObserver(Events.EVENTID_UPDATE_LEDS, this);
+		this.eventManager.addEventObserver(EventManager.EVENT.LED_UPDATE, this);
 	}
 
 	/**
@@ -126,11 +126,12 @@ import jniosemu.emulator.*;
 		}
 	}
 	
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_UPDATE_LEDS))
-		{
-			updateLeds( (Vector<Boolean>) obj );
+		switch (eventIdentifier) {
+			case LED_UPDATE:
+				updateLeds( (Vector<Boolean>) obj );
+				break;
 		}
 	}
 }

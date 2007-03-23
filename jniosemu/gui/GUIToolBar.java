@@ -52,56 +52,56 @@ public class GUIToolBar extends JToolBar
 
 		JButton button = null;
 
-		button = makeButton("new", Events.EVENTID_NEW,
+		button = makeButton("new", EventManager.EVENT.DOCUMENT_NEW.toString(),
 												"Create new document",
 												"New");
 		this.add(button);
 
-		button = makeButton("open", Events.EVENTID_OPEN,
+		button = makeButton("open", EventManager.EVENT.DOCUMENT_OPEN.toString(),
 												"Open document",
 												"Open");
 		this.add(button);
 
-		button = makeButton("save", Events.EVENTID_SAVE,
+		button = makeButton("save", EventManager.EVENT.DOCUMENT_SAVE.toString(),
 												"Save document",
 												"Save");
 		this.add(button);
 
 		this.addSeparator();
 
-		button = makeButton("compile", Events.EVENTID_GUI_COMPILE,
+		button = makeButton("compile", EventManager.EVENT.COMPILER_COMPILE_INIT.toString(),
 												"Compile source code",
 												"Compile");
 		this.add(button);
 
-		button = makeButton("run", Events.EVENTID_RUN,
+		button = makeButton("run", EventManager.EVENT.EMULATOR_RUN.toString(),
 												"Run compiled code in emulator",
 												"Run");
 		this.add(button);
 
-		button = makeButton("pause", Events.EVENTID_PAUSE,
+		button = makeButton("pause", EventManager.EVENT.EMULATOR_PAUSE.toString(),
 												"Pause emulation",
 												"Pause");
 		this.add(button);
 
-		button = makeButton("step", Events.EVENTID_STEP,
+		button = makeButton("step", EventManager.EVENT.EMULATOR_STEP.toString(),
 												"Step through and execute one instruction at a time",
 												"Step");
 		this.add(button);
 
-		button = makeButton("reset", Events.EVENTID_RESET,
+		button = makeButton("reset", EventManager.EVENT.EMULATOR_RESET.toString(),
 												"Reset emulator",
 												"Reset");
 		this.add(button);
 
 		this.addSeparator();
 
-		button = makeButton("variable_view", Events.EVENTID_VIEW_VARIABLES,
+		button = makeButton("variable_view", EventManager.EVENT.VARIABLE_VIEW.toString(),
 												"View variables",
 												"Variable View");
 		this.add(button);
 
-		button = makeButton("memory_view", Events.EVENTID_VIEW_MEMORY,
+		button = makeButton("memory_view", EventManager.EVENT.MEMORY_VIEW.toString(),
 												"View memory",
 												"Memory View");
 		this.add(button);
@@ -153,8 +153,12 @@ public class GUIToolBar extends JToolBar
 			Component comp = this.getComponentAtIndex(i);
 			
 			// if it's a JButton (and not a separator), then update state
-			if (comp.getClass().getName().equals("javax.swing.JButton"))
-				stateManager.addItem(((JButton) comp).getActionCommand(), (AbstractButton) comp);
+			if (comp.getClass().getName().equals("javax.swing.JButton")) {
+				try {
+					EventManager.EVENT event = this.eventManager.getEvent(((JButton) comp).getActionCommand());
+					stateManager.addItem(event, (AbstractButton) comp);
+				} catch (Exception ex) {}
+			}
 		}
 	}
 
@@ -167,7 +171,10 @@ public class GUIToolBar extends JToolBar
 	 * @param  e  action event object
 	 */
 	public void actionPerformed(ActionEvent e) {
-			eventManager.sendEvent(e.getActionCommand());
+		try {
+			EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
+			eventManager.sendEvent(event);
+		} catch (Exception ex) {}
 	}
 
 }

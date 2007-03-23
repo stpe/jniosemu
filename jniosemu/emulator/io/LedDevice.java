@@ -2,7 +2,6 @@ package jniosemu.emulator.io;
 
 import java.util.Vector;
 import jniosemu.emulator.memory.MemoryManager;
-import jniosemu.events.Events;
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
 
@@ -79,6 +78,6 @@ public class LedDevice extends IODevice
 	}
 
 	public void sendEvent() {
-		this.eventManager.sendEvent(Events.EVENTID_UPDATE_LEDS, this.state);
+		this.eventManager.sendEvent(EventManager.EVENT.LED_UPDATE, this.state);
 	}
 }

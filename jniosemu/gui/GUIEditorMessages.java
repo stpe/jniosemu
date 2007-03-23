@@ -42,9 +42,10 @@ public class GUIEditorMessages extends JPanel
 		setup();
 		
     // add events to listen to
-		String [] events = {
-			Events.EVENTID_COMPILE_ERROR,
-			Events.EVENTID_COMPILE};
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.COMPILER_COMPILE,
+			EventManager.EVENT.COMPILER_ERROR
+		};
     this.eventManager.addEventObserver(events, this);
 	}
 
@@ -72,15 +73,18 @@ public class GUIEditorMessages extends JPanel
 		this.setVisible(false);
 	}
 
-	public void update(String eventIdentifier, Object obj)
+	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		if (eventIdentifier.equals(Events.EVENTID_COMPILE)) {
-			editorMessages.setText("");
-			this.setVisible(false);
-		} else if (eventIdentifier.equals(Events.EVENTID_COMPILE_ERROR)) {
-			String msg = (String) obj;
-			editorMessages.append(msg + "\n");
-			this.setVisible(true);
+		switch (eventIdentifier) {
+			case COMPILER_COMPILE:
+				editorMessages.setText("");
+				this.setVisible(false);
+				break;
+			case COMPILER_ERROR:
+				String msg = (String) obj;
+				editorMessages.append(msg + "\n");
+				this.setVisible(true);
+				break;
 		}
 	}
 
@@ -92,8 +96,11 @@ public class GUIEditorMessages extends JPanel
 	 *
 	 * @param  e  action event object
 	 */
-  public void actionPerformed(ActionEvent e) {
-  		eventManager.sendEvent(e.getActionCommand());
-  }
-	
+	public void actionPerformed(ActionEvent e) {
+		try {
+			EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
+			eventManager.sendEvent(event);
+		} catch (Exception ex) {}
+	}
+
 }
