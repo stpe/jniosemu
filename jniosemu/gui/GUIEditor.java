@@ -42,9 +42,9 @@ public class GUIEditor extends JPanel
 	private boolean textHasChanged = true;
 
 	/**
-	 * Filename of current document (default "untitled").
+	 * File of current document (null if document not saved).
 	 */
-	private String documentTitle = DEFAULT_DOCUMENT_NAME;
+	private File documentFile = null;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -70,7 +70,8 @@ public class GUIEditor extends JPanel
 			EventManager.EVENT.COMPILER_COMPILE_INIT,
 			EventManager.EVENT.DOCUMENT_NEW,
 			EventManager.EVENT.DOCUMENT_OPEN,
-			EventManager.EVENT.DOCUMENT_SAVE
+			EventManager.EVENT.DOCUMENT_SAVE,
+			EventManager.EVENT.DOCUMENT_SAVE_AS
 		};
 
     this.eventManager.addEventObserver(events, this);
@@ -101,6 +102,7 @@ public class GUIEditor extends JPanel
 
 		// file chooser
 		fc.setCurrentDirectory(new File("."));
+		fc.addChoosableFileFilter(new AsmFileFilter());
 
 		textChanged(false);
 	}
@@ -121,27 +123,38 @@ public class GUIEditor extends JPanel
 	/**
 	 * Is called when text is changed in editor. Used to keep track
 	 * of if a document is modified since last save or not.
-	 * an event to the EventManager object.
 	 *
 	 * @calledby  insertUpdate(), removeUpdate(), changedUpdate(),
 	 *            newDocument(), openDocument(), saveDocument()
 	 * @calls     EventManager.sendEvent()
 	 *
+	 * @param  textHasChanged     set value if text has changed
+	 * @param  forceTitleUpdated  forces a window title update even if
+	 *                            textHasChanged state is same
+	 */
+	private void textChanged(boolean textHasChanged, boolean forceTitleUpdate)
+	{
+		if (this.textHasChanged != textHasChanged || forceTitleUpdate)
+		{
+			this.textHasChanged = textHasChanged;
+
+			eventManager.sendEvent(EventManager.EVENT.APPLICATION_TITLE_CHANGE, getDocumentTitle());
+		}
+	}
+
+	/**
+	 * Is called when text is changed in editor. Used to keep track
+	 * of if a document is modified since last save or not.
+	 *
+	 * @calledby  insertUpdate(), removeUpdate(), changedUpdate(),
+	 *            newDocument(), openDocument(), saveDocument()
+	 * @calls     textChanged()
+	 *
 	 * @param  textHasChanged  Set value if text has changed
 	 */
 	private void textChanged(boolean textHasChanged)
 	{
-		if (this.textHasChanged != textHasChanged)
-		{
-			this.textHasChanged = textHasChanged;
-
-			String title = this.documentTitle;
-
-			if (textHasChanged)
-				title = title + "*";
-
-			eventManager.sendEvent(EventManager.EVENT.APPLICATION_TITLE_CHANGE, title);
-		}
+		textChanged(textHasChanged, false);
 	}
 
 	/**
@@ -227,6 +240,9 @@ public class GUIEditor extends JPanel
 			case DOCUMENT_SAVE:
 				saveDocument();
 				break;
+			case DOCUMENT_SAVE_AS:
+				saveAsDocument();
+				break;
 		}
 	}
 
@@ -262,8 +278,8 @@ public class GUIEditor extends JPanel
 		
 		// clear editor
 		textArea.setText("");
-		this.documentTitle = DEFAULT_DOCUMENT_NAME;
-		textChanged(false);
+		this.documentFile = null;
+		textChanged(false, true);
 
 		eventManager.sendEvent(EventManager.EVENT.DOCUMENT_NEW_DONE);
 		// change tab to editor tab (if not current)
@@ -310,10 +326,10 @@ public class GUIEditor extends JPanel
 			try
 			{
 				String content = Editor.read(file.toString());
-				
-				this.documentTitle = file.getName();
+
+				this.documentFile = file;				
 				textArea.setText(content);
-				textChanged(false);
+				textChanged(false, true);
 
 				// send event of successfully opened document
 				eventManager.sendEvent(EventManager.EVENT.DOCUMENT_OPEN_DONE);
@@ -333,38 +349,59 @@ public class GUIEditor extends JPanel
 	 *
 	 * @pre       Instance of FileChooser fc is created.
 	 * @calledby  update(), exitApplication()
-	 * @calls     EventManager.sendEvent(), Editor.write()
+	 * @calls     EventManager.sendEvent(), saveDocument()
+	 *
+	 * @return  true if successfully saved
+	 */
+	private boolean saveAsDocument()
+	{
+		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+		{
+			this.documentFile = fc.getSelectedFile();
+
+			return saveDocument();
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Save current document.
+	 *
+	 * @checks    If document has not been associated with a file (it has not
+	 *            been saved before) then the Save As dialog is used instead.
+	 * @calledby  update(), exitApplication()
+	 * @calls     EventManager.sendEvent(), Editor.write(), saveAsDocument()
 	 *
 	 * @return  true if successfully saved
 	 */
 	private boolean saveDocument()
 	{
-		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+		// if no current file, ask for one
+		if (this.documentFile == null)
 		{
-			java.io.File file = fc.getSelectedFile();
-
-			try
-			{
-				Editor.write(file.toString(), textArea.getText());
-				
-				this.documentTitle = file.getName();
-				textChanged(false);
-
-				// send event of successfully saved document
-				eventManager.sendEvent(EventManager.EVENT.DOCUMENT_SAVE_DONE);
-				// change tab to editor tab (if not current)
-				eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
-				
-				return true;
-			}
-			catch (IOException e)
-			{
-				eventManager.sendEvent(EventManager.EVENT.EXCEPTION, e);
-				return false;
-			}
+			return saveAsDocument();
 		}
 		
-		return false;
+		// save file
+		try
+		{
+			Editor.write(this.documentFile.toString(), textArea.getText());
+			
+			textChanged(false, true);
+
+			// send event of successfully saved document
+			eventManager.sendEvent(EventManager.EVENT.DOCUMENT_SAVE_DONE);
+			// change tab to editor tab (if not current)
+			eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
+			
+			return true;
+		}
+		catch (IOException e)
+		{
+			eventManager.sendEvent(EventManager.EVENT.EXCEPTION, e);
+			return false;
+		}		
 	}
 
 	/**
@@ -424,7 +461,7 @@ public class GUIEditor extends JPanel
 			// show option dialog
 			return JOptionPane.showOptionDialog(
 					this,
-					"Save changes to " + this.documentTitle + "?",
+					"Save changes to " + getDocumentTitle() + "?",
 					"JNiosEmu",
 					JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.WARNING_MESSAGE,
@@ -432,6 +469,30 @@ public class GUIEditor extends JPanel
 					null,
 					null
 			);		
+	}
+
+	/**
+	 * Returns document title based on filename (or untitled
+	 * if document has not been saved.
+	 *
+	 * @return  document title
+	 */
+	private String getDocumentTitle()
+	{
+		String title = "";
+		if (this.documentFile == null)
+		{
+			title = DEFAULT_DOCUMENT_NAME;
+		}
+		else
+		{
+			title = this.documentFile.getName();
+		}
+		
+		if (textHasChanged)
+			title = title + "*";
+
+		return title;
 	}
 
 }

@@ -70,6 +70,10 @@ public class EventManager
 	 * Manages which observers are listening to which event.
 	 */
 	private Hashtable<EVENT, ArrayList<EventObserver>> eventTable = new Hashtable<EVENT, ArrayList<EventObserver>>();
+	
+	/**
+	 * Used for string to enum conversion.
+	 */
 	private Hashtable<String, EVENT> stringLookup = new Hashtable<String, EVENT>();
 	
 	/**
