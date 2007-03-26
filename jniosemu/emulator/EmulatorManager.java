@@ -359,7 +359,7 @@ public class EmulatorManager implements EventObserver
 			this.breakpoints.remove(addr);
 		}
 
-		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE, lineNumber);
+		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_BREAKPOINT_UPDATE, lineNumber);
 	}
 
 	/**
