@@ -52,6 +52,7 @@ public class EventManager
 		EMULATOR_READY,										// Compilation of current source code successfully done
 		EMULATOR_RESET,										// Reset emulator
 		EMULATOR_RUN,											// Start emulation
+		EMULATOR_SPEED,										// Change the emulator speed
 		EMULATOR_START,										// Emulation started
 		EMULATOR_STEP,										// Step emulation one instruction
 		EMULATOR_STOP,										// Emulation stopped

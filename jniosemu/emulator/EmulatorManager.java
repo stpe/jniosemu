@@ -20,6 +20,10 @@ import jniosemu.instruction.emulator.Instruction;
 public class EmulatorManager implements EventObserver
 {
 	/**
+	 * The different speed that is possible to run the emulator in
+	 */
+	public static enum SPEED {FULL, NORMAL, SLOW};
+	/**
 	 * Program counter address
 	 */
 	private int pc = MemoryManager.PROGRAMSTARTADDR;
@@ -56,6 +60,10 @@ public class EmulatorManager implements EventObserver
 	 */
 	private Program program;
 	/**
+	 * Current speed
+	 */
+	private SPEED speed = SPEED.NORMAL;
+	/**
 	 * Breakpoints
 	 */
 	private Hashtable<Integer, Integer> breakpoints = new Hashtable<Integer, Integer>();
@@ -81,7 +89,8 @@ public class EmulatorManager implements EventObserver
 			EventManager.EVENT.EMULATOR_STEP,
 			EventManager.EVENT.EMULATOR_RESET,
 			EventManager.EVENT.EMULATOR_RUN,
-			EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE
+			EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE,
+			EventManager.EVENT.EMULATOR_SPEED
 		};
 
 		eventManager.addEventObserver(events, this);
@@ -124,17 +133,32 @@ public class EmulatorManager implements EventObserver
 		this.startEvent();
 
 		boolean nextInstruction = false;
-		int instruction = 0;
+		boolean sendEvent = false;
+		int instructionCount = 0;
+
 		do {
-			if (instruction % 1000 == 0)
+			sendEvent = (this.speed != SPEED.FULL || instructionCount % 1009 == 0);
+			
+			if (sendEvent)
 				this.register.resetState();
 
 			nextInstruction = this.step();
 
-			if (instruction % 1000 == 0)
+			try {
+				switch (this.speed) {
+					case SLOW:
+						Thread.sleep(500);
+						break;
+					case NORMAL:
+						Thread.sleep(1);
+						break;
+				}
+			} catch (InterruptedException e) {}
+
+			if (sendEvent)
 				this.pcChange();
 
-			instruction++;
+			instructionCount++;
 		} while (nextInstruction && this.running);
 
 		this.pcChange();
@@ -382,6 +406,9 @@ public class EmulatorManager implements EventObserver
 				break;
 			case EMULATOR_BREAKPOINT_TOGGLE:
 				this.toggleBreakpoint(((Integer)obj).intValue());
+				break;
+			case EMULATOR_SPEED:
+				this.speed = (SPEED)obj;
 				break;
 		}
 	}
