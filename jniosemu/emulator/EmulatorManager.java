@@ -2,6 +2,7 @@ package jniosemu.emulator;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.lang.Thread;
 
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
@@ -118,7 +119,10 @@ public class EmulatorManager implements EventObserver
 		this.running = true;
 		this.startEvent();
 
-		while (this.step());
+		while (this.step())
+		{
+			Thread.yield();
+		}
 
 		this.running = false;
 		this.stopEvent();
@@ -323,7 +327,14 @@ public class EmulatorManager implements EventObserver
 				this.runOne();
 				break;
 			case EMULATOR_RUN:
-				this.runAll();
+			
+		    Thread t = new Thread(new Runnable() {
+		        public void run() {
+		            runAll();
+		        }
+		    });
+		    t.setPriority(Thread.MIN_PRIORITY);
+		    t.start();
 				break;
 			case EMULATOR_PAUSE:
 				this.pause();
@@ -370,5 +381,10 @@ public class EmulatorManager implements EventObserver
 		} else {
 			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_STOP);
 		}
+	}
+	
+	public void run()
+	{
+		
 	}
 }
