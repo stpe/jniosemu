@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.*;
 
 import jniosemu.events.*;
+import jniosemu.emulator.*;
 
 /**
  * Creates and manages menu bar in GUI.
@@ -112,6 +113,30 @@ public class GUIMenuBar extends JMenuBar
 		stateManager.addItem(EventManager.EVENT.EMULATOR_RESET, item);
 		menu.add(item);
 		
+		menu.addSeparator();
+
+		// execution speed submenu		
+		JMenu submenu = new JMenu("Execution Speed");
+		menu.add(submenu);
+		
+		ButtonGroup speedGroup = new ButtonGroup();
+		
+		item = new JRadioButtonMenuItem("Full", true);
+		item.setActionCommand(EmulatorManager.SPEED.FULL.toString());
+		item.addActionListener(this);
+		speedGroup.add(item);
+		submenu.add(item);
+		
+		item = new JRadioButtonMenuItem("Normal");
+		item.setActionCommand(EmulatorManager.SPEED.NORMAL.toString());
+		item.addActionListener(this);
+		speedGroup.add(item);
+		submenu.add(item);
+		item = new JRadioButtonMenuItem("Slow");
+		item.setActionCommand(EmulatorManager.SPEED.SLOW.toString());
+		item.addActionListener(this);
+		speedGroup.add(item);
+		submenu.add(item);
 
 		// View menu
 		menu = new JMenu("View");
@@ -242,11 +267,32 @@ public class GUIMenuBar extends JMenuBar
 	 *
 	 * @param  e  action event object
 	 */
-	public void actionPerformed(ActionEvent e) {
-		try {
-			EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
-			eventManager.sendEvent(event);
-		} catch (Exception ex) {}
+	public void actionPerformed(ActionEvent e)
+	{
+		if (e.getActionCommand().equals(EmulatorManager.SPEED.FULL.toString()))
+		{
+			eventManager.sendEvent(EventManager.EVENT.EMULATOR_SPEED, EmulatorManager.SPEED.FULL);
+		}
+		else if (e.getActionCommand().equals(EmulatorManager.SPEED.NORMAL.toString()))
+		{
+			eventManager.sendEvent(EventManager.EVENT.EMULATOR_SPEED, EmulatorManager.SPEED.NORMAL);
+		}
+		else if (e.getActionCommand().equals(EmulatorManager.SPEED.SLOW.toString()))
+		{
+			eventManager.sendEvent(EventManager.EVENT.EMULATOR_SPEED, EmulatorManager.SPEED.SLOW);
+		} 
+		else
+		{
+			try 
+			{
+				EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
+				eventManager.sendEvent(event);
+			} 
+			catch (Exception ex) 
+			{
+				
+			}
+		}
 	}
 
 }
