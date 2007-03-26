@@ -357,6 +357,15 @@ public class EmulatorManager implements EventObserver
 				this.runOne();
 				break;
 			case EMULATOR_RUN:
+				this.running = false;
+				this.ended = false;
+
+				if (this.runningThread != null && this.runningThread.isAlive()) {
+					try {
+						this.runningThread.join(1000);
+					} catch (InterruptedException e) {}
+				}
+
 				this.runningThread = new Thread(new Runnable() {
 					public void run() {
 						runAll();
