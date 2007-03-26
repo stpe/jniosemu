@@ -121,13 +121,13 @@ public class GUIMenuBar extends JMenuBar
 		
 		ButtonGroup speedGroup = new ButtonGroup();
 		
-		item = new JRadioButtonMenuItem("Full", true);
+		item = new JRadioButtonMenuItem("Full");
 		item.setActionCommand(EmulatorManager.SPEED.FULL.toString());
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
 		
-		item = new JRadioButtonMenuItem("Normal");
+		item = new JRadioButtonMenuItem("Normal", true);
 		item.setActionCommand(EmulatorManager.SPEED.NORMAL.toString());
 		item.addActionListener(this);
 		speedGroup.add(item);
