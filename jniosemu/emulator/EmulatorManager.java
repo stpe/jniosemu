@@ -59,6 +59,10 @@ public class EmulatorManager implements EventObserver
 	 * Breakpoints
 	 */
 	private Hashtable<Integer, Integer> breakpoints = new Hashtable<Integer, Integer>();
+	/**
+	 * Thread that the emulation runs in
+	 */
+	private Thread runningThread = null;
 
 	/**
 	 * Init EmulatorManager
@@ -119,10 +123,21 @@ public class EmulatorManager implements EventObserver
 		this.running = true;
 		this.startEvent();
 
-		while (this.step())
-		{
-			Thread.yield();
-		}
+		boolean nextInstruction = false;
+		int instruction = 0;
+		do {
+			if (instruction % 1000 == 0)
+				this.register.resetState();
+
+			nextInstruction = this.step();
+
+			if (instruction % 1000 == 0)
+				this.pcChange();
+
+			instruction++;
+		} while (nextInstruction && this.running);
+
+		this.pcChange();
 
 		this.running = false;
 		this.stopEvent();
@@ -138,7 +153,9 @@ public class EmulatorManager implements EventObserver
 		this.running = true;
 		this.startEvent();
 
+		this.register.resetState();
 		this.step();
+		this.pcChange();
 
 		this.running = false;
 		this.stopEvent();
@@ -156,7 +173,6 @@ public class EmulatorManager implements EventObserver
 	 * @return True if the emulation can continue
 	 */
 	public boolean step() {
-		this.register.resetState();
 		int lastPc = this.pc;
 
 		try {
@@ -176,14 +192,13 @@ public class EmulatorManager implements EventObserver
 			return false;
 		}
 
-		if (this.pc == lastPc) {
+		if (this.pc == lastPc || this.ended) {
 			this.pc = 0;
 			this.pcChange();
 			this.ended = true;
 			return false;
 		}
 
-		this.pcChange();
 		return !this.breakpoints.containsKey(this.pc);
 	}
 
@@ -261,7 +276,7 @@ public class EmulatorManager implements EventObserver
 	 * @calledby update()
 	 */
 	public void pause() {
-		
+		this.running = false;
 	}
 
 	/**
@@ -286,6 +301,21 @@ public class EmulatorManager implements EventObserver
 		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_READY, this.program);
 
 		this.pcChange();
+	}
+
+	public void reset() {
+		this.running = false;
+		this.ended = false;
+
+		if (this.runningThread != null && this.runningThread.isAlive()) {
+			try {
+				this.runningThread.join(1000);
+			} catch (InterruptedException e) {}
+
+			this.runningThread = null;
+		}
+
+		this.load();
 	}
 
 	/**
@@ -327,20 +357,19 @@ public class EmulatorManager implements EventObserver
 				this.runOne();
 				break;
 			case EMULATOR_RUN:
-			
-		    Thread t = new Thread(new Runnable() {
-		        public void run() {
-		            runAll();
-		        }
-		    });
-		    t.setPriority(Thread.MIN_PRIORITY);
-		    t.start();
+				this.runningThread = new Thread(new Runnable() {
+					public void run() {
+						runAll();
+					}
+				});
+				this.runningThread.setPriority(Thread.MIN_PRIORITY);
+				this.runningThread.start();
 				break;
 			case EMULATOR_PAUSE:
 				this.pause();
 				break;
 			case EMULATOR_RESET:
-				this.load();
+				this.reset();
 				break;
 			case EMULATOR_BREAKPOINT_TOGGLE:
 				this.toggleBreakpoint(((Integer)obj).intValue());
