@@ -134,7 +134,7 @@ public class EmulatorManager implements EventObserver
 
 		boolean nextInstruction = false;
 		boolean sendEvent = false;
-		int instructionCount = 0;
+		int instructionCount = 1;
 
 		do {
 			sendEvent = (this.speed != SPEED.FULL || instructionCount % 1009 == 0);
