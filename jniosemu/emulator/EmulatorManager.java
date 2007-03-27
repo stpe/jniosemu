@@ -139,10 +139,13 @@ public class EmulatorManager implements EventObserver
 		do {
 			sendEvent = (this.speed != SPEED.FULL || instructionCount % 1009 == 0);
 			
-			if (sendEvent)
-				this.register.resetState();
+			// if (sendEvent)
+			this.register.resetState();
 
 			nextInstruction = this.step();
+
+			if (sendEvent)
+				this.pcChange();
 
 			try {
 				switch (this.speed) {
@@ -154,9 +157,6 @@ public class EmulatorManager implements EventObserver
 						break;
 				}
 			} catch (InterruptedException e) {}
-
-			if (sendEvent)
-				this.pcChange();
 
 			instructionCount++;
 		} while (nextInstruction && this.running);
@@ -291,7 +291,7 @@ public class EmulatorManager implements EventObserver
 		for (Integer lineNumber: this.breakpoints.values())
 			this.program.toggleBreakpoint(lineNumber.intValue());
 
-		this.load();
+		this.reset();
 	}
 
 	/**
