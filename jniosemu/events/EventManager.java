@@ -1,6 +1,7 @@
 package jniosemu.events;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * EventManager manages events that may have several senders
@@ -77,10 +78,18 @@ public class EventManager
 	 */
 	private Hashtable<String, EVENT> stringLookup = new Hashtable<String, EVENT>();
 	
+	private ConcurrentLinkedQueue<QueueObject> queue = new ConcurrentLinkedQueue<QueueObject>();
+	
+	private EventSender sendEventThread;
+	
 	/**
 	 * Creates an instance of eventTable.
 	 */
-	public EventManager() {
+	public EventManager() 
+	{
+		sendEventThread = new EventSender();
+		sendEventThread.start();
+		
 		for (EVENT event: EVENT.values())
 			stringLookup.put(event.toString(), event);
 	}
@@ -143,26 +152,12 @@ public class EventManager
 	 */	
 	public void sendEvent(EVENT eventIdentifier, Object obj)
 	{
-		// get list of observers
-		ArrayList<EventObserver> eventObservers = eventTable.get(eventIdentifier);
-		
-		if (eventObservers == null)
-		{
-			String objValue = ".";
-			if (obj != null)
-				objValue = ": " + obj;
-			
-			// debug (omit println)
-			System.out.println("EventManger.sendEvent(): No observers listening to '" + eventIdentifier + "'" + objValue);
-			return;
-		}
+		// put event in queue
+		queue.add(new QueueObject(eventIdentifier, obj));
 
-//		System.out.println("EventManger.sendEvent(): " + eventIdentifier);
-		
-		// iterate over all listening observers
-		for (EventObserver eventObserver : eventObservers)
+		synchronized(this.sendEventThread)
 		{
-			eventObserver.update(eventIdentifier, obj);
+			this.sendEventThread.notify();
 		}
 	}
 
@@ -192,4 +187,69 @@ public class EventManager
 		return stringLookup.get(eventIdentifier);
 	}
 	
+	/**
+	 * Event queue object.
+	 */
+	private class QueueObject
+	{
+		public QueueObject(EVENT eventIdentifier, Object obj)
+		{
+			this.eventIdentifier = eventIdentifier;
+			this.obj = obj;
+		}
+		
+		public EVENT eventIdentifier;
+		public Object obj;
+	}
+	
+	private class EventSender extends Thread
+	{
+		public void run()
+		{
+			while (true)
+			{
+				try
+				{
+					synchronized(this) 
+					{
+						wait();
+					}
+				}
+				catch (InterruptedException e)
+				{
+
+				}
+
+				System.out.println(queue.size());
+				while (!queue.isEmpty())
+					sendEvent( queue.poll() );
+			}
+		}
+
+		private void sendEvent(QueueObject queueObj)
+		{
+			// get list of observers
+			ArrayList<EventObserver> eventObservers = eventTable.get(queueObj.eventIdentifier);
+			
+			if (eventObservers == null)
+			{
+				String objValue = ".";
+				if (queueObj.obj != null)
+					objValue = ": " + queueObj.obj;
+				
+				// debug (omit println)
+				System.out.println("EventManger.sendEvent(): No observers listening to '" + queueObj.eventIdentifier + "'" + objValue);
+				return;
+			}
+	
+			// System.out.println("EventManger.sendEvent(): " + eventIdentifier);
+			
+			// iterate over all listening observers
+			for (EventObserver eventObserver : eventObservers)
+			{
+				eventObserver.update(queueObj.eventIdentifier, queueObj.obj);
+			}
+		}		
+		
+	}
 }
