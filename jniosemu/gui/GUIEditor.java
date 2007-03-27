@@ -6,8 +6,10 @@ import javax.swing.text.Utilities;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
+
 import jniosemu.events.*;
 import jniosemu.editor.*;
+import jniosemu.instruction.InstructionManager;
 
 /**
  * Creates and manages the GUI component of the editor view.
@@ -71,7 +73,8 @@ public class GUIEditor extends JPanel
 			EventManager.EVENT.DOCUMENT_NEW,
 			EventManager.EVENT.DOCUMENT_OPEN,
 			EventManager.EVENT.DOCUMENT_SAVE,
-			EventManager.EVENT.DOCUMENT_SAVE_AS
+			EventManager.EVENT.DOCUMENT_SAVE_AS,
+			EventManager.EVENT.EDITOR_INSERT_INSTRUCTION
 		};
 
     this.eventManager.addEventObserver(events, this);
@@ -242,6 +245,9 @@ public class GUIEditor extends JPanel
 				break;
 			case DOCUMENT_SAVE_AS:
 				saveAsDocument();
+				break;
+			case EDITOR_INSERT_INSTRUCTION:
+				insertInstruction((String) obj);
 				break;
 		}
 	}
@@ -490,9 +496,36 @@ public class GUIEditor extends JPanel
 		}
 		
 		if (textHasChanged)
-			title = title + "*";
+			title += "*";
 
 		return title;
+	}
+
+	/**
+	 * Insert instruction at caret position in editor.
+	 *
+	 * @param  instruction  instruction string
+	 */
+	private void insertInstruction(String instruction)
+	{
+		// get argument of instruction
+		String argument = InstructionManager.getArgument(instruction);
+
+		int caretPos = textArea.getCaretPosition();
+
+		// insert instruction and argument at caret position		
+		textArea.insert(instruction + argument, caretPos);
+
+		try {
+			// move caret to beginning of argument
+			int newCaretPos = caretPos + instruction.length();
+			if (argument.length() > 0)
+				newCaretPos++;
+
+			textArea.setCaretPosition(newCaretPos);
+		} catch(IllegalArgumentException e) {
+			
+		}
 	}
 
 }

@@ -19,6 +19,12 @@ public class GUIMenuBar extends JMenuBar
 	private transient EventManager eventManager;
 
 	/**
+	 * Delimter character used in action command to separate
+	 * event from value.
+	 */
+	private static final String DELIMITER_CHAR = "|";
+
+	/**
 	 * Initiates the creation of this GUI component.
 	 *
 	 * @post      eventManager reference is set for this object.
@@ -122,18 +128,18 @@ public class GUIMenuBar extends JMenuBar
 		ButtonGroup speedGroup = new ButtonGroup();
 		
 		item = new JRadioButtonMenuItem("Full");
-		item.setActionCommand(EmulatorManager.SPEED.FULL.toString());
+		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.FULL);
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
 		
 		item = new JRadioButtonMenuItem("Normal", true);
-		item.setActionCommand(EmulatorManager.SPEED.NORMAL.toString());
+		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.NORMAL);
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
 		item = new JRadioButtonMenuItem("Slow");
-		item.setActionCommand(EmulatorManager.SPEED.SLOW.toString());
+		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.SLOW);
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
@@ -185,6 +191,9 @@ public class GUIMenuBar extends JMenuBar
 		
 		JMenu submenu = new JMenu("Arithmetic & Logical");
 		
+		JMenuItem item = createMenuItem("add", EventManager.EVENT.EDITOR_INSERT_INSTRUCTION + DELIMITER_CHAR + "add");
+		submenu.add(item);
+
 		menu.add(submenu);
 
 
@@ -269,27 +278,46 @@ public class GUIMenuBar extends JMenuBar
 	 */
 	public void actionPerformed(ActionEvent e)
 	{
-		if (e.getActionCommand().equals(EmulatorManager.SPEED.FULL.toString()))
+		String actionCommand = e.getActionCommand();
+		String actionValue = null;
+
+		int delimiterIndex = actionCommand.indexOf(DELIMITER_CHAR);
+
+		// check if action command has value		
+		if (delimiterIndex != -1)
 		{
-			eventManager.sendEvent(EventManager.EVENT.EMULATOR_SPEED, EmulatorManager.SPEED.FULL);
+			actionValue = actionCommand.substring(delimiterIndex + 1);
+			actionCommand = actionCommand.substring(0, delimiterIndex);
 		}
-		else if (e.getActionCommand().equals(EmulatorManager.SPEED.NORMAL.toString()))
-		{
-			eventManager.sendEvent(EventManager.EVENT.EMULATOR_SPEED, EmulatorManager.SPEED.NORMAL);
+
+		// get event based on action command
+		EventManager.EVENT event;
+		try {
+			event = this.eventManager.getEvent(actionCommand);
+		} catch (EventException ex) {
+			System.out.println("Error: " + ex.getMessage());
+			return;
 		}
-		else if (e.getActionCommand().equals(EmulatorManager.SPEED.SLOW.toString()))
+
+		Object eventObj = actionValue;
+		
+		switch(event) 
 		{
-			eventManager.sendEvent(EventManager.EVENT.EMULATOR_SPEED, EmulatorManager.SPEED.SLOW);
-		} 
-		else
-		{
-			try {
-				EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
-				eventManager.sendEvent(event);
-			} catch (EventException ex) {
-				System.out.println("Error: " + ex.getMessage());
-			}
+			case EMULATOR_SPEED:
+				eventObj = EmulatorManager.SPEED.NORMAL;
+	
+				if (actionValue.equals(EmulatorManager.SPEED.FULL.toString()))
+				{
+					eventObj = EmulatorManager.SPEED.FULL;
+				}
+				else if (actionValue.equals(EmulatorManager.SPEED.SLOW.toString()))
+				{
+					eventObj = EmulatorManager.SPEED.SLOW;
+				} 
+				break;
 		}
+		
+		eventManager.sendEvent(event, eventObj);
 	}
 
 }

@@ -253,16 +253,15 @@ public class EventManager
 			
 			if (eventObservers == null)
 			{
-				String objValue = ".";
-				if (queueObj.obj != null)
-					objValue = ": " + queueObj.obj;
-				
-				// debug (omit println)
+				// debug
+				String objValue = queueObj.obj != null ? ": " + queueObj.obj : "<null>";
 				System.out.println("EventManger.sendEvent(): No observers listening to '" + queueObj.eventIdentifier + "'" + objValue);
 				return;
 			}
-	
-			// System.out.println("EventManger.sendEvent(): " + eventIdentifier);
+
+			// debug	
+//			String objValue = queueObj.obj != null ? ": " + queueObj.obj : "<null>";
+//			System.out.println("EventManger.sendEvent(): " + queueObj.eventIdentifier + " " + objValue);
 			
 			// iterate over all listening observers
 			for (EventObserver eventObserver : eventObservers)

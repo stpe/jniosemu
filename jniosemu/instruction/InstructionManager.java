@@ -202,4 +202,8 @@ public class InstructionManager
 		String hex = "00000000"+ Integer.toHexString(value);
 		return "0x"+ hex.substring(hex.length()-8, hex.length());
 	}
+	
+	public static String getArgument(String instruction) {
+		return " rX, rY, rZ";
+	}
 }
