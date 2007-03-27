@@ -157,7 +157,9 @@ public class GUIToolBar extends JToolBar
 				try {
 					EventManager.EVENT event = this.eventManager.getEvent(((JButton) comp).getActionCommand());
 					stateManager.addItem(event, (AbstractButton) comp);
-				} catch (Exception ex) {}
+				} catch (EventException ex) {
+					System.out.println("Error: " + ex.getMessage());
+				}
 			}
 		}
 	}
@@ -174,7 +176,9 @@ public class GUIToolBar extends JToolBar
 		try {
 			EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
 			eventManager.sendEvent(event);
-		} catch (Exception ex) {}
+		} catch (EventException ex) {
+			System.out.println("Error: " + ex.getMessage());
+		}
 	}
 
 }

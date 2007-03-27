@@ -78,12 +78,19 @@ public class EventManager
 	 */
 	private Hashtable<String, EVENT> stringLookup = new Hashtable<String, EVENT>();
 	
+	/**
+	 * Event queue.
+	 */
 	private ConcurrentLinkedQueue<QueueObject> queue = new ConcurrentLinkedQueue<QueueObject>();
 	
+	/**
+	 * Separate thread used to send events.
+	 */
 	private EventSender sendEventThread;
 	
 	/**
-	 * Creates an instance of eventTable.
+	 * Starts the event sender thread and populates the hashtable
+	 * for string to enum conversions.
 	 */
 	public EventManager() 
 	{
@@ -138,14 +145,11 @@ public class EventManager
 	}
 		
 	/**
-	 * Notifies all observers that listens to given event identifier.
+	 * Add event to event sender queue.
 	 *
-	 * @pre       Observers must be added eventTable.
-	 * @checks    That there are <i>EventObservers</i> listening to
-	 *            to the particular event. If none, the event is
-	 *            not sent.
+	 * @pre       Event sender queue must be created.
 	 * @calledby  <i>All objects that sends an event</i>
-	 * @calls     update() method of all <i>EventObservers</i>
+	 * @calls     EventSender.notify()
 	 *
 	 * @param  eventIdentifier  string identifying the event
 	 * @param  obj              object to pass along to the observer
@@ -162,8 +166,8 @@ public class EventManager
 	}
 
 	/**
-	 * Notifies all observers that listens to eventIdentifier but
-	 * without passing along any object.
+	 * Add event to event sender queue without passing
+	 * along any object.
 	 *
 	 * @calls    sendEvent() (overloaded method)
 	 *	 
@@ -175,20 +179,22 @@ public class EventManager
 	}
 
 	/**
-	 * Translate a String into its enum value
+	 * Translate a string into its enum value
 	 *
 	 * @param eventIdentifier event identifier in the form of a string
 	 * @return enum value of the string
+	 * @throws  EventException  if eventIdentifier is unknown
 	 */
-	public EVENT getEvent(String eventIdentifier) throws Exception {
+	public EVENT getEvent(String eventIdentifier) throws EventException {
 		if (!stringLookup.containsKey(eventIdentifier))
-			throw new Exception();
+			throw new EventException("Unknown event '" + eventIdentifier + "'.");
 
 		return stringLookup.get(eventIdentifier);
 	}
 	
 	/**
-	 * Event queue object.
+	 * Event queue object. Used as container for event identifier
+	 * and event object when places in send queue.
 	 */
 	private class QueueObject
 	{
@@ -202,30 +208,44 @@ public class EventManager
 		public Object obj;
 	}
 	
+	/**
+	 * The event sender class runs in it's own thread
+	 * and sends the events in the queue when it receives
+	 * a notify.
+	 */
 	private class EventSender extends Thread
 	{
 		public void run()
 		{
 			while (true)
 			{
-				try
-				{
-					synchronized(this) 
-					{
+				try	{
+					synchronized(this) {
 						wait();
 					}
-				}
-				catch (InterruptedException e)
-				{
+				} catch (InterruptedException e) { }
 
-				}
-
-				System.out.println(queue.size());
+				// send events in queue
 				while (!queue.isEmpty())
+				{
 					sendEvent( queue.poll() );
+				}
 			}
 		}
 
+		/** 
+		 * Notifies all observers that listens to given event identifier. 
+		 * 
+		 * @pre       Observers must be added eventTable. 
+		 * @checks    That there are <i>EventObservers</i> listening to 
+		 *            to the particular event. If none, the event is 
+		 *            not sent. 
+		 * @calledby  <i>All objects that sends an event</i> 
+		 * @calls     update() method of all <i>EventObservers</i> 
+		 * 
+		 * @param  eventIdentifier  string identifying the event 
+		 * @param  obj              object to pass along to the observer 
+		 */   
 		private void sendEvent(QueueObject queueObj)
 		{
 			// get list of observers

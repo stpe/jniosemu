@@ -283,14 +283,11 @@ public class GUIMenuBar extends JMenuBar
 		} 
 		else
 		{
-			try 
-			{
+			try {
 				EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
 				eventManager.sendEvent(event);
-			} 
-			catch (Exception ex) 
-			{
-				
+			} catch (EventException ex) {
+				System.out.println("Error: " + ex.getMessage());
 			}
 		}
 	}

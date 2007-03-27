@@ -100,7 +100,9 @@ public class GUIEditorMessages extends JPanel
 		try {
 			EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
 			eventManager.sendEvent(event);
-		} catch (Exception ex) {}
+		} catch (EventException ex) {
+			System.out.println("Error: " + ex.getMessage());
+		}
 	}
 
 }
