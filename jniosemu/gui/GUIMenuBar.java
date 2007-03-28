@@ -158,6 +158,11 @@ public class GUIMenuBar extends JMenuBar
 		stateManager.addItem(EventManager.EVENT.MEMORY_VIEW, item);
 		menu.add(item);
 		
+		menu.addSeparator();
+		
+		item = createMenuItem("Serial Console...", EventManager.EVENT.SERIAL_CONSOLE_VIEW.toString());
+		stateManager.addItem(EventManager.EVENT.SERIAL_CONSOLE_VIEW, item);
+		menu.add(item);
 
 		menu.addSeparator();
 		item = createMenuItem("Toggle Editor/Emulator", EventManager.EVENT.APPLICATION_TAB_TOGGLE.toString(),

@@ -64,7 +64,8 @@ public class GUIManager
 			EventManager.EVENT.EMULATOR_READY,
 			EventManager.EVENT.EXCEPTION,
 			EventManager.EVENT.MEMORY_VIEW,
-			EventManager.EVENT.VARIABLE_VIEW
+			EventManager.EVENT.VARIABLE_VIEW,
+			EventManager.EVENT.SERIAL_CONSOLE_VIEW
 		};
 		this.eventManager.addEventObserver(events, this);
 
@@ -243,6 +244,9 @@ public class GUIManager
 			case VARIABLE_VIEW:
 				showVariableView();
 				break;
+			case SERIAL_CONSOLE_VIEW:
+				showSerialConsole();
+				break;
 		}
 	}
 
@@ -342,6 +346,22 @@ public class GUIManager
 		GUIMemoryView windowFrame = new GUIMemoryView(this.eventManager);
 
 		windowFrame.setSize(new Dimension(200, 260));
+		windowFrame.setLocationRelativeTo(this.frame);
+		windowFrame.setVisible(true);		
+	}
+
+	/**
+	 * Show Serial Console window positioned in center
+	 * of main window.
+	 *
+	 * @calls     GUISerialConsole
+	 * @calledby  update()
+	 */	
+	private void showSerialConsole()
+	{
+		GUISerialConsole windowFrame = new GUISerialConsole(this.eventManager);
+
+		windowFrame.setSize(new Dimension(440, 300));
 		windowFrame.setLocationRelativeTo(this.frame);
 		windowFrame.setVisible(true);		
 	}
