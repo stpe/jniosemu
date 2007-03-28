@@ -55,9 +55,11 @@ public class Memory extends MemoryBlock
 	public void reset() {
 		this.memory = new byte[this.length];
 
-		if (memory != null)
-			System.arraycopy(memory, 0, this.memory, 0, memory.length);
+		if (this.originalMemory != null)
+			System.arraycopy(this.originalMemory, 0, this.memory, 0, this.originalMemory.length);
 	}
 
-	public boolean resetState() {}
+	public boolean resetState() {
+		return false;
+	}
 }

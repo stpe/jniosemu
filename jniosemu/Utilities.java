@@ -15,6 +15,17 @@ public class Utilities
 		return ret;
 	}
 
+	public static byte vectorToByte(Vector<Boolean> vector) {
+		byte ret = 0;
+		int i = 0;
+		for (Boolean value: vector) {
+			if (value)
+				ret |= (byte)Math.pow(2, i);
+			i++;
+		}
+		return ret;
+	}
+
 	public static Vector<Boolean> intToVector(int value, int size) {
 		Vector<Boolean> ret = new Vector<Boolean>(size);
 
@@ -23,5 +34,9 @@ public class Utilities
 
 		return ret;
 	}
-	
+
+	public static int unsignedbyteToInt(byte value) {
+		int ret = 0;
+		return (int)(ret | value);
+	}
 }

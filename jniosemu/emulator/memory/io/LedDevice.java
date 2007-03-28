@@ -11,22 +11,22 @@ import jniosemu.events.EventObserver;
 /**
  * Handle the dipswitches
  */
-public class ButtonDevice extends MemoryBlock implements EventObserver
+public class LedDevice extends MemoryBlock
 {
 	/**
-	 * Address to memory where this is placed
+	 * Memory address which this uses
 	 */
-	private static final int MEMORYADDR = 0x840;
+	private static final int MEMORYADDR = 0x810;
 	/**
-	 * Length of memory that is used
+	 * Memory length it uses
 	 */
 	private static final int MEMORYLENGTH = 16;
 	/**
 	 * Name of memoryblock
 	 */
-	private static final String MEMORYNAME = "Buttons";
+	private static String MEMORYNAME = "Leds";
 	/**
-	 * Number of buttons
+	 * Number of leds
 	 */
 	private static final int COUNT = 4;
 	/**
@@ -38,17 +38,9 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 */
 	private EventManager eventManager;
 	/**
-	 * Used MemoryManger
-	 */
-	private MemoryManager memoryManager;
-	/**
 	 * Contains the memory data
 	 */
 	private byte[] memory;
-	/**
-	 * 
-	 */
-	private boolean changed = false;
 
 	/**
 	 * Init ButtonDevice
@@ -59,7 +51,7 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 * @param memory  current MemoryManager
 	 * @param eventManager current EventManager
 	 */
-	public ButtonDevice(EventManager eventManager, MemoryManager memoryManager) {
+	public LedDevice(EventManager eventManager, MemoryManager memoryManager) {
 		this.name = MEMORYNAME;
 		this.start = MEMORYADDR;
 		this.length = MEMORYLENGTH;
@@ -67,15 +59,6 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 		this.memory = new byte[this.length];
 
 		this.eventManager = eventManager;
-		this.memoryManager = memoryManager;
-
-		EventManager.EVENT[] events = {
-			EventManager.EVENT.BUTTON_RELEASE,
-			EventManager.EVENT.BUTTON_PRESS,
-			EventManager.EVENT.BUTTON_TOGGLE
-		};
-
-		this.eventManager.addEventObserver(events, this);
 
 		this.reset();
 	}
@@ -88,7 +71,6 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
-		this.changed = false;
 		this.state = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
 			this.state.add(i, false);
@@ -97,17 +79,21 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	}
 
 	public boolean resetState() {
-		if (this.changed) {
-			memory[0] = Utilities.vectorToByte(this.state);
-			this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
-		}
-
-		this.changed = false;
 		return false;
 	}
 
 	public void writeByte(int addr, byte value) throws MemoryException {
-		throw new MemoryException(addr);
+		int mapAddr = this.mapAddr(addr);
+
+		if (mapAddr == 0) {
+			value &= (byte)0xf;
+			memory[0] = value;
+
+			this.state = Utilities.intToVector(Utilities.unsignedbyteToInt(value), COUNT);
+			this.sendEvent();
+		} else if (mapAddr < 0 || mapAddr > 3) {
+			throw new MemoryException(addr);
+		}
 	}
 
 	public byte readByte(int addr) throws MemoryException {
@@ -123,38 +109,8 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 *
 	 * @calledby ButtonDevice(), reset(), update()
 	 */
-	private void sendEvent() {
-		this.eventManager.sendEvent(EventManager.EVENT.BUTTON_UPDATE, this.state);
+	public void sendEvent() {
+		this.eventManager.sendEvent(EventManager.EVENT.LED_UPDATE, this.state);
 	}
 
-	/**
-	 * Set state of a button
-	 *
-	 * @calledby update()
-	 *
-	 * @param index button index
-	 * @param state new state
-	 */
-	private void setState(int index, boolean state) {
-		this.changed = true;
-		this.state.set(index, state);
-
-		this.sendEvent();
-	}
-
-	public void update(EventManager.EVENT eventIdentifier, Object obj)
-	{
-		switch(eventIdentifier) {
-			case BUTTON_RELEASE:
-				this.setState(((Integer)obj).intValue(), false);
-				break;
-			case BUTTON_PRESS:
-				this.setState(((Integer)obj).intValue(), true);
-				break;
-			case BUTTON_TOGGLE:
-				int index = ((Integer)obj).intValue();
-				this.setState(index, !this.state.get(index));
-				break;
-		}
-	}
 }

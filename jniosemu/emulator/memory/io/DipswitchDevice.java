@@ -11,12 +11,12 @@ import jniosemu.events.EventObserver;
 /**
  * Handle the dipswitches
  */
-public class ButtonDevice extends MemoryBlock implements EventObserver
+public class DipswitchDevice extends MemoryBlock implements EventObserver
 {
 	/**
 	 * Address to memory where this is placed
 	 */
-	private static final int MEMORYADDR = 0x840;
+	private static final int MEMORYADDR = 0x850;
 	/**
 	 * Length of memory that is used
 	 */
@@ -24,7 +24,7 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	/**
 	 * Name of memoryblock
 	 */
-	private static final String MEMORYNAME = "Buttons";
+	private static final String MEMORYNAME = "DIPSWITCHES";
 	/**
 	 * Number of buttons
 	 */
@@ -59,7 +59,7 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 * @param memory  current MemoryManager
 	 * @param eventManager current EventManager
 	 */
-	public ButtonDevice(EventManager eventManager, MemoryManager memoryManager) {
+	public DipswitchDevice(EventManager eventManager, MemoryManager memoryManager) {
 		this.name = MEMORYNAME;
 		this.start = MEMORYADDR;
 		this.length = MEMORYLENGTH;
@@ -69,13 +69,11 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 		this.eventManager = eventManager;
 		this.memoryManager = memoryManager;
 
-		EventManager.EVENT[] events = {
-			EventManager.EVENT.BUTTON_RELEASE,
-			EventManager.EVENT.BUTTON_PRESS,
-			EventManager.EVENT.BUTTON_TOGGLE
-		};
+		this.eventManager.addEventObserver(EventManager.EVENT.DIPSWITCH_TOGGLE, this);
 
-		this.eventManager.addEventObserver(events, this);
+		this.state = new Vector<Boolean>(COUNT);
+		for (int i = 0; i < COUNT; i++)
+			this.state.add(i, false);
 
 		this.reset();
 	}
@@ -89,9 +87,6 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 */
 	public void reset() {
 		this.changed = false;
-		this.state = new Vector<Boolean>(COUNT);
-		for (int i = 0; i < COUNT; i++)
-			this.state.add(i, false);
 
 		this.sendEvent();
 	}
@@ -101,8 +96,6 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 			memory[0] = Utilities.vectorToByte(this.state);
 			this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
 		}
-
-		this.changed = false;
 		return false;
 	}
 
@@ -124,7 +117,7 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 * @calledby ButtonDevice(), reset(), update()
 	 */
 	private void sendEvent() {
-		this.eventManager.sendEvent(EventManager.EVENT.BUTTON_UPDATE, this.state);
+		this.eventManager.sendEvent(EventManager.EVENT.DIPSWITCH_UPDATE, this.state);
 	}
 
 	/**
@@ -136,7 +129,6 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 * @param state new state
 	 */
 	private void setState(int index, boolean state) {
-		this.changed = true;
 		this.state.set(index, state);
 
 		this.sendEvent();
@@ -145,13 +137,8 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
 		switch(eventIdentifier) {
-			case BUTTON_RELEASE:
-				this.setState(((Integer)obj).intValue(), false);
-				break;
-			case BUTTON_PRESS:
-				this.setState(((Integer)obj).intValue(), true);
-				break;
-			case BUTTON_TOGGLE:
+			case DIPSWITCH_TOGGLE:
+				this.changed = true;
 				int index = ((Integer)obj).intValue();
 				this.setState(index, !this.state.get(index));
 				break;

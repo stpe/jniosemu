@@ -64,6 +64,8 @@ public class EventManager
 		MEMORY_VIEW,											// Show Memory View window
 		PROGRAMCOUNTER_CHANGE,						// Program counter in emulated program has changed
 		REGISTER_CHANGE,									// Regiser in emulated program has changed
+		SERIAL_INPUT,											// Send a charater to emulated serial port
+		SERIAL_OUTPUT,										// Send a charater out of emulated serial port
 		STATE_CHANGE,											// Update state (disabled/enabled) of elements in menu and toolbar
 		VARIABLE_VIEW											// Show Variables View window
 	};

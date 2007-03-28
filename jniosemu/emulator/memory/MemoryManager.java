@@ -1,13 +1,16 @@
 package jniosemu.emulator.memory;
 
 import java.util.ArrayList;
-import jniosemu.emulator.io.IODevice;
+import java.util.HashMap;
+import jniosemu.emulator.memory.io.*;
+import jniosemu.events.EventManager;
 
 /**
  * Manage the memory that the emulated program can access.
  */
 public class MemoryManager
 {
+	public static enum STATE {UNTOUCHED, READ, WRITE};
 	/**
 	 * Address in the memory where the program is placed.
 	 */
@@ -29,6 +32,8 @@ public class MemoryManager
 	 */
 	private ArrayList<MemoryBlock> memoryBlocks = new ArrayList<MemoryBlock>();
 
+	private HashMap<Integer, STATE> state = new HashMap<Integer, STATE>();
+
 	/**
 	 * Init MemoryManager with program.
 	 *
@@ -39,25 +44,40 @@ public class MemoryManager
 	 * @param program Program
 	 * @param variables Variables
 	 */
-	public MemoryManager(byte[] program, byte[] variables)
+	public MemoryManager(EventManager eventManager, byte[] program, byte[] variables)
 	{
-		this.memoryBlocks.add(new MemoryBlock("PROGRAM", PROGRAMSTARTADDR, program.length, null, program));
-		this.memoryBlocks.add(new MemoryBlock("VARIABLES", VARIABLESTARTADDR, variables.length, null, variables));
-		this.memoryBlocks.add(new MemoryBlock("STACK", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null, null));
+		this.memoryBlocks.add(new Memory("PROGRAM", PROGRAMSTARTADDR, program.length, program));
+		this.memoryBlocks.add(new Memory("VARIABLES", VARIABLESTARTADDR, variables.length, variables));
+		this.memoryBlocks.add(new Memory("STACK", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
+
+		this.memoryBlocks.add(new ButtonDevice(eventManager, this));
+		this.memoryBlocks.add(new LedDevice(eventManager, this));
+		this.memoryBlocks.add(new DipswitchDevice(eventManager, this));
+		this.memoryBlocks.add(new SerialDevice(eventManager, this));
 	}
 
-	/**
-	 * Register a part of memory
-	 *
-	 * @calledby IODevice.reset()
-	 *
-	 * @param name Name of the MemoryBlock
-	 * @param startAddr Memory start address
-	 * @param length Length of the MemoryBlock
-	 * @param device Device
-	 */
-	public void register(String name, int startAddr, int length, IODevice device) {
-		this.memoryBlocks.add(new MemoryBlock(name, startAddr, length, device, null));
+	public void reset(byte[] program, byte[] variables) {
+		this.state.clear();
+
+		for (MemoryBlock memoryBlock : this.memoryBlocks)
+			memoryBlock.reset();
+
+		this.memoryBlocks.set(0, new Memory("PROGRAM", PROGRAMSTARTADDR, program.length, program));
+		this.memoryBlocks.set(1, new Memory("VARIABLES", VARIABLESTARTADDR, variables.length, variables));
+		this.memoryBlocks.add(2, new Memory("STACK", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
+	}
+
+	public void resetState() {
+		for (MemoryBlock memoryBlock : this.memoryBlocks)
+			memoryBlock.resetState();
+	}
+
+	public void setState(int addr, STATE state) {
+		if (state == STATE.UNTOUCHED) {
+			this.state.remove(addr);
+		} else {
+			this.state.put(addr, state);
+		}
 	}
 
 	/**
@@ -70,27 +90,14 @@ public class MemoryManager
 	 * @return One byte from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public byte readByte(int addr, boolean notify) throws MemoryException {
+	public byte readByte(int addr) throws MemoryException {
 		for (MemoryBlock block: this.memoryBlocks) {
 			if (block.inRange(addr)) {
-				return block.readByte(addr, notify);
+				return block.readByte(addr);
 			}
 		}
 
 		throw new MemoryException(addr);		
-	}
-
-	/**
-	 * Read one byte from memory.
-	 *
-	 * @calledby Instruction
-	 *
-	 * @param addr  External address
-	 * @return One byte from the memory
-	 * @throws MemoryException  If the address is wrong
-	 */
-	public byte readByte(int addr) throws MemoryException {
-		return readByte(addr, true);
 	}
 
 	/**
@@ -103,10 +110,10 @@ public class MemoryManager
 	 * @param value  Value
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public void writeByte(int addr, byte value, boolean notify) throws MemoryException {
+	public void writeByte(int addr, byte value) throws MemoryException {
 		for (MemoryBlock block: this.memoryBlocks) {
 			if (block.inRange(addr)) {
-				block.writeByte(addr, value, notify);
+				block.writeByte(addr, value);
 				return;
 			}
 		}
@@ -115,43 +122,17 @@ public class MemoryManager
 	}
 
 	/**
-	 * Write one byte to memory.
-	 *
-	 * @calledby Instruction
-	 *
-	 * @param addr  External address
-	 * @param value  Value
-	 * @throws MemoryException  If the address is wrong
-	 */
-	public void writeByte(int addr, byte value) throws MemoryException {
-		writeByte(addr, value, true);
-	}
-
-	/**
 	 * Read one short from memory.
 	 *
 	 * @calledby Instruction
 	 *
 	 * @param addr  External address
 	 * @param notify True if the device should be notified
-	 * @return One short from the memory
-	 * @throws MemoryException  If the address is wrong
-	 */
-	public short readShort(int addr, boolean notify) throws MemoryException {
-		return (short)((this.readByte(addr+1, notify) & 0xFF) << 8 | (this.readByte(addr, notify) & 0xFF));
-	}
-
-	/**
-	 * Read one short from memory.
-	 *
-	 * @calledby Instruction
-	 *
-	 * @param addr  External address
 	 * @return One short from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
 	public short readShort(int addr) throws MemoryException {
-		return readShort(addr, true);
+		return (short)((this.readByte(addr+1) & 0xFF) << 8 | (this.readByte(addr) & 0xFF));
 	}
 
 	/**
@@ -162,24 +143,11 @@ public class MemoryManager
 	 * @param addr  External address
 	 * @param value  Value
 	 * @param notify True if the device should be notified
-	 * @throws MemoryException  If the address is wrong
-	 */
-	public void writeShort(int addr, short value, boolean notify) throws MemoryException {
-		this.writeByte(addr    , (byte)(value       & 0xFF), notify);
-		this.writeByte(addr + 1, (byte)(value >>> 8 & 0xFF), notify);
-	}
-
-	/**
-	 * Write one short to memory.
-	 *
-	 * @calledby Instruction
-	 *
-	 * @param addr  External address
-	 * @param value  Value
 	 * @throws MemoryException  If the address is wrong
 	 */
 	public void writeShort(int addr, short value) throws MemoryException {
-		writeShort(addr, value, true);
+		this.writeByte(addr    , (byte)(value       & 0xFF));
+		this.writeByte(addr + 1, (byte)(value >>> 8 & 0xFF));
 	}
 
 	/**
@@ -189,24 +157,11 @@ public class MemoryManager
 	 *
 	 * @param addr  External address
 	 * @param notify True if the device should be notified
-	 * @return One int from the memory
-	 * @throws MemoryException  If the address is wrong
-	 */
-	public int readInt(int addr, boolean notify) throws MemoryException {
-		return (this.readByte(addr+3, notify) & 0xFF) << 24 | (this.readByte(addr+2, notify) & 0xFF) << 16 | (this.readByte(addr+1, notify) & 0xFF) << 8 | (this.readByte(addr, notify) & 0xFF);
-	}
-
-	/**
-	 * Read one int from memory.
-	 *
-	 * @calledby Instruction, EmulatorManager
-	 *
-	 * @param addr  External address
 	 * @return One int from the memory
 	 * @throws MemoryException  If the address is wrong
 	 */
 	public int readInt(int addr) throws MemoryException {
-		return readInt(addr, true);
+		return (this.readByte(addr+3) & 0xFF) << 24 | (this.readByte(addr+2) & 0xFF) << 16 | (this.readByte(addr+1) & 0xFF) << 8 | (this.readByte(addr) & 0xFF);
 	}
 
 	/**
@@ -219,24 +174,11 @@ public class MemoryManager
 	 * @param value  Value
 	 * @throws MemoryException  If the address is wrong
 	 */
-	public void writeInt(int addr, int value, boolean notify) throws MemoryException {
-		this.writeByte(addr    , (byte)(value        & 0xFF), notify);
-		this.writeByte(addr + 1, (byte)(value >>> 8  & 0xFF), notify);
-		this.writeByte(addr + 2, (byte)(value >>> 16 & 0xFF), notify);
-		this.writeByte(addr + 3, (byte)(value >>> 24 & 0xFF), notify);
-	}
-
-	/**
-	 * Write one int to memory.
-	 *
-	 * @calledby Instruction
-	 *
-	 * @param addr  External address
-	 * @param value  Value
-	 * @throws MemoryException  If the address is wrong
-	 */
 	public void writeInt(int addr, int value) throws MemoryException {
-		writeInt(addr, value, true);
+		this.writeByte(addr    , (byte)(value        & 0xFF));
+		this.writeByte(addr + 1, (byte)(value >>> 8  & 0xFF));
+		this.writeByte(addr + 2, (byte)(value >>> 16 & 0xFF));
+		this.writeByte(addr + 3, (byte)(value >>> 24 & 0xFF));
 	}
 
 	public void dump() {

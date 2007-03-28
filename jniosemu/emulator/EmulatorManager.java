@@ -8,7 +8,6 @@ import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
 import jniosemu.emulator.compiler.Compiler;
 import jniosemu.emulator.compiler.CompilerException;
-import jniosemu.emulator.io.IOManager;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionManager;
@@ -39,10 +38,6 @@ public class EmulatorManager implements EventObserver
 	 * RegisterManager that is used
 	 */
 	private RegisterManager register;
-	/**
-	 * IOManager that is used
-	 */
-	private IOManager io = null;
 	/**
 	 * Emulator that is used
 	 */
@@ -139,9 +134,6 @@ public class EmulatorManager implements EventObserver
 		do {
 			sendEvent = (this.speed != SPEED.FULL || instructionCount % 1009 == 0);
 			
-			// if (sendEvent)
-			this.register.resetState();
-
 			nextInstruction = this.step();
 
 			if (sendEvent)
@@ -177,7 +169,6 @@ public class EmulatorManager implements EventObserver
 		this.running = true;
 		this.startEvent();
 
-		this.register.resetState();
 		this.step();
 		this.pcChange();
 
@@ -200,6 +191,9 @@ public class EmulatorManager implements EventObserver
 		int lastPc = this.pc;
 
 		try {
+			this.register.resetState();
+			this.memory.resetState();
+
 			int opCode = this.memory.readInt(this.pc);
 			if (opCode == 0) {
 				this.pcChange();
@@ -307,15 +301,13 @@ public class EmulatorManager implements EventObserver
 	 * Reset the emulation
 	 *
 	 * @calledby update()
-	 * @calls RegisterManager(), MemoryManager(), IOManager(), Program.getStartAddr(), EventManager.sendEvent(), pcChange()
+	 * @calls RegisterManager(), MemoryManager.reset(), Program.getStartAddr(), EventManager.sendEvent(), pcChange()
 	 */
 	public void load() {
-		this.memory = new MemoryManager(program.getBinaryProgram(), program.getBinaryVariables());
-		
-		if (this.io == null) {
-			this.io = new IOManager(this.memory, this.eventManager);
+		if (this.memory == null) {
+			this.memory = new MemoryManager(this.eventManager, this.program.getBinaryProgram(), this.program.getBinaryVariables());
 		} else {
-			this.io.reset(this.memory);
+			this.memory.reset(this.program.getBinaryProgram(), this.program.getBinaryVariables());
 		}
 
 		this.pc = this.program.getStartAddr();
