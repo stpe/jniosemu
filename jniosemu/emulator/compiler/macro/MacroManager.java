@@ -1,35 +1,56 @@
 package jniosemu.emulator.compiler.macro;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.ArrayList;
+
+import jniosemu.instruction.InstructionManager;
 
 public class MacroManager
 {
-	private Hashtable<String, Macro>nameHash = new Hashtable<String, Macro>();
+	private HashMap<String, Macro>nameHash = new HashMap<String, Macro>();
 	private ArrayList<Macro> macros = new ArrayList<Macro>();
 
 	/**
 	 * Init the MacroManager
 	 */
 	public MacroManager() {
-		this.put("BGT",     "rA, rB, label", "BLT \\rB, \\rA, \\label", -1);
-		this.put("BGTU",    "rA, rB, label", "BLTU \\rB, \\rA, \\label", -1);
-		this.put("BLE",     "rA, rB, label", "BGE \\rB, \\rA, \\label", -1);
-		this.put("CMPGT",   "rC, rA, rB",    "CMPLT \\rC, \\rB, \\rA", -1);
-		this.put("CMPGTI",  "rB, rA, imm",   "CMPGEI \\rB, \\rA, (\\imm + 1)", -1);
-		this.put("CMPGTU",  "rC, rA, rB",    "CMPLTU \\rC, \\rB, \\rA", -1);
-		this.put("CMPGTUI", "rB, rA, imm",   "CMPGEUI \\rB, \\rA, (\\imm + 1)", -1);
-		this.put("CMPLE",   "rC, rA, rB",    "CMPGE \\rC, \\rB, \\rA", -1);
-		this.put("CMPLEI",  "rB, rA, imm",   "CMPLTI \\rB, \\rA, (\\imm + 1)", -1);
-		this.put("CMPLEU",  "rC, rA, rB",    "CMPGEU \\rC, \\rB, \\rA", -1);
-		this.put("CMPLEUI", "rB, rA, imm",   "CMPLTUI \\rB, \\rA, (\\imm + 1)", -1);
-		this.put("MOV",     "rC, rA",        "ADD \\rC, \\rA, r0", -1);
-		this.put("MOVHI",   "rB, imm",       "ORHI \\rB, r0, \\imm", -1);
-		this.put("MOVI",    "rB, imm",       "ADDI \\rB, r0, \\imm", -1);
-		this.put("MOVIA",   "rB, imm",       "ORHI \\rB, r0, %hiadj(\\imm)\nADDI \\rB, \\rB, %lo(\\imm)", -1);
-		this.put("MOVUI",   "rB, imm",       "ORI \\rB, r0, \\imm", -1);
-		this.put("NOP",     null,            "ADD r0, r0, r0", -1);
-		this.put("SUBI",    "rB, rA, imm",   "ADDI \\rB, \\rA, -(\\imm)", -1);
+		addMacro("BGT",     "rA, rB, label", "BLT \\rB, \\rA, \\label", -1, InstructionManager.INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
+		addMacro("BGTU",    "rA, rB, label", "BLTU \\rB, \\rA, \\label", -1, InstructionManager.INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
+		addMacro("BLE",     "rA, rB, label", "BGE \\rB, \\rA, \\label", -1, InstructionManager.INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
+		addMacro("CMPGT",   "rC, rA, rB",    "CMPLT \\rC, \\rB, \\rA", -1, InstructionManager.INSTRUCTION_CATEGORY.COMPARISON);
+		addMacro("CMPGTI",  "rB, rA, imm",   "CMPGEI \\rB, \\rA, (\\imm + 1)", -1, InstructionManager.INSTRUCTION_CATEGORY.COMPARISON);
+		addMacro("CMPGTU",  "rC, rA, rB",    "CMPLTU \\rC, \\rB, \\rA", -1, InstructionManager.INSTRUCTION_CATEGORY.COMPARISON);
+		addMacro("CMPGTUI", "rB, rA, imm",   "CMPGEUI \\rB, \\rA, (\\imm + 1)", -1, InstructionManager.INSTRUCTION_CATEGORY.COMPARISON);
+		addMacro("CMPLE",   "rC, rA, rB",    "CMPGE \\rC, \\rB, \\rA", -1, InstructionManager.INSTRUCTION_CATEGORY.COMPARISON);
+		addMacro("CMPLEI",  "rB, rA, imm",   "CMPLTI \\rB, \\rA, (\\imm + 1)", -1, InstructionManager.INSTRUCTION_CATEGORY.COMPARISON);
+		addMacro("CMPLEU",  "rC, rA, rB",    "CMPGEU \\rC, \\rB, \\rA", -1, InstructionManager.INSTRUCTION_CATEGORY.COMPARISON);
+		addMacro("CMPLEUI", "rB, rA, imm",   "CMPLTUI \\rB, \\rA, (\\imm + 1)", -1, InstructionManager.INSTRUCTION_CATEGORY.COMPARISON);
+		addMacro("MOV",     "rC, rA",        "ADD \\rC, \\rA, r0", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
+		addMacro("MOVHI",   "rB, imm",       "ORHI \\rB, r0, \\imm", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
+		addMacro("MOVI",    "rB, imm",       "ADDI \\rB, r0, \\imm", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
+		addMacro("MOVIA",   "rB, imm",       "ORHI \\rB, r0, %hiadj(\\imm)\nADDI \\rB, \\rB, %lo(\\imm)", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
+		addMacro("MOVUI",   "rB, imm",       "ORI \\rB, r0, \\imm", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
+		addMacro("NOP",     null,            "ADD r0, r0, r0", -1, InstructionManager.INSTRUCTION_CATEGORY.OTHER);
+		addMacro("SUBI",    "rB, rA, imm",   "ADDI \\rB, \\rA, -(\\imm)", -1, InstructionManager.INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
+	}
+
+	/**
+	 * Add macro and put it in category list in InstructionManager.
+	 *
+	 * @calledby          MacroManager()
+	 * @calls             InstructionManager.addMacro()
+	 *
+	 * @param name		    name of the macro
+	 * @param args		    arguments separated with ","-character
+	 * @param lines       lines separated with ","-character
+	 * @param lineNumber  line number where the macro is defined
+	 * @param category    instruction category	 
+	 */
+	private void addMacro(String name, String args, String lines, int lineNumber, InstructionManager.INSTRUCTION_CATEGORY category)
+	{
+		this.put(name, args, lines, lineNumber);
+		
+		InstructionManager.addMacro(name, args, category);
 	}
 
 	/**
@@ -48,10 +69,10 @@ public class MacroManager
 	 * @calledby MacroManager()
 	 * @calls put()
 	 *
-	 * @param name		Name of the macro
-	 * @param args		Arguments separated with ","-character
-	 * @param lines  Lines separated with ","-character
-	 * @param lineNumber  Line number where the macro is defined
+	 * @param name		    name of the macro
+	 * @param args		    arguments separated with ","-character
+	 * @param lines       lines separated with ","-character
+	 * @param lineNumber  line number where the macro is defined
 	 */
 	public Macro put(String name, String args, String lines, int lineNumber) {
 		String[] argsArray = null;

@@ -71,12 +71,12 @@ public class EventManager
 	/**
 	 * Manages which observers are listening to which event.
 	 */
-	private Hashtable<EVENT, ArrayList<EventObserver>> eventTable = new Hashtable<EVENT, ArrayList<EventObserver>>();
+	private HashMap<EVENT, ArrayList<EventObserver>> eventTable = new HashMap<EVENT, ArrayList<EventObserver>>();
 	
 	/**
 	 * Used for string to enum conversion.
 	 */
-	private Hashtable<String, EVENT> stringLookup = new Hashtable<String, EVENT>();
+	private HashMap<String, EVENT> stringLookup = new HashMap<String, EVENT>();
 	
 	/**
 	 * Event queue.
@@ -89,7 +89,7 @@ public class EventManager
 	private EventSender sendEventThread;
 	
 	/**
-	 * Starts the event sender thread and populates the hashtable
+	 * Starts the event sender thread and populates the hashmap
 	 * for string to enum conversions.
 	 */
 	public EventManager() 
@@ -255,13 +255,13 @@ public class EventManager
 			{
 				// debug
 				String objValue = queueObj.obj != null ? ": " + queueObj.obj : "<null>";
-				System.out.println("EventManger.sendEvent(): No observers listening to '" + queueObj.eventIdentifier + "'" + objValue);
+				System.out.println("EventManger.sendEvent(): No observers listening to '" + queueObj.eventIdentifier + "': " + objValue);
 				return;
 			}
 
 			// debug	
 //			String objValue = queueObj.obj != null ? ": " + queueObj.obj : "<null>";
-//			System.out.println("EventManger.sendEvent(): " + queueObj.eventIdentifier + " " + objValue);
+//			System.out.println("EventManger.sendEvent(): Event: " + queueObj.eventIdentifier + ", Value: " + objValue);
 			
 			// iterate over all listening observers
 			for (EventObserver eventObserver : eventObservers)

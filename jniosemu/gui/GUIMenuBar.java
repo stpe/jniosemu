@@ -1,10 +1,12 @@
 package jniosemu.gui;
 
-import javax.swing.*;
 import java.awt.event.*;
+import javax.swing.*;
+import java.util.ArrayList;
 
 import jniosemu.events.*;
 import jniosemu.emulator.*;
+import jniosemu.instruction.InstructionManager;
 
 /**
  * Creates and manages menu bar in GUI.
@@ -180,52 +182,70 @@ public class GUIMenuBar extends JMenuBar
 	 * into the editor.
 	 *
 	 * @calledby  setup()
-	 * @calls     StateManager.addItem()
 	 *
-	 * @param  stateManager  reference to State Manager
-	 * @return  Instruction menu
+	 * @param   stateManager  reference to State Manager
+	 * @return  instruction menu
 	 */
 	private JMenu setupInstructions(StateManager stateManager)
 	{
+		ArrayList<String> instructions = InstructionManager.getSortedInstructionList();
+
+		// create instruction category submenus
+		JMenu arithmeticLogicalMenu = new JMenu("Arithmetic & Logical");
+		JMenu moveMenu              = new JMenu("Move");
+		JMenu comparisonMenu        = new JMenu("Comparison");
+		JMenu shiftRotateMenu       = new JMenu("Shift & Rotate");
+		JMenu programControlMenu    = new JMenu("Program Control");
+		JMenu dataTransferMenu      = new JMenu("Data Transfer");
+		JMenu otherMenu             = new JMenu("Other");
+		
+		JMenu submenu;
+		
+		// add instructions to category submenus
+		for (String instruction : instructions)
+		{
+			// get submenu depending on instruction category
+			switch (InstructionManager.getInstructionCategory(instruction))
+			{
+				case ARITHMETIC_LOGICAL:
+					submenu = arithmeticLogicalMenu;
+					break;
+				case MOVE:
+					submenu = moveMenu;
+					break;
+				case COMPARISON:
+					submenu = comparisonMenu;
+					break;
+				case SHIFT_ROTATE:
+					submenu = shiftRotateMenu;
+					break;
+				case PROGRAM_CONTROL:
+					submenu = programControlMenu;
+					break;
+				case DATA_TRANSFER:
+					submenu = dataTransferMenu;
+					break;
+				default:
+					submenu = otherMenu;
+					break;
+			}
+
+			// add instruction to submenu
+			submenu.add(
+		 		createMenuItem(instruction, EventManager.EVENT.EDITOR_INSERT_INSTRUCTION + DELIMITER_CHAR + instruction)
+		 	);
+		}
+
 		JMenu menu = new JMenu("Instruction");
-		
-		JMenu submenu = new JMenu("Arithmetic & Logical");
-		
-		JMenuItem item = createMenuItem("add", EventManager.EVENT.EDITOR_INSERT_INSTRUCTION + DELIMITER_CHAR + "add");
-		submenu.add(item);
 
-		menu.add(submenu);
-
-
-		submenu = new JMenu("Move");
-		
-		menu.add(submenu);
-
-
-		submenu = new JMenu("Comparison");
-		
-		menu.add(submenu);
-
-
-		submenu = new JMenu("Shift & Rotate");
-		
-		menu.add(submenu);
-
-
-		submenu = new JMenu("Program Control");
-		
-		menu.add(submenu);
-		
-		
-		submenu = new JMenu("Data Transfer");
-		
-		menu.add(submenu);
-
-
-		submenu = new JMenu("Other");
-		
-		menu.add(submenu);
-		
+		// add instruction categories as submenus
+		menu.add(arithmeticLogicalMenu); 
+		menu.add(moveMenu); 
+		menu.add(comparisonMenu); 
+		menu.add(shiftRotateMenu); 
+		menu.add(programControlMenu); 
+		menu.add(dataTransferMenu); 
+		menu.add(otherMenu); 		
 		
 		return menu;
 	}

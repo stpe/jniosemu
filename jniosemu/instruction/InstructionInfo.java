@@ -55,10 +55,10 @@ public class InstructionInfo
 	 *
 	 * @calledby InstructionManager.
 	 *
-	 * @param name  Name of the instruction
-	 * @param opCode  OpCode for the instruction.
-	 * @param type  Type of instruction
-	 * @param syntax  Syntax of the instruction
+	 * @param name    name of the instruction
+	 * @param opCode  op-code for the instruction
+	 * @param type    sype of instruction
+	 * @param syntax  syntax of the instruction
 	 */
 	public InstructionInfo(String name, int opCode, Type type, Syntax syntax) {
 		this.name   = name.toLowerCase();
