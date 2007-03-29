@@ -97,7 +97,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 			memory[4] = value;
 			this.eventManager.sendEvent(EventManager.EVENT.SERIAL_OUTPUT, (char)(value & 0xFF));
 		} else if (mapAddr == 12) {
-			memory[12] = value & 0xC0;
+			memory[12] = (byte)(value & 0xC0);
 		} else if (mapAddr < 4 || mapAddr >= 8 && mapAddr < 12 || mapAddr >= 16) {
 			throw new MemoryException(addr);
 		}
