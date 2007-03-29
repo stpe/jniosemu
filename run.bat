@@ -1,3 +1,1 @@
 java jniosemu.JNiosEmu
-
-PAUSE
