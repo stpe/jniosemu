@@ -10,7 +10,7 @@ import jniosemu.events.*;
 import jniosemu.emulator.*;
 
 /**
- * Creates and manages the GUI component of the memory view.
+ * Creates and manages the GUI component of the serial console.
  */
  public class GUISerialConsole extends JFrame
                               implements ActionListener, EventObserver {
@@ -22,12 +22,12 @@ import jniosemu.emulator.*;
 	private transient EventManager eventManager;
 
 	/**
-	 * 
+	 * Text area for received data from serial.
 	 */
 	private JTextArea recvTextArea;
 
 	/**
-	 * 
+	 * Text area where user enter data to be sent to serial.
 	 */
 	private JTextArea sendTextArea;
 
@@ -51,7 +51,6 @@ import jniosemu.emulator.*;
 
 		// add events to listen to
 		EventManager.EVENT[] events = {
-			EventManager.EVENT.SERIAL_INPUT,
 			EventManager.EVENT.SERIAL_OUTPUT,
 			EventManager.EVENT.EMULATOR_RESET
 		};
@@ -68,30 +67,33 @@ import jniosemu.emulator.*;
 	private void setup()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		
+
 		recvTextArea = new JTextArea("recv");
 		
 		recvTextArea.setEditable(false);
+		recvTextArea.setLineWrap(true);
 		recvTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
-		// put scrollbars around editor text area
+		// put scrollbars around received data text area
 		JScrollPane recvScrollPane =
 		    new JScrollPane(recvTextArea,
 		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
-		
 		sendTextArea = new JTextArea("send") {
 			/**
 			 * Override to intercept KeyEvents and send typed character.
 			 */
-			protected void processEvent(AWTEvent e) {
+			protected void processEvent(AWTEvent e)
+			{
 				if (e instanceof KeyEvent)
 				{
-					if( e.getID() == KeyEvent.KEY_TYPED) 
+					if (e.getID() == KeyEvent.KEY_TYPED) 
 					{
-						char c = ((KeyEvent) e).getKeyChar();
-						eventManager.sendEvent(EventManager.EVENT.SERIAL_INPUT, (int) c);
+						eventManager.sendEvent(
+							EventManager.EVENT.SERIAL_INPUT, 
+							((KeyEvent) e).getKeyChar()
+						);
 					}
 				} 
 				
@@ -101,14 +103,15 @@ import jniosemu.emulator.*;
     };
 
 		sendTextArea.setEditable(true);
+		sendTextArea.setLineWrap(true);
 		sendTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
-		// put scrollbars around editor text area
+		// put scrollbars around send data text area
 		JScrollPane sendScrollPane =
 		    new JScrollPane(sendTextArea,
 		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 		                            recvScrollPane, sendScrollPane);
 		splitPane.setDividerLocation(150);
@@ -132,12 +135,13 @@ import jniosemu.emulator.*;
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
 		switch (eventIdentifier) {
-			case SERIAL_INPUT:
-				char c = (char) ((Integer) obj).intValue();
-				recvTextArea.append(Character.toString(c));
-				break;
 			case SERIAL_OUTPUT:
-				//
+				// append character last
+				recvTextArea.append( ((Character) obj).toString() );
+				
+				// move caret to last position to force scroll
+				recvTextArea.setCaretPosition(recvTextArea.getDocument().getLength());
+
 				break;
 			case EMULATOR_RESET:
 				recvTextArea.setText("");

@@ -81,8 +81,12 @@ public class GUIEditorMessages extends JPanel
 				this.setVisible(false);
 				break;
 			case COMPILER_ERROR:
-				String msg = (String) obj;
-				editorMessages.append(msg + "\n");
+				// append to the end
+				editorMessages.append((String) obj + "\n");
+				
+				// move caret to last position to force scroll
+				editorMessages.setCaretPosition(editorMessages.getDocument().getLength());
+				
 				this.setVisible(true);
 				break;
 		}
