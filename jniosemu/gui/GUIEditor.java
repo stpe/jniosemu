@@ -3,8 +3,7 @@ package jniosemu.gui;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.undo.*;
-import javax.swing.text.Utilities;
-import javax.swing.text.DefaultCaret;
+import javax.swing.text.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
@@ -98,7 +97,35 @@ public class GUIEditor extends JPanel
 	 */
 	private void setup()
 	{
-		textArea = new JTextArea();
+		textArea = new JTextArea() {
+			/**
+			 * Override to intercept KeyEvents to detect newlines (used for auto indentation).
+			 */
+			protected void processEvent(AWTEvent e)
+			{
+				boolean isNewline = false;
+				
+				if (e instanceof KeyEvent && e.getID() == KeyEvent.KEY_TYPED)
+				{
+					// is typed char a newline character?
+					if (((KeyEvent) e).getKeyChar() == '\n')
+					{
+						isNewline = true;
+						
+						int pos = textArea.getCaretPosition();
+						
+						// insert whitespace of previous line first
+						textArea.insert(getIndentString(pos - 1), pos);
+					}
+				} 
+				
+				// let textarea process keyevent as usual if typed
+				// character is not a new line
+				if (!isNewline)
+					super.processEvent(e);
+			}
+    };
+    
 		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		textArea.getDocument().addDocumentListener(this);
 		textArea.addCaretListener(this);
@@ -605,6 +632,55 @@ public class GUIEditor extends JPanel
 	{
 		eventManager.sendEvent(EventManager.EVENT.EDITOR_UPDATE_UNDO_STATE, new Boolean(this.undo.canUndo()));
 		eventManager.sendEvent(EventManager.EVENT.EDITOR_UPDATE_REDO_STATE, new Boolean(this.undo.canRedo()));
+	}
+
+	/**
+	 * Returns initial whitespace of the line of the given position.
+	 *
+	 * @param   position in editor text (usually caret position)
+	 * @return  initial whitespace
+	 */
+	private String getIndentString(int position)
+	{
+		String lineStr = "";
+		
+		try {
+			// get line number
+			int line = textArea.getLineOfOffset(position);
+
+			// get line as string except last character (newline)
+			lineStr = textArea.getText().substring(textArea.getLineStartOffset(line), textArea.getLineEndOffset(line) - 1);
+		} catch(BadLocationException e) { }
+		
+		// no need to proceed if empty row
+		if (lineStr == "")
+			return "";
+		
+		char[] charArr = lineStr.toCharArray();
+
+		int i = 0;
+		boolean nonWhitespaceFound = false;
+
+		// find position of first non white space
+		while (i < charArr.length)
+		{
+			if (!Character.isWhitespace(charArr[i]))
+			{
+				nonWhitespaceFound = true;
+				break;
+			}
+			
+			i++;
+		}
+
+		// return initial whitespace		
+		if (nonWhitespaceFound)
+		{
+			return lineStr.substring(0, i);
+		}
+		
+		// if all whitespace, simply return everything
+		return lineStr;
 	}
 
 }

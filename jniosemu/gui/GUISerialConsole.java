@@ -86,15 +86,12 @@ import jniosemu.emulator.*;
 			 */
 			protected void processEvent(AWTEvent e)
 			{
-				if (e instanceof KeyEvent)
+				if (e instanceof KeyEvent && e.getID() == KeyEvent.KEY_TYPED)
 				{
-					if (e.getID() == KeyEvent.KEY_TYPED) 
-					{
-						eventManager.sendEvent(
-							EventManager.EVENT.SERIAL_INPUT, 
-							((KeyEvent) e).getKeyChar()
-						);
-					}
+					eventManager.sendEvent(
+						EventManager.EVENT.SERIAL_INPUT, 
+						((KeyEvent) e).getKeyChar()
+					);
 				} 
 				
 				// let textarea process keyevent as usual
