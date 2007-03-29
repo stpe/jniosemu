@@ -10,6 +10,8 @@ public class BgeuInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
+		if(signedToUnsigned(em.readRegister(rA)) >= signedToUnsigned(em.readRegister(rB)))
+			em.writePC(em.readPC()+imm);		
 		
 	}
 }

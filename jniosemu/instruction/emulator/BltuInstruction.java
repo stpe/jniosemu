@@ -10,6 +10,7 @@ public class BltuInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		
+  		if (signedToUnsigned(em.readRegister(this.rA)) < signedToUnsigned(em.readRegister(this.rB)))
+               		em.writePC(em.readPC() + this.imm);
 	}
 }
