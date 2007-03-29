@@ -10,6 +10,6 @@ public class NextpcInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-
+		em.writeRegister(rC, em.readPC()+4);
 	}
 }

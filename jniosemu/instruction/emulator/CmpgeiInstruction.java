@@ -10,6 +10,10 @@ public class CmpgeiInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
+                if(em.readRegister(rA) >= imm)
+                        em.writeRegister(rB, 1);
+                else
+                        em.writeRegister(rB, 0);
 		
 	}
 }

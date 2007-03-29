@@ -10,6 +10,6 @@ public class MuliInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		
+		em.writeRegister(rB, (em.readRegister(rA)*imm));		
 	}
 }

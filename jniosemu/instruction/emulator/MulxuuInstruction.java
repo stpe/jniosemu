@@ -3,14 +3,14 @@ package jniosemu.instruction.emulator;
 import jniosemu.emulator.Emulator;
 import jniosemu.emulator.EmulatorException;
 
-public class MulxsuInstruction extends RTypeInstruction
+public class MulxuuInstruction extends RTypeInstruction
 {
-	public MulxsuInstruction(int opCode) {
+	public MulxuuInstruction(int opCode) {
 		super(opCode);
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                long vA = (long)em.readRegister(rA);
+                long vA = signedToUnsigned(em.readRegister(rA));
                 long vB = signedToUnsigned(em.readRegister(rB));
                 long vC = vA*vB;
                 vC = vC >>> 32;

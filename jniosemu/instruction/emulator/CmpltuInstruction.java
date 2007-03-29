@@ -10,6 +10,10 @@ public class CmpltuInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-
+                if (signedToUnsigned(em.readRegister(this.rA)) < signedToUnsigned(em.readRegister(this.rB))) {
+                        em.writeRegister(this.rC, 1);
+                } else {
+                        em.writeRegister(this.rC, 0);
+                }
 	}
 }

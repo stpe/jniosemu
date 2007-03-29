@@ -10,6 +10,6 @@ public class NorInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-
+		em.writeRegister(rC, ~(em.readRegister(rA) | em.readRegister(rB)));
 	}
 }

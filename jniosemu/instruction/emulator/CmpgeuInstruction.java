@@ -10,6 +10,11 @@ public class CmpgeuInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
+                if(signedToUnsigned(em.readRegister(rA)) >= signedToUnsigned(em.readRegister(rB)))
+                        em.writeRegister(rC, 1);
+                else
+                        em.writeRegister(rC, 0);
+
 
 	}
 }
