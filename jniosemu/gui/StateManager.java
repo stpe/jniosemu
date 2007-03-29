@@ -35,7 +35,9 @@ public class StateManager implements EventObserver
 			EventManager.EVENT.EMULATOR_END,
 			EventManager.EVENT.EMULATOR_READY,
 			EventManager.EVENT.EMULATOR_START,
-			EventManager.EVENT.EMULATOR_STOP
+			EventManager.EVENT.EMULATOR_STOP,
+			EventManager.EVENT.EDITOR_UPDATE_UNDO_STATE,
+			EventManager.EVENT.EDITOR_UPDATE_REDO_STATE
 		};
 
 		this.eventManager.addEventObserver(events, this);		
@@ -136,6 +138,13 @@ public class StateManager implements EventObserver
 				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
 				setEnabled(EventManager.EVENT.EMULATOR_STEP, true);
 				setEnabled(EventManager.EVENT.EMULATOR_RESET, true);
+				break;
+				
+			case EDITOR_UPDATE_UNDO_STATE:
+				setEnabled(EventManager.EVENT.EDITOR_UNDO, ((Boolean) obj).booleanValue());
+				break;
+			case EDITOR_UPDATE_REDO_STATE:
+				setEnabled(EventManager.EVENT.EDITOR_REDO, ((Boolean) obj).booleanValue());
 				break;
 		}
 	}	

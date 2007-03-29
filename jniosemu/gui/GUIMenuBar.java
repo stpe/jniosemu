@@ -84,13 +84,27 @@ public class GUIMenuBar extends JMenuBar
 		stateManager.addItem(EventManager.EVENT.DOCUMENT_SAVE_AS, item);
 		menu.add(item);
 		
-
 		menu.addSeparator();
+		
 		item = createMenuItem("Exit", EventManager.EVENT.APPLICATION_EXIT.toString());
 		menu.add(item);
 
-		// Insert instruction menu
+		// Edit menu
+		menu = new JMenu("Edit");
+		this.add(menu);
 		
+		item = createMenuItem("Undo", EventManager.EVENT.EDITOR_UNDO.toString(),
+		          KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
+		stateManager.addItem(EventManager.EVENT.EDITOR_UNDO, item);
+		menu.add(item);
+
+		item = createMenuItem("Redo", EventManager.EVENT.EDITOR_REDO.toString(),
+		          KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
+		stateManager.addItem(EventManager.EVENT.EDITOR_REDO, item);
+		menu.add(item);
+		
+
+		// Insert instruction menu
 		this.add( setupInstructions(stateManager) );
 
 		// Emulator menu

@@ -2,7 +2,9 @@ package jniosemu.gui;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.undo.*;
 import javax.swing.text.Utilities;
+import javax.swing.text.DefaultCaret;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.*;
@@ -15,8 +17,8 @@ import jniosemu.instruction.InstructionManager;
  * Creates and manages the GUI component of the editor view.
  */
 public class GUIEditor extends JPanel
-                       implements DocumentListener, CaretListener, EventObserver {
-
+                       implements UndoableEditListener, DocumentListener, CaretListener, EventObserver
+{
 	/**
 	 * Document name used for unsaved documents.
 	 */
@@ -29,7 +31,7 @@ public class GUIEditor extends JPanel
 	private transient EventManager eventManager;
 
 	/**
-	 * The text area component.
+	 * The text area component used for editing source documents.
 	 */
 	private JTextArea textArea;
 
@@ -47,6 +49,11 @@ public class GUIEditor extends JPanel
 	 * File of current document (null if document not saved).
 	 */
 	private File documentFile = null;
+
+	/**
+	 * Used to keep track of undo/redo for the editor.
+	 */
+	private UndoManager undo = new UndoManager();
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -74,7 +81,10 @@ public class GUIEditor extends JPanel
 			EventManager.EVENT.DOCUMENT_OPEN,
 			EventManager.EVENT.DOCUMENT_SAVE,
 			EventManager.EVENT.DOCUMENT_SAVE_AS,
-			EventManager.EVENT.EDITOR_INSERT_INSTRUCTION
+			EventManager.EVENT.EDITOR_INSERT_INSTRUCTION,
+			EventManager.EVENT.EDITOR_UNDO,
+			EventManager.EVENT.EDITOR_REDO
+			
 		};
 
     this.eventManager.addEventObserver(events, this);
@@ -106,6 +116,14 @@ public class GUIEditor extends JPanel
 		// file chooser
 		fc.setCurrentDirectory(new File("."));
 		fc.addChoosableFileFilter(new AsmFileFilter());
+
+		// undo
+		textArea.getDocument().addUndoableEditListener(this);
+
+		// change caret policy to make sure it is moved
+		// when using undo/redo
+		DefaultCaret caret = (DefaultCaret) textArea.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
 		textChanged(false);
 	}
@@ -248,6 +266,12 @@ public class GUIEditor extends JPanel
 				break;
 			case EDITOR_INSERT_INSTRUCTION:
 				insertInstruction((String) obj);
+				break;
+			case EDITOR_UNDO:
+				this.undo();
+				break;
+			case EDITOR_REDO:
+				this.redo();
 				break;
 		}
 	}
@@ -526,6 +550,61 @@ public class GUIEditor extends JPanel
 		} catch(IllegalArgumentException e) {
 			
 		}
+	}
+
+	/**
+	 * Implemented due to UndoableEditListener. Called
+	 * whenever there is something that might be undoed in
+	 * the editor.
+	 *
+	 * @calls updateUndoRedoState()
+	 */
+	public void undoableEditHappened(UndoableEditEvent e)
+	{
+		undo.addEdit(e.getEdit());
+		
+		// update menus
+		updateUndoRedoState();
+	}
+
+	/**
+	 * Performs an undo in the editor.
+	 *
+	 * @calls updateUndoRedoState()
+	 */
+	private void undo()
+	{
+		try {
+			this.undo.undo();
+		} catch (CannotUndoException ex) { }
+		
+		updateUndoRedoState();
+	}
+	
+	/**
+	 * Performs a redo in the editor.
+	 *
+	 * @calls updateUndoRedoState()
+	 */
+	private void redo()
+	{
+		try {
+			this.undo.redo();
+		} catch (CannotRedoException ex) { }
+		
+		updateUndoRedoState();
+	}
+
+	/**
+	 * Sends event to update the state of the undo/redo
+	 * menu items.
+	 *
+	 * @calls EventManager.sendEvent()
+	 */
+	private void updateUndoRedoState()
+	{
+		eventManager.sendEvent(EventManager.EVENT.EDITOR_UPDATE_UNDO_STATE, new Boolean(this.undo.canUndo()));
+		eventManager.sendEvent(EventManager.EVENT.EDITOR_UPDATE_REDO_STATE, new Boolean(this.undo.canRedo()));
 	}
 
 }

@@ -47,6 +47,10 @@ public class EventManager
 		DOCUMENT_SAVE_DONE,								// Document has been saved
 		EDITOR_CURSOR_CHANGE,							// Cursor changed in editor
 		EDITOR_INSERT_INSTRUCTION,				// Insert instruction using insert menu
+		EDITOR_UNDO,											// Perform undo in editor
+		EDITOR_REDO,											// Perform redo in editor
+		EDITOR_UPDATE_UNDO_STATE,					// Update state of undo menu item
+		EDITOR_UPDATE_REDO_STATE,					// Update state of redo menu item
 		EMULATOR_END,											// Emulation ended
 		EMULATOR_ERROR,										// Error occured during emulation
 		EMULATOR_PAUSE,										// Pause emulation
