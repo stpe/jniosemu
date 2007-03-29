@@ -21,7 +21,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	/**
 	 * Length of memory that is used
 	 */
-	private static final int MEMORYLENGTH = 12;
+	private static final int MEMORYLENGTH = 16;
 	/**
 	 * Name of memoryblock
 	 */
@@ -96,7 +96,9 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 		if (mapAddr == 4) {
 			memory[4] = value;
 			this.eventManager.sendEvent(EventManager.EVENT.SERIAL_OUTPUT, (char)(value & 0xFF));
-		} else if (mapAddr < 4 || mapAddr > 7) {
+		} else if (mapAddr == 12) {
+			memory[12] = value & 0xC0;
+		} else if (mapAddr < 4 || mapAddr >= 8 && mapAddr < 12 || mapAddr >= 16) {
 			throw new MemoryException(addr);
 		}
 	}
@@ -107,7 +109,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 		if (mapAddr == 0) {
 			memory[8] &= 0x7F;
 			return memory[0];
-		} else if (mapAddr >= 1 && mapAddr < 4 || mapAddr >= 8 && mapAddr < 12) {
+		} else if (mapAddr >= 1 && mapAddr < 4 || mapAddr >= 8 && mapAddr < 16) {
 			return memory[mapAddr];
 		} else {
 			throw new MemoryException(addr);

@@ -45,7 +45,7 @@ public abstract class ITypeInstruction extends Instruction
 				case BRANCH:
 					return info.getName() +" "+ Integer.toString(this.imm);
 				case MEMORY:
-					return info.getName() +" r"+ Integer.toString(this.rB) +", "+ Integer.toString(this.imm) +" (r"+ Integer.toString(this.rA) +")";
+					return info.getName() +" r"+ Integer.toString(this.rB) +", "+ Integer.toString(this.imm) +"(r"+ Integer.toString(this.rA) +")";
 			}
 		}
 

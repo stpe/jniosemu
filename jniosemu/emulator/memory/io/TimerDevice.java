@@ -76,17 +76,26 @@ public class TimerDevice extends MemoryBlock
 			if (this.counter > 0) {
 				this.counter--;
 			} else if ((this.memory[4] & 0x2) > 0) {
-				this.counter = this.period;
+				this.memory[0] |= 0x1;
+				this.updateCounter();
+				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
 			} else {
 				this.counting = false;
+				this.memory[0] |= 0x1;
 				this.memory[0] &= 0xFD;
 				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
 			}
 		}
 
-		System.out.println(this.counter);
-
 		return false;
+	}
+
+	private void updateCounter() {
+		byte[] period = new byte[8];
+		System.arraycopy(this.memory, 8, period, 0, 8);
+		this.period = Utilities.byteArrayToLong(period);
+
+		this.counter = this.period;
 	}
 
 	public void writeByte(int addr, byte value) throws MemoryException {
@@ -99,10 +108,16 @@ public class TimerDevice extends MemoryBlock
 			memory[4] = value;
 			if ((value & 0x8) > 0) {
 				this.counting = false;
+				memory[0] &= 0xFD;
+				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
 			}
 			if ((value & 0x4) > 0) {
 				this.counting = true;
-				this.counter = this.period;
+				memory[0] |= 0x2;
+				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
+
+				if (this.counter == 0)
+					this.updateCounter();
 			}
 		} else if (mapAddr >= 16 && mapAddr < 24) {
 			byte[] snapshot = Utilities.longToByteArray(this.counter);
@@ -112,6 +127,8 @@ public class TimerDevice extends MemoryBlock
 			}
 		} else if (mapAddr >= 8 && mapAddr < 16) {
 			this.memory[mapAddr] = value;
+		} else if (mapAddr < 0 || mapAddr >= 24) {
+			throw new MemoryException(addr);
 		}
 	}
 

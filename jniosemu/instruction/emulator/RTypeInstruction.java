@@ -44,7 +44,7 @@ public abstract class RTypeInstruction extends Instruction
 		if (info != null) {
 			switch (info.getSyntax()) {
 				case DEFAULT:
-					return info.getName() +" r"+ Integer.toString(this.rC) +", r"+ Integer.toString(this.rA) +", "+ Integer.toString(this.rB);
+					return info.getName() +" r"+ Integer.toString(this.rC) +", r"+ Integer.toString(this.rA) +", r"+ Integer.toString(this.rB);
 				case CALLJUMP:
 					return info.getName() +" r"+ Integer.toString(this.rA);
 				case PC:
