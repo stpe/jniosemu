@@ -10,7 +10,7 @@ public class BneInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		if(em.readRegister(rA) != em.readRegister(rB))
-			em.writePC(em.readPC()+imm);		
+		if(em.readRegister(this.rA) != em.readRegister(this.rB))
+			em.writePC(em.readPC() + this.imm);
 	}
 }

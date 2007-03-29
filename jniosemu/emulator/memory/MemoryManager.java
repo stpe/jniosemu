@@ -54,6 +54,7 @@ public class MemoryManager
 		this.memoryBlocks.add(new LedDevice(eventManager, this));
 		this.memoryBlocks.add(new DipswitchDevice(eventManager, this));
 		this.memoryBlocks.add(new SerialDevice(eventManager, this));
+		this.memoryBlocks.add(new TimerDevice(eventManager, this));
 	}
 
 	public void reset(byte[] program, byte[] variables) {

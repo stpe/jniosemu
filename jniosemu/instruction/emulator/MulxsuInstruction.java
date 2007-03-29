@@ -10,10 +10,9 @@ public class MulxsuInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                long vA = (long)em.readRegister(rA);
-                long vB = signedToUnsigned(em.readRegister(rB));
-                long vC = vA*vB;
-                vC = vC >>> 32;
-                em.writeRegister(rC, (int)vC);
+		long vA = (long)em.readRegister(this.rA);
+		long vB = this.signedToUnsigned(em.readRegister(this.rB));
+		long vC = (vA * vB) >>> 32;
+		em.writeRegister(this.rC, (int)vC);
 	}
 }

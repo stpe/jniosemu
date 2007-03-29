@@ -10,7 +10,6 @@ public class SlliInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                em.writeRegister(rC, em.readRegister(rA) << imm);
-		
+		em.writeRegister(this.rC, em.readRegister(this.rA) << this.imm);
 	}
 }

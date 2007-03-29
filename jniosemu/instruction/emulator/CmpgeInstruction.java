@@ -10,10 +10,10 @@ public class CmpgeInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                if(em.readRegister(rA) >= em.readRegister(rB))
-                        em.writeRegister(rC, 1);
-                else
-                        em.writeRegister(rC, 0);
-
+		if(em.readRegister(this.rA) >= em.readRegister(this.rB)) {
+			em.writeRegister(this.rC, 1);
+		} else {
+			em.writeRegister(this.rC, 0);
+		}
 	}
 }

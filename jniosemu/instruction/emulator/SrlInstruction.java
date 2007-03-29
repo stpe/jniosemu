@@ -10,8 +10,7 @@ public class SrlInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                int vB = em.readRegister(rB);
-                vB = vB & 0xF;   // we only want the lower-4-bits.
-                em.writeRegister(rC, (int)(signedToUnsigned(em.readRegister(rA)) >>> signedToUnsigned(vB))); 
+		int vB = em.readRegister(this.rB) & 0xF;   // we only want the lower-4-bits.
+		em.writeRegister(this.rC, em.readRegister(this.rA) >>> vB);
 	}
 }

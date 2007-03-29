@@ -10,6 +10,6 @@ public class SraiInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                em.writeRegister(rC, em.readRegister(rA) >>> signedToUnsigned(imm)); 		
+		em.writeRegister(this.rC, em.readRegister(this.rA) >> this.imm);
 	}
 }

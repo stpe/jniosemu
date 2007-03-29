@@ -10,6 +10,6 @@ public class LdbuInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                em.writeRegister(rB, (int)signedToUnsigned(em.readByteMemory(em.readRegister(rA)+imm)));		
+		em.writeRegister(this.rB, (int)this.signedToUnsigned(em.readByteMemory(em.readRegister(this.rA) + this.imm)));
 	}
 }

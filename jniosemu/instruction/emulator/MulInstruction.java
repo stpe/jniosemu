@@ -10,6 +10,6 @@ public class MulInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		em.writeRegister(rC, (em.readRegister(rA)*em.readRegister(rB)));
+		em.writeRegister(this.rC, em.readRegister(this.rA) * em.readRegister(this.rB));
 	}
 }

@@ -10,10 +10,10 @@ public class CmpltuiInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                if (signedToUnsigned(em.readRegister(rA)) < signedToUnsigned(imm)) {
-                        em.writeRegister(rB, 1);
-                } else {
-                        em.writeRegister(rB, 0);
-                }		
+		if (this.signedToUnsigned(em.readRegister(this.rA)) < this.signedToUnsigned(this.imm)) {
+			em.writeRegister(this.rB, 1);
+		} else {
+			em.writeRegister(this.rB, 0);
+		}
 	}
 }

@@ -10,9 +10,10 @@ public class CmpeqiInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-                if(em.readRegister(rA) == imm)
-                        em.writeRegister(rB, 1);
-                else
-                        em.writeRegister(rB, 0);		
+		if(em.readRegister(this.rA) == this.imm) {
+			em.writeRegister(this.rB, 1);
+		} else {
+			em.writeRegister(this.rB, 0);
+		}
 	}
 }

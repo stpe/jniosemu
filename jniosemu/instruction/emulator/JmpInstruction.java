@@ -10,6 +10,6 @@ public class JmpInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		em.writePC(em.readRegister(rA));
+		em.writePC(em.readRegister(this.rA));
 	}
 }
