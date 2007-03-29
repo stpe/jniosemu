@@ -81,7 +81,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	}
 
 	public boolean resetState() {
-		if (!this.inputBuffer.isEmpty()) {
+		if (!this.inputBuffer.isEmpty() && (memory[8] & 0x80) == 0) {
 			memory[0] = (byte)(this.inputBuffer.poll() & 0xFF);
 			memory[8] |= 0x80;
 		}
