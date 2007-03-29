@@ -10,6 +10,6 @@ public class OriInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		em.writeRegister(rC, em.readRegister(rA) | imm);		
+		em.writeRegister(rB, em.readRegister(rA) | imm);		
 	}
 }

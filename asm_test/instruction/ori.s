@@ -1,8 +1,8 @@
-# r1 = 0xFFFF0000
-# r2 = 0x0000FFFF
-# r3 = 0xFFFFFFFF
-# r4 = 0xFFFF0000
-# r5 = 0x0000FFFF
+# r1 = 0b0011
+# r2 = 0b0110
+# r3 = 0b0111
+# r4 = 0b0111
+# r5 = 0b1010
 
  .data
  .global main
@@ -10,8 +10,8 @@
  .text
 
 main:
-	movi r1, 0xFFFF0000
-	movi r2, 0x0000FFFF
-	or r3, r1, 0xFFFF
-	or r4, r1, 0x0
-	or r5, r0, r2
+	movi r1, 0b0011
+	movi r2, 0b0110
+	ori r3, r1, 0b0110
+	ori r4, r2, 0b0011
+	ori r5, r0, 0b1010
