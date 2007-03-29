@@ -20,8 +20,8 @@ public abstract class Instruction
 	 * @return Long value
 	 */
 	protected long signedToUnsigned(int value) {
-		long ret = 0;
-		return ret | value;
+		// This is a very stupid way to do it but it seams to be the only way Java can do it
+		return (long)value & (new Long("4294967295")).longValue();
 	}
 
 	/**
@@ -31,8 +31,7 @@ public abstract class Instruction
 	 * @return Int value
 	 */
 	protected int signedToUnsigned(short value) {
-		int ret = 0;
-		return ret | value;
+		return (int)value & 0xFFFF;
 	}
 
 	/**
