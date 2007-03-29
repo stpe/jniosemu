@@ -114,8 +114,13 @@ public class GUIEditor extends JPanel
 						
 						int pos = textArea.getCaretPosition();
 						
+						// temporarily hide caret while inserting to prevent flicker
+						textArea.getCaret().setVisible(false);
+						
 						// insert whitespace of previous line first
 						textArea.insert(getIndentString(pos - 1), pos);
+						
+						textArea.getCaret().setVisible(true);
 					}
 				} 
 				
