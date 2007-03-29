@@ -27,7 +27,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	 */
 	private static final String MEMORYNAME = "Serial";
 
-	private Queue<Byte> inputBuffer = new LinkedList<Byte>();
+	private Queue<Character> inputBuffer = new LinkedList<Character>();
 	/**
 	 * Used EventManager
 	 */
@@ -82,9 +82,10 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 
 	public boolean resetState() {
 		if (!this.inputBuffer.isEmpty()) {
-			memory[0] = this.inputBuffer.poll();
+			memory[0] = (byte)(this.inputBuffer.poll() & 0xFF);
 			memory[8] |= 0x80;
 		}
+		memory[8] |= 0x40;
 
 		return false;
 	}
@@ -94,7 +95,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 
 		if (mapAddr == 4) {
 			memory[4] = value;
-			this.eventManager.sendEvent(EventManager.EVENT.SERIAL_OUTPUT, Utilities.unsignedbyteToInt(value));
+			this.eventManager.sendEvent(EventManager.EVENT.SERIAL_OUTPUT, (char)(value & 0xFF));
 		} else if (mapAddr < 4 || mapAddr > 7) {
 			throw new MemoryException(addr);
 		}
@@ -106,6 +107,8 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 		if (mapAddr == 0) {
 			memory[8] &= 0x7F;
 			return memory[0];
+		} else if (mapAddr >= 1 && mapAddr < 4 || mapAddr >= 8 && mapAddr < 12) {
+			return memory[mapAddr];
 		} else {
 			throw new MemoryException(addr);
 		}
@@ -115,7 +118,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	{
 		switch(eventIdentifier) {
 			case SERIAL_INPUT:
-				this.inputBuffer.offer(((Byte)obj).byteValue());
+				this.inputBuffer.offer(((Character)obj).charValue());
 				break;
 		}
 	}
