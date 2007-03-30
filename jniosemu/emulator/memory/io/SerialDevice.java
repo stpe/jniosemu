@@ -36,14 +36,6 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	 * Used MemoryManger
 	 */
 	private MemoryManager memoryManager;
-	/**
-	 * Contains the memory data
-	 */
-	private byte[] memory;
-	/**
-	 * 
-	 */
-	private boolean changed = false;
 
 	/**
 	 * Init ButtonDevice
@@ -77,15 +69,22 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
+		this.changed = true;
 		this.inputBuffer.clear();
 	}
 
 	public boolean resetState() {
+		this.changed = false;
+
 		if (!this.inputBuffer.isEmpty() && (memory[8] & 0x80) == 0) {
 			memory[0] = (byte)(this.inputBuffer.poll() & 0xFF);
 			memory[8] |= 0x80;
+			this.changed = true;
 		}
-		memory[8] |= 0x40;
+		if ((memory[8] & 0x40) == 0) {
+			memory[8] |= 0x40;
+			this.changed = true;
+		}
 
 		return false;
 	}
@@ -101,19 +100,25 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 		} else if (mapAddr < 4 || mapAddr >= 8 && mapAddr < 12 || mapAddr >= 16) {
 			throw new MemoryException(addr);
 		}
+
+		this.changed = true;
 	}
 
 	public byte readByte(int addr) throws MemoryException {
 		int mapAddr = this.mapAddr(addr);
 
+		byte ret = 0;
 		if (mapAddr == 0) {
 			memory[8] &= 0x7F;
-			return memory[0];
+			ret = memory[0];
 		} else if (mapAddr >= 1 && mapAddr < 4 || mapAddr >= 8 && mapAddr < 16) {
-			return memory[mapAddr];
+			ret = memory[mapAddr];
 		} else {
 			throw new MemoryException(addr);
 		}
+
+		this.changed = true;
+		return ret;
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)

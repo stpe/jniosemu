@@ -66,6 +66,7 @@ public class EventManager
 		EXCEPTION,												// Exception has occured
 		LED_UPDATE,												// Update state of leds
 		MEMORY_VIEW,											// Show Memory View window
+		MEMORY_CHANGE,										// If the memory changed
 		PROGRAMCOUNTER_CHANGE,						// Program counter in emulated program has changed
 		REGISTER_CHANGE,									// Regiser in emulated program has changed
 		SERIAL_INPUT,											// Send a charater to emulated serial port

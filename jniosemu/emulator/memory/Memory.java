@@ -6,11 +6,6 @@ package jniosemu.emulator.memory;
 public class Memory extends MemoryBlock
 {
 	/**
-	 * Contains the memory data
-	 */
-	private byte[] memory;
-
-	/**
 	 * Contains how the memory looked when init
 	 */
 	private byte[] originalMemory;
@@ -41,6 +36,7 @@ public class Memory extends MemoryBlock
 			throw new MemoryException(addr);
 		}
 
+		this.changed = true;
 		return value;
 	}
 
@@ -50,9 +46,12 @@ public class Memory extends MemoryBlock
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
+
+		this.changed = true;
 	}
 
 	public void reset() {
+		this.changed = true;
 		this.memory = new byte[this.length];
 
 		if (this.originalMemory != null)
@@ -60,6 +59,11 @@ public class Memory extends MemoryBlock
 	}
 
 	public boolean resetState() {
+		this.changed = false;
 		return false;
+	}
+
+	public boolean isChanged() {
+		return this.changed;
 	}
 }

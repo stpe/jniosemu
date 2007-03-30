@@ -42,13 +42,9 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 */
 	private MemoryManager memoryManager;
 	/**
-	 * Contains the memory data
-	 */
-	private byte[] memory;
-	/**
 	 * 
 	 */
-	private boolean changed = false;
+	private boolean stateChanged = false;
 
 	/**
 	 * Init ButtonDevice
@@ -88,7 +84,8 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
-		this.changed = false;
+		this.changed = true;
+		this.stateChanged = false;
 		this.state = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
 			this.state.add(i, false);
@@ -97,12 +94,15 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	}
 
 	public boolean resetState() {
-		if (this.changed) {
+		this.changed = false;
+
+		if (this.stateChanged) {
+			this.changed = true;
 			memory[0] = Utilities.vectorToByte(this.state);
 			this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
-		}
 
-		this.changed = false;
+			this.stateChanged = false;
+		}
 		return false;
 	}
 
@@ -111,11 +111,15 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	}
 
 	public byte readByte(int addr) throws MemoryException {
+		byte ret = 0;
 		try {
-			return memory[this.mapAddr(addr)];
+			ret = memory[this.mapAddr(addr)];
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
+
+		this.changed = true;
+		return ret;
 	}
 
 	/**
@@ -136,7 +140,7 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 	 * @param state new state
 	 */
 	private void setState(int index, boolean state) {
-		this.changed = true;
+		this.stateChanged = true;
 		this.state.set(index, state);
 
 		this.sendEvent();
@@ -156,5 +160,9 @@ public class ButtonDevice extends MemoryBlock implements EventObserver
 				this.setState(index, !this.state.get(index));
 				break;
 		}
+	}
+
+	public boolean isChanged() {
+		return this.changed;
 	}
 }

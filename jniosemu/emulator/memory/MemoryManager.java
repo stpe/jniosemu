@@ -26,7 +26,7 @@ public class MemoryManager
 	/**
 	 * Size of the stack
 	 */
-	public static final int STACKSIZE         = 0x08000;
+	public static final int STACKSIZE         = 0x00020;
 	/**
 	 * Contains the different MemoryBlocks
 	 */
@@ -94,7 +94,9 @@ public class MemoryManager
 	public byte readByte(int addr) throws MemoryException {
 		for (MemoryBlock block: this.memoryBlocks) {
 			if (block.inRange(addr)) {
-				return block.readByte(addr);
+				byte ret = block.readByte(addr);
+				this.setState(addr, STATE.READ);
+				return ret;
 			}
 		}
 
@@ -115,6 +117,7 @@ public class MemoryManager
 		for (MemoryBlock block: this.memoryBlocks) {
 			if (block.inRange(addr)) {
 				block.writeByte(addr, value);
+				this.setState(addr, STATE.WRITE);
 				return;
 			}
 		}
@@ -180,6 +183,10 @@ public class MemoryManager
 		this.writeByte(addr + 1, (byte)(value >>> 8  & 0xFF));
 		this.writeByte(addr + 2, (byte)(value >>> 16 & 0xFF));
 		this.writeByte(addr + 3, (byte)(value >>> 24 & 0xFF));
+	}
+
+	public ArrayList<MemoryBlock> getMemoryBlocks() {
+		return this.memoryBlocks;
 	}
 
 	public void dump() {

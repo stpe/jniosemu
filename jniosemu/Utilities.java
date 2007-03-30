@@ -80,6 +80,24 @@ public class Utilities
 		return ret;
 	}
 
+	public static String byteArrayToBitString(byte[] value) {
+		String ret = "";
+
+		for (int i = value.length - 1; i >= 0; i--) {
+			for (int j = 7; j >= 0; j--) {
+				if ((value[i] & (int)Math.pow(2, j)) > 0)
+					ret.concat("1");
+				else
+					ret.concat("0");
+			}
+
+			if (i > 0)
+				ret.concat(" ");
+		}
+
+		return ret;
+	}
+
 	public static int unsignedbyteToInt(byte value) {
 		int ret = 0;
 		return (int)(ret | value);

@@ -1,5 +1,7 @@
 package jniosemu.emulator.memory;
 
+import java.util.Vector;
+
 /**
  * Contains a part of the memory.
  */
@@ -17,6 +19,14 @@ public abstract class MemoryBlock
 	 * Length of the memory part.
 	 */
 	protected int length;
+	/**
+	 * Contains the memory data
+	 */
+	protected byte[] memory;
+
+	protected boolean changed = false;
+
+	protected Vector<MemoryInt> memoryVector;
 
 	/**
 	 * Get the name of the part.
@@ -114,4 +124,25 @@ public abstract class MemoryBlock
 	public abstract void reset();
 
 	public abstract boolean resetState();
+
+	public boolean isChanged() {
+		return this.changed;
+	}
+
+	private void updateMemoryVector() {
+		this.memoryVector = new Vector<MemoryInt>();
+
+		for (int i = this.start; i < this.length; i++) {
+			byte[] memoryInt = new byte[4];
+			System.arraycopy(this.memory, i, memoryInt, 0, 4);
+			this.memoryVector.add(new MemoryInt(this.start+i, memoryInt));
+		}
+	}
+
+	public Vector<MemoryInt> getMemoryVector() {
+		if (this.isChanged())
+			this.updateMemoryVector();
+
+		return this.memoryVector;
+	}
 }

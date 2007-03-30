@@ -29,10 +29,6 @@ public class TimerDevice extends MemoryBlock
 	 * Used MemoryManger
 	 */
 	private MemoryManager memoryManager;
-	/**
-	 * Contains the memory data
-	 */
-	private byte[] memory;
 
 	private long counter = 0;
 	private long period = 0;
@@ -65,6 +61,7 @@ public class TimerDevice extends MemoryBlock
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
+		this.changed = true;
 		this.memory = new byte[this.length];
 		this.counter = 0;
 		this.period = 0;
@@ -72,17 +69,21 @@ public class TimerDevice extends MemoryBlock
 	}
 
 	public boolean resetState() {
+		this.changed = false;
+
 		if (this.counting) {
 			if (this.counter > 0) {
 				this.counter--;
 			} else if ((this.memory[4] & 0x2) > 0) {
 				this.memory[0] |= 0x1;
+				this.changed = true;
 				this.updateCounter();
 				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
 			} else {
 				this.counting = false;
 				this.memory[0] |= 0x1;
 				this.memory[0] &= 0xFD;
+				this.changed = true;
 				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
 			}
 		}
@@ -130,14 +131,20 @@ public class TimerDevice extends MemoryBlock
 		} else if (mapAddr < 0 || mapAddr >= 24) {
 			throw new MemoryException(addr);
 		}
+
+		this.changed = true;
 	}
 
 	public byte readByte(int addr) throws MemoryException {
+		byte ret = 0;
 		try {
-			return this.memory[this.mapAddr(addr)];
+			ret = memory[this.mapAddr(addr)];
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
+
+		this.changed = true;
+		return ret;
 	}
 
 }

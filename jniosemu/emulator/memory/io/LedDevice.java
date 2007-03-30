@@ -37,10 +37,6 @@ public class LedDevice extends MemoryBlock
 	 * Used EventManager
 	 */
 	private EventManager eventManager;
-	/**
-	 * Contains the memory data
-	 */
-	private byte[] memory;
 
 	/**
 	 * Init ButtonDevice
@@ -71,6 +67,7 @@ public class LedDevice extends MemoryBlock
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
+		this.changed = true;
 		this.state = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
 			this.state.add(i, false);
@@ -79,6 +76,7 @@ public class LedDevice extends MemoryBlock
 	}
 
 	public boolean resetState() {
+		this.changed = false;
 		return false;
 	}
 
@@ -94,14 +92,20 @@ public class LedDevice extends MemoryBlock
 		} else if (mapAddr < 0 || mapAddr > 3) {
 			throw new MemoryException(addr);
 		}
+
+		this.changed = true;
 	}
 
 	public byte readByte(int addr) throws MemoryException {
+		byte ret = 0;
 		try {
-			return memory[this.mapAddr(addr)];
+			ret = memory[this.mapAddr(addr)];
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
+
+		this.changed = true;
+		return ret;
 	}
 
 	/**
