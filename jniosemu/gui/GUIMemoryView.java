@@ -25,7 +25,7 @@ import jniosemu.emulator.*;
 	 * List object used to display the memory content.
 	 */
 	private JList memoryList;
-
+	
 	/**
 	 * Initiates the creation of GUI components and adds itself to
 	 * the Event Manager as an observer.
@@ -64,25 +64,26 @@ import jniosemu.emulator.*;
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		// list
-		JPanel listPanel = new JPanel(new GridLayout(1,1));
+		JPanel listPanel = new JPanel();
+		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.PAGE_AXIS));
 		
 		listPanel.setBorder(
 			BorderFactory.createCompoundBorder(
 				BorderFactory.createEmptyBorder(4, 4, 0, 4),
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
 			)
-		);		
+		);	
 		
-		Vector<String> tmp = new Vector<String>();
-		tmp.add("minne");
-		tmp.add("grej");
-		tmp.add("sak");
-		
-		memoryList = new JList(tmp);
-		memoryList.setBackground(Color.WHITE);
-		memoryList.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		
-		listPanel.add(memoryList);
+		this.doList("Minne 1", listPanel);
+		this.doList("Minne 2", listPanel);
+		this.doList("Minne 3", listPanel);
+		this.doList("Minne 4", listPanel);
+		this.doList("Minne 5", listPanel);
+		this.doList("Minne 6", listPanel);
+		this.doList("Minne 7", listPanel);
+		this.doList("Minne 8", listPanel);
+
+		JScrollPane scrollPane = new JScrollPane(listPanel);
 
     // button
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -96,8 +97,40 @@ import jniosemu.emulator.*;
     Container contentPane = getContentPane();
     contentPane.setLayout(new BorderLayout());
     
-    contentPane.add(listPanel, BorderLayout.CENTER);
+    contentPane.add(scrollPane, BorderLayout.CENTER);
     contentPane.add(buttonPanel, BorderLayout.PAGE_END);
+	}
+
+	public JList doList(String name, JPanel panel)
+	{
+		Vector<String> tmp = new Vector<String>();
+		
+		int count = 2 + (int)(Math.random() * 20);
+		
+		for (int i = 0; i < count; i++)
+			tmp.add("#000" + i + "   123");
+				
+		JList memoryList = new JList(tmp);
+	
+		memoryList.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+		memoryList.setAlignmentX(Component.CENTER_ALIGNMENT);
+		memoryList.setBackground(Color.WHITE);
+		memoryList.setFont(new Font("Monospaced", Font.PLAIN, 12));
+
+		memoryList.setBorder(
+			BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
+		);
+		
+		
+		JLabel titleLabel = new JLabel(name, JLabel.LEFT);
+		titleLabel.setLabelFor(memoryList);
+		titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+		
+		panel.add(titleLabel);
+		panel.add(memoryList);		
+		
+		return memoryList;
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
