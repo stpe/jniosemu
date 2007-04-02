@@ -9,6 +9,7 @@ import javax.swing.border.*;
 import jniosemu.events.*;
 import jniosemu.emulator.*;
 import jniosemu.emulator.memory.*;
+import jniosemu.Utilities;
 
 /**
  * Creates and manages the GUI component of the memory view.
@@ -108,10 +109,10 @@ import jniosemu.emulator.memory.*;
 			BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
 		);
 		
-		JLabel titleLabel = new JLabel(memBlock.getName(), JLabel.LEFT);
+		JLabel titleLabel = new JLabel(" " + memBlock.getName(), JLabel.LEFT);
 		titleLabel.setLabelFor(memoryList);
 		titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+		titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) titleLabel.getMinimumSize().getHeight()));
 		
 		this.listPanel.add(titleLabel);
 		this.listPanel.add(memoryList);		
@@ -123,7 +124,6 @@ import jniosemu.emulator.memory.*;
 	{
 		listPanel.removeAll();
 		
-		System.out.println("init");
 		memoryLists = new ArrayList<JList>();
 		
 		for(int i = 0; i < this.memoryBlocks.size(); i++)
@@ -143,14 +143,14 @@ import jniosemu.emulator.memory.*;
 			MemoryBlock memBlock = (MemoryBlock) memoryBlocks.get(i);
 			
 			Vector<MemoryInt> memVector =  memBlock.getMemoryVector();
-			
+
 			if (memVector != null)
 			{
 				memoryLists.get(i).setListData(memVector);
-				System.out.println("update: MemVector size " + memVector.size() + " for block " + memBlock.getName());
+				System.out.println("MemoryView update: MemoryVector size " + memVector.size() + " for block " + memBlock.getName());
 			}
 			else
-				System.out.println("update: MemVector null for block " + memBlock.getName());
+				System.out.println("MemoryView update: MemoryVector null for block " + memBlock.getName());
 		}		
 	}
 
@@ -261,11 +261,33 @@ import jniosemu.emulator.memory.*;
 		*/
 				g.setColor(new Color(0, 0, 0));
 			
-			g.drawString("" + memInt.getAddress(), 2, 11);
+			// address
+			g.drawString(Utilities.intToHexString(memInt.getAddress()), 2, 11);
 
-			String tmp = new String(memInt.getMemory());	
+			// memory as hex
+			byte[] b = memInt.getMemory();
+			
+			String tmp = "";
+			for (int i = 0; i < b.length; i++)
+			{
+				tmp = tmp + Integer.toHexString( (b[i] & 0xFF) | 0x100 ).substring(1,3) + " ";
+			}
 
-			g.drawString(tmp, getWidth()-metrics.stringWidth(tmp), 11);
+			g.drawString(tmp, 100, 11);
+
+			// memory as ascii
+			tmp = "";
+			for (int i = 0; i < b.length; i++)
+			{
+				if (b[i] >= 32 && b[i] <= 126)
+					tmp = tmp + ((char) b[i]);
+				else
+					tmp = tmp + ".";
+			}
+
+			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, 11);
+
+
 		}
 
 	}

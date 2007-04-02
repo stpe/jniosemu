@@ -345,7 +345,7 @@ public class GUIManager
 	{
 		GUIMemoryView windowFrame = new GUIMemoryView(this.eventManager);
 
-		windowFrame.setSize(new Dimension(240, 360));
+		windowFrame.setSize(new Dimension(280, 360));
 		windowFrame.setLocationRelativeTo(this.frame);
 		windowFrame.setVisible(true);		
 	}

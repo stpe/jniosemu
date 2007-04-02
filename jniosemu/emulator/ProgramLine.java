@@ -1,7 +1,7 @@
 package jniosemu.emulator;
 
 import jniosemu.instruction.emulator.Instruction;
-import jniosemu.instruction.InstructionManager;
+import jniosemu.Utilities;
 
 /**
  * Contains info about one line in the program
@@ -181,7 +181,7 @@ public class ProgramLine
 	 * Get opcode
 	 *
 	 * @calledby GUIEmulator.EmulatorCellRenderer.paintComponent()
-	 * @calls InstructionManager.intToHexString()
+	 * @calls Utilities.intToHexString()
 	 *
 	 * @return opcode
 	 */
@@ -189,7 +189,7 @@ public class ProgramLine
 		if (this.opCode == 0)
 			return null;
 
-		return InstructionManager.intToHexString(this.opCode);
+		return Utilities.intToHexString(this.opCode);
 	}
 
 	/**

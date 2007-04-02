@@ -270,17 +270,6 @@ public class InstructionManager
 	}
 
 	/**
-	 * Converts integer to a string of the hexadecimal value.
-	 *
-	 * @param   value  decimal value to convert
-	 * @return         hexadecimal value as string
-	 */
-	public static String intToHexString(int value) {
-		String hex = "00000000" + Integer.toHexString(value);
-		return "0x" + hex.substring(hex.length()-8, hex.length());
-	}
-	
-	/**
 	 * Get instruction arguments as a string.
 	 *
 	 * @calledby GUIEditor.insertInstruction()

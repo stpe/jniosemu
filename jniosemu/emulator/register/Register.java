@@ -1,7 +1,7 @@
 package jniosemu.emulator.register;
 
 import jniosemu.emulator.memory.MemoryManager;
-import jniosemu.instruction.InstructionManager;
+import jniosemu.Utilities;
 
 /**
  * Contains info about one register
@@ -70,11 +70,12 @@ public class Register
 	 * Get string representation of value
 	 *
 	 * @calledby GUIRegister
+	 * @calls Utilities.intToHexString()
 	 *
 	 * @return value
 	 */
 	public String getValue() {
-		return this.value +" ("+ InstructionManager.intToHexString(this.value) +")";
+		return this.value +" ("+ Utilities.intToHexString(this.value) +")";
 	}
 
 	/**

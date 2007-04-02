@@ -156,7 +156,7 @@ public class GUIRegisters extends JPanel
 
 			String tmp = regObj.getValue();	
 
-			g.drawString(tmp, getWidth()-metrics.stringWidth(tmp), 11);
+			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, 11);
 		}
 
 	}
