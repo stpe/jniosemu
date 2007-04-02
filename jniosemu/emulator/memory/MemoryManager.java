@@ -65,7 +65,7 @@ public class MemoryManager
 
 		this.memoryBlocks.set(0, new Memory("PROGRAM", PROGRAMSTARTADDR, program.length, program));
 		this.memoryBlocks.set(1, new Memory("VARIABLES", VARIABLESTARTADDR, variables.length, variables));
-		this.memoryBlocks.add(2, new Memory("STACK", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
+		this.memoryBlocks.set(2, new Memory("STACK", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
 	}
 
 	public void resetState() {
