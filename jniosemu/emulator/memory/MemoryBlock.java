@@ -24,7 +24,7 @@ public abstract class MemoryBlock
 	 */
 	protected byte[] memory;
 
-	protected boolean changed = false;
+	protected boolean changed = true;
 
 	protected Vector<MemoryInt> memoryVector;
 
@@ -132,7 +132,7 @@ public abstract class MemoryBlock
 	private void updateMemoryVector() {
 		this.memoryVector = new Vector<MemoryInt>();
 
-		for (int i = this.start; i < this.length; i++) {
+		for (int i = 0; i < this.length; i += 4) {
 			byte[] memoryInt = new byte[4];
 			System.arraycopy(this.memory, i, memoryInt, 0, 4);
 			this.memoryVector.add(new MemoryInt(this.start+i, memoryInt));
