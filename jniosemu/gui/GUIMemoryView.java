@@ -14,8 +14,8 @@ import jniosemu.Utilities;
 /**
  * Creates and manages the GUI component of the memory view.
  */
- public class GUIMemoryView extends JFrame
-                              implements ActionListener, EventObserver {
+public class GUIMemoryView extends JFrame
+                           implements ActionListener, EventObserver {
 
 	/**
 	 * Reference to EventManager used to receive
@@ -142,15 +142,20 @@ import jniosemu.Utilities;
 		{
 			MemoryBlock memBlock = (MemoryBlock) memoryBlocks.get(i);
 			
-			Vector<MemoryInt> memVector =  memBlock.getMemoryVector();
-
-			if (memVector != null)
+			if (memBlock.isChanged())
 			{
-				memoryLists.get(i).setListData(memVector);
-				System.out.println("MemoryView update: MemoryVector size " + memVector.size() + " for block " + memBlock.getName());
+				Vector<MemoryInt> memVector =  memBlock.getMemoryVector();
+	
+				if (memVector != null)
+				{
+					memoryLists.get(i).setListData(memVector);
+					System.out.println("MemoryView update: MemoryVector size " + memVector.size() + " for block " + memBlock.getName());
+				}
+				else
+				{
+					System.out.println("MemoryView update: MemoryVector null for block " + memBlock.getName());
+				}
 			}
-			else
-				System.out.println("MemoryView update: MemoryVector null for block " + memBlock.getName());
 		}		
 	}
 

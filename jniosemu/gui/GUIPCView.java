@@ -6,6 +6,7 @@ import java.awt.*;
 import java.util.*;
 
 import jniosemu.events.*;
+import jniosemu.Utilities;
 
 /**
  * Creates and manages the GUI component of the PC (Program Counter) view.
@@ -76,7 +77,7 @@ import jniosemu.events.*;
 	 */
 	public void setPC(int addr)
 	{
-		pcLabel.setText("PC: " + addr);
+		pcLabel.setText("PC: " + Utilities.intToHexString(addr));
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
