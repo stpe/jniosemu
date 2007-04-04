@@ -82,8 +82,8 @@ public class GUIEditor extends JPanel
 			EventManager.EVENT.DOCUMENT_SAVE_AS,
 			EventManager.EVENT.EDITOR_INSERT_INSTRUCTION,
 			EventManager.EVENT.EDITOR_UNDO,
-			EventManager.EVENT.EDITOR_REDO
-			
+			EventManager.EVENT.EDITOR_REDO,
+			EventManager.EVENT.EDITOR_MOVE_TO_LINE
 		};
 
     this.eventManager.addEventObserver(events, this);
@@ -279,31 +279,49 @@ public class GUIEditor extends JPanel
 	{
 		switch(eventIdentifier) {
 			case APPLICATION_EXIT:
-				exitApplication();
+				this.exitApplication();
 				break;
 			case COMPILER_COMPILE_INIT:
-				prepareCompile();
+				this.prepareCompile();
 				break;
 			case DOCUMENT_NEW:
-				newDocument();
+				this.newDocument();
 				break;
 			case DOCUMENT_OPEN:
-				openDocument();
+				this.openDocument();
 				break;
 			case DOCUMENT_SAVE:
-				saveDocument();
+				this.saveDocument();
 				break;
 			case DOCUMENT_SAVE_AS:
-				saveAsDocument();
+				this.saveAsDocument();
 				break;
 			case EDITOR_INSERT_INSTRUCTION:
-				insertInstruction((String) obj);
+				this.insertInstruction((String) obj);
 				break;
 			case EDITOR_UNDO:
 				this.undo();
 				break;
 			case EDITOR_REDO:
 				this.redo();
+				break;
+			case EDITOR_MOVE_TO_LINE:
+
+				try {
+					// get offset from line number
+					int offset = this.textArea.getLineStartOffset( java.lang.Math.max(((Integer) obj).intValue() - 1, 0) );
+					
+					// move caret to position
+					this.textArea.setCaretPosition(offset);
+					
+					// set focus to text area
+					this.textArea.requestFocusInWindow();
+					
+				} catch(BadLocationException ex) {
+					// invalid line number
+					return;
+				}
+
 				break;
 		}
 	}
@@ -397,6 +415,11 @@ public class GUIEditor extends JPanel
 				eventManager.sendEvent(EventManager.EVENT.DOCUMENT_OPEN_DONE);
 				// change tab to editor tab (if not current)
 				eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
+				
+				// move caret in text area to the top
+				textArea.setCaretPosition(0);
+				// set focus to text area
+				textArea.requestFocusInWindow();
 			}
 			catch (IOException e)
 			{
@@ -642,6 +665,7 @@ public class GUIEditor extends JPanel
 	/**
 	 * Returns initial whitespace of the line of the given position.
 	 *
+	 * @checks  If the position is invalid an empty string is returned.
 	 * @param   position in editor text (usually caret position)
 	 * @return  initial whitespace
 	 */

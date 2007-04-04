@@ -23,10 +23,19 @@ public class GUIMemoryView extends JFrame
 	 */
 	private transient EventManager eventManager;
 
+	/**
+	 * Panel used to contain all lists.
+	 */
 	private JPanel listPanel;
 	
+	/**
+	 * Lists used to display content of each memory block.
+	 */
 	private ArrayList<JList> memoryLists = null;
 	
+	/**
+	 * Reference to memory blocks to display.
+	 */
 	private ArrayList<MemoryBlock> memoryBlocks = null;
 	
 	/**
@@ -49,8 +58,6 @@ public class GUIMemoryView extends JFrame
 
 		// add events to listen to
 		EventManager.EVENT[] events = {
-			EventManager.EVENT.PROGRAMCOUNTER_CHANGE,
-			EventManager.EVENT.EMULATOR_RESET,
 			EventManager.EVENT.MEMORY_CHANGE
 		};
 
@@ -96,6 +103,13 @@ public class GUIMemoryView extends JFrame
     contentPane.add(buttonPanel, BorderLayout.PAGE_END);
 	}
 
+	/**
+	 * Create display list for given memory block.
+	 *
+	 * @calledby           initLists()
+	 * @param    memBlock  memory block to display
+	 * @return             list created
+	 */
 	private JList addList(MemoryBlock memBlock)
 	{
 		JList memoryList = new JList();
@@ -120,6 +134,11 @@ public class GUIMemoryView extends JFrame
 		return memoryList;
 	}
 
+	/**
+	 * Initiates creation of display lists for all memory blocks.
+	 *
+	 * @calls  addList(), updateLists()
+	 */
 	private void initLists()
 	{
 		listPanel.removeAll();
@@ -136,6 +155,9 @@ public class GUIMemoryView extends JFrame
 		this.updateLists();
 	}
 	
+	/**
+	 * Updates content of all list tagged as changed.
+	 */
 	private void updateLists()
 	{
 		for(int i = 0; i < this.memoryLists.size(); i++)
@@ -162,26 +184,17 @@ public class GUIMemoryView extends JFrame
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
 		switch (eventIdentifier) {
-			case PROGRAMCOUNTER_CHANGE:
-				//
-				break;
-			case EMULATOR_RESET:
-				//
-				break;
 			case MEMORY_CHANGE:
+				// get memory blocks if not present
 				if (this.memoryBlocks == null)
-				{
 					this.memoryBlocks = (ArrayList<MemoryBlock>) obj;
-				}
 			
+				// init if no lists exists
 				if (this.memoryLists == null)
-				{
 					initLists();
-				}
 				else
-				{
+					// otherwise update existing
 					updateLists();
-				}
 			
 				break;
 		}
@@ -291,8 +304,6 @@ public class GUIMemoryView extends JFrame
 			}
 
 			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, 11);
-
-
 		}
 
 	}

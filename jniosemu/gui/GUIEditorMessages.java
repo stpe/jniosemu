@@ -10,7 +10,7 @@ import jniosemu.events.*;
  * Creates and manages the GUI component of the editor message view.
  */
 public class GUIEditorMessages extends JPanel 
-                       implements ActionListener, EventObserver {
+                       implements EventObserver {
 	
 	/**
 	 * Reference to EventManager used to receive
@@ -19,9 +19,14 @@ public class GUIEditorMessages extends JPanel
 	private transient EventManager eventManager;
 	
 	/**
-	 * The text area used to display messages.
+	 * List to contain messages.
+	 */	
+	private JList msgList;
+	
+	/**
+	 * List model used by the JList.
 	 */
-	private JTextArea editorMessages;
+	private DefaultListModel listModel;
 	
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -57,55 +62,90 @@ public class GUIEditorMessages extends JPanel
 	 */
 	private void setup()
 	{
-		editorMessages = new JTextArea("", 5, 60);
-		editorMessages.setEditable(false);
-		editorMessages.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		listModel = new DefaultListModel();
+		
+		msgList = new JList(listModel);
+		msgList.setBackground(Color.WHITE);
+		msgList.setFont(new Font("Monospaced", Font.PLAIN, 11));
+	
+		/**
+		 * Add mouse listener to listen to double-clicks on a line
+		 * to be able to move the caret in the editor to the line
+		 * number stated in the error message.
+		 */
+		MouseListener mouseListener = new MouseAdapter() 
+		{
+			private static final String LINE_NUMBER_PREFIX = "Line: ";
+			
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					// get click location
+					int index = msgList.locationToIndex(e.getPoint());
+
+					// unable to get location					
+					if (index == -1)
+						return;
+					
+					// get error message where clicked
+					String errorMsg = "";
+					try {
+						errorMsg = (String) listModel.getElementAt(index);
+					} catch(ArrayIndexOutOfBoundsException ex) {
+						// no error message row at point where clicked
+						return;
+					}
+					
+					// get the line number
+					errorMsg = errorMsg.substring(
+						errorMsg.indexOf(LINE_NUMBER_PREFIX) + LINE_NUMBER_PREFIX.length(),
+						errorMsg.indexOf(':')
+					);
+					
+					int lineNumber = -1;
+					
+					try {
+						lineNumber = Integer.parseInt(errorMsg);
+					} catch(NumberFormatException ex) {
+						// wasn't a number, do nothing
+						return;
+					}
+					
+					// send event to move caret in editor
+					eventManager.sendEvent(EventManager.EVENT.EDITOR_MOVE_TO_LINE, Integer.valueOf(lineNumber));
+				}
+			}
+		};	
+
+		msgList.addMouseListener(mouseListener);	
 
 		// put scrollbars around editor text area
 		JScrollPane editorMessagesScrollPane =
-		    new JScrollPane(editorMessages,
+		    new JScrollPane(msgList,
 		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		// put everything into the editor panel
 		this.setLayout(new BorderLayout());
 		this.add(editorMessagesScrollPane, BorderLayout.CENTER);
-		this.setVisible(false);
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
 		switch (eventIdentifier) {
 			case COMPILER_COMPILE:
-				editorMessages.setText("");
-				this.setVisible(false);
+				listModel.clear();
 				break;
 			case COMPILER_ERROR:
-				// append to the end
-				editorMessages.append((String) obj + "\n");
+				String[] result = ((String) obj).split("\n");
+				for (int x = 0; x < result.length; x++)
+				{
+					// convert tab to spaces
+					result[x] = result[x].replaceAll("\t", "    ");
+					
+					listModel.addElement(result[x]);
+				}
 				
-				// move caret to last position to force scroll
-				editorMessages.setCaretPosition(editorMessages.getDocument().getLength());
-				
-				this.setVisible(true);
 				break;
-		}
-	}
-
-	/**
-	 * Invoked when a GUI action occurs, forwards it as
-	 * an event to the EventManager object.
-	 *
-	 * @calls     EventManager.sendEvent()
-	 *
-	 * @param  e  action event object
-	 */
-	public void actionPerformed(ActionEvent e) {
-		try {
-			EventManager.EVENT event = this.eventManager.getEvent(e.getActionCommand());
-			eventManager.sendEvent(event);
-		} catch (EventException ex) {
-			System.out.println("Error: " + ex.getMessage());
 		}
 	}
 

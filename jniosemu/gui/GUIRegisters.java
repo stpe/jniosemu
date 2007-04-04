@@ -55,7 +55,7 @@ public class GUIRegisters extends JPanel
 	 */	
 	private void setup()
 	{
-		this.setPreferredSize(new Dimension(160, 0));
+		this.setPreferredSize(new Dimension(190, 0));
 
 		// registers
 		registerList = new JList();

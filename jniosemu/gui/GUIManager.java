@@ -15,6 +15,16 @@ import jniosemu.events.*;
 public class GUIManager
 	implements EventObserver {
 
+  /**
+   * Application window width.
+   */
+	public static final int WINDOW_WIDTH = 800;
+
+  /**
+   * Application window height.
+   */
+	public static final int WINDOW_HEIGHT = 600;
+
 	/**
 	 * Tab number of editor.
 	 */
@@ -42,6 +52,16 @@ public class GUIManager
 	private JTabbedPane tabbedPane;
 
 	/**
+	 * Splitter used between editor and editor messages.
+	 */
+	private JSplitPane editorSplitPane;
+	
+	/**
+	 * Reference to editor messages object.
+	 */
+	private GUIEditorMessages editorMessages;
+
+	/**
 	 * Initiates the creation of GUI components and adds itself to
 	 * the Event Manager as an observer.
 	 *
@@ -65,7 +85,9 @@ public class GUIManager
 			EventManager.EVENT.EXCEPTION,
 			EventManager.EVENT.MEMORY_VIEW,
 			EventManager.EVENT.VARIABLE_VIEW,
-			EventManager.EVENT.SERIAL_CONSOLE_VIEW
+			EventManager.EVENT.SERIAL_CONSOLE_VIEW,
+			EventManager.EVENT.COMPILER_COMPILE,
+			EventManager.EVENT.COMPILER_ERROR
 		};
 		this.eventManager.addEventObserver(events, this);
 
@@ -122,7 +144,7 @@ public class GUIManager
 		// all other components
 		setup(mainPanel);
 
-		frame.setSize(800, 600);
+		frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		frame.setVisible(true);
 	}
 
@@ -144,19 +166,21 @@ public class GUIManager
 
 		// editor
 		GUIEditor editor = new GUIEditor(this.eventManager);
-		editorPanel.add(editor, BorderLayout.CENTER);
 
 		// editor messages
-		JPanel editorMessagePanel = new JPanel(new BorderLayout());
-		
-		GUIEditorMessages editorMessages = new GUIEditorMessages(this.eventManager);
-		editorMessagePanel.add(editorMessages, BorderLayout.CENTER);
+		editorMessages = new GUIEditorMessages(this.eventManager);
 		
 		// status bar
 		GUIStatusBar statusBar = new GUIStatusBar(this.eventManager);
-		editorMessagePanel.add(statusBar, BorderLayout.PAGE_END);
-		
-		editorPanel.add(editorMessagePanel, BorderLayout.PAGE_END);
+
+		// split pane between editor and editor messages		
+		editorSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+		                                            editor, editorMessages);
+
+		editorPanel.add(editorSplitPane, BorderLayout.CENTER);
+		editorPanel.add(statusBar, BorderLayout.PAGE_END);
+
+		toggleErrorMessages(false);		// hide error messages at startup
 
 		// emulator panel
 		JPanel emulatorPanel = new JPanel(new BorderLayout());
@@ -164,7 +188,6 @@ public class GUIManager
 
 		// emulator
 		GUIEmulator emulator = new GUIEmulator(this.eventManager);
-		emulatorPanel.add(emulator, BorderLayout.CENTER);
 
 		// emulator: left panel
 		JPanel emulatorLeftPanel = new JPanel(new BorderLayout());
@@ -174,8 +197,12 @@ public class GUIManager
 		
 		GUIRegisters registers = new GUIRegisters(this.eventManager);
 		emulatorLeftPanel.add(registers, BorderLayout.CENTER);
-		
-		emulatorPanel.add(emulatorLeftPanel, BorderLayout.LINE_START);
+
+		// split pane between emulator and register view
+		JSplitPane emulatorSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+		                                              emulatorLeftPanel, emulator);
+		emulatorPanel.add(emulatorSplitPane, BorderLayout.CENTER);
+
 
 		// emulator: right panel
 		JPanel emulatorRightPanel = new JPanel(new BorderLayout());
@@ -246,6 +273,12 @@ public class GUIManager
 				break;
 			case SERIAL_CONSOLE_VIEW:
 				showSerialConsole();
+				break;
+			case COMPILER_COMPILE:
+				toggleErrorMessages(false);
+				break;
+			case COMPILER_ERROR:
+				toggleErrorMessages(true);
 				break;
 		}
 	}
@@ -364,6 +397,26 @@ public class GUIManager
 		windowFrame.setSize(new Dimension(440, 300));
 		windowFrame.setLocationRelativeTo(this.frame);
 		windowFrame.setVisible(true);		
+	}
+
+	/**
+	 * Show or hide the error messages list.
+	 *
+	 * @param makeVisible  set to true to show error messages
+	 */
+	private void toggleErrorMessages(boolean makeVisible)
+	{
+		// do nothing if state already is set
+		if (makeVisible == editorMessages.isVisible())
+			return;
+		
+		javax.swing.plaf.basic.BasicSplitPaneUI ui = (javax.swing.plaf.basic.BasicSplitPaneUI) editorSplitPane.getUI();
+		ui.getDivider().setVisible(makeVisible);
+		
+		editorMessages.setVisible(makeVisible);
+		
+		// set percentages the editor should occupy (messages gets the rest)
+		editorSplitPane.setDividerLocation(0.85);
 	}
 
 }

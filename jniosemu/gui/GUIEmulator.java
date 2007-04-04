@@ -302,10 +302,10 @@ import jniosemu.emulator.*;
 				g.drawString(lineObj.getOpCode(), BREAKPOINT_AREA_WIDTH, yOffset);
 
 			if (lineObj.getInstruction() != null)
-				g.drawString(lineObj.getInstruction(), 120, yOffset);
+				g.drawString(lineObj.getInstruction(), 110, yOffset);
 
 			if (lineObj.getSourceCodeLine() != null)
-				g.drawString(lineObj.getSourceCodeLine(), 300, yOffset);
+				g.drawString(lineObj.getSourceCodeLine(), 240, yOffset);
 		}
 
 	}

@@ -51,6 +51,7 @@ public class EventManager
 		EDITOR_REDO,											// Perform redo in editor
 		EDITOR_UPDATE_UNDO_STATE,					// Update state of undo menu item
 		EDITOR_UPDATE_REDO_STATE,					// Update state of redo menu item
+		EDITOR_MOVE_TO_LINE,							// Move cursor (caret) to line
 		EMULATOR_END,											// Emulation ended
 		EMULATOR_ERROR,										// Error occured during emulation
 		EMULATOR_PAUSE,										// Pause emulation
