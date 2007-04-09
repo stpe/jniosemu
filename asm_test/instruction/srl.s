@@ -1,9 +1,9 @@
 # r1 = -1
-# r2 = 0b0110
+# r2 = 6
 # r3 = 4
-# r4 = 0xFFFFFFFE
+# r4 = 66
 # r5 = 0x0FFFFFFF
-# r6 = 0b0001
+# r6 = 1
 
  .data
  .global main

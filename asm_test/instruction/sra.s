@@ -1,9 +1,9 @@
-# r1 = 0b0011
-# r2 = 0b0110
-# r3 = 2
-# r4 = 0xFFFFFFFE
-# r5 = 0b1100
-# r6 = 0b0001
+# r1 = 3
+# r2 = 6
+# r3 = 1
+# r4 = 1
+# r5 = 3
+# r6 = 0
 
  .data
  .global main
@@ -11,12 +11,12 @@
  .text
 
 main:
-	movia r1, 0b0011
-	movia r2, 0b0110
-	movi r3, 2
-	movia r4, 0xFFFFFFFE
-	sra r5, r1, r3
-	sra r6, r2, r4
+	movi r1, 3
+	movi r2, 6
+	movi r3, 1
+	sra r4, r1, r3
+	sra r5, r2, r3
+	sra r6, r2, r1
 	
 
 
