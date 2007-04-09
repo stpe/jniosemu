@@ -10,6 +10,9 @@ public class StbInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		
+                int vA = em.readRegister(this.rA);
+                byte vB = (byte)em.readRegister(this.rB);
+                em.writeByteMemory(vA + this.imm, vB);
+
 	}
 }

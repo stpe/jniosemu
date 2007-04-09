@@ -1,0 +1,23 @@
+# r1 = 0xF
+# r2 = 0xFF
+# r3 = 0xFF0
+# r4 = 0xF
+# r5 = 0xF
+# r6 = 0
+# r7 = 0xF0
+# r8 = 0xF0
+
+ .data
+ .global main
+
+ .text
+
+main:
+	movi r1, 0xF
+	movi r2, 0xFF
+	movi r3, 0xFF0
+	andi r4, r1, 0xFF
+	andi r5, r2, 0xF
+	andi r6, r1, 0xFF0
+	andi r7, r2, 0xFF0
+	andi r8, r3, 0xFF

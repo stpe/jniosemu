@@ -10,6 +10,9 @@ public class XoriInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
+                int vA = em.readRegister(this.rA);
+		int vI = this.imm & 0xFFFF;
+                em.writeRegister(this.rB, vA ^ vI);
 		
 	}
 }

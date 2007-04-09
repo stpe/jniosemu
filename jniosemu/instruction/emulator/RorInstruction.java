@@ -10,6 +10,10 @@ public class RorInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
+                int vA = em.readRegister(this.rA);
+                int vB = em.readRegister(this.rB);
+                vB = vB & 0xF;  // Lowest 4 bits.                          
+                em.writeRegister(this.rC, Integer.rotateRight(vA, vB));
 
 	}
 }

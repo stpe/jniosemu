@@ -10,6 +10,8 @@ public class SthInstruction extends ITypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		
+                int vA = em.readRegister(this.rA);
+                short vB = (short)em.readRegister(this.rB);
+                em.writeShortMemory(vA + this.imm, vB);		
 	}
 }
