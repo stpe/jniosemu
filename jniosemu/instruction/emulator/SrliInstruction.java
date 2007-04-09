@@ -10,6 +10,7 @@ public class SrliInstruction extends RTypeInstruction
 	}
 
 	public void run(Emulator em) throws EmulatorException {
-		em.writeRegister(this.rC, em.readRegister(this.rA) >>> this.imm);
+		int vI = this.imm & 63;	// Lowest 6 bits.
+		em.writeRegister(this.rC, (int)(signedToUnsigned(em.readRegister(this.rA)) >> signedToUnsigned(vI)));
 	}
 }

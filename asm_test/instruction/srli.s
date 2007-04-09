@@ -1,6 +1,6 @@
 # r1 = -1
 # r2 = 0b0110
-# r3 = 0xFFFFFFF0
+# r3 = 0x0FFFFFFF
 # r4 = 0b0001
 
  .data
@@ -11,8 +11,8 @@
 main:
 	movia r1, -1
 	movia r2, 0b0110
-	srl r3, r1, 4
-	srl r4, r2, 0xFFFFFFFE
+	srli r3, r1, 4
+	srli r4, r2, 0xFFFFFFFE
 	
 
 
