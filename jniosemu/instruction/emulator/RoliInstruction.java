@@ -11,6 +11,7 @@ public class RoliInstruction extends RTypeInstruction
 
 	public void run(Emulator em) throws EmulatorException {
 		int vA = em.readRegister(this.rA);
-		em.writeRegister(this.rC, Integer.rotateLeft(vA, this.imm));
+		int vI = this.imm & 0x1F;
+		em.writeRegister(this.rC, Integer.rotateLeft(vA, vI));
 	}
 }
