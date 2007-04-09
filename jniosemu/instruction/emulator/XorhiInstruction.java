@@ -11,9 +11,7 @@ public class XorhiInstruction extends ITypeInstruction
 
 	public void run(Emulator em) throws EmulatorException {
                 int vA = em.readRegister(this.rA);
-		int vI = this.imm & 0xFFFF;
-		vI = vI << 16;
-                em.writeRegister(this.rB, vA ^ vI);
+                em.writeRegister(this.rB, vA ^ (this.imm << 16));
 
 
 	}

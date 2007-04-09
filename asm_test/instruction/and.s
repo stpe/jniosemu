@@ -1,6 +1,6 @@
 # r1 = 0xF
 # r2 = 0xFF
-# r3 = 0xF0F
+# r3 = 0xFF0
 # r4 = 0xF
 # r5 = 0xF
 # r6 = 0
@@ -13,9 +13,9 @@
  .text
 
 main:
-	movi r1, 0xF
-	movi r2, 0xFF
-	movi r3, 0xFF0
+	movia r1, 0xF
+	movia r2, 0xFF
+	movia r3, 0xFF0
 	and r4, r1, r2
 	and r5, r2, r1
 	and r6, r1, r3

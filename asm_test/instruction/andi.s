@@ -13,9 +13,9 @@
  .text
 
 main:
-	movi r1, 0xF
-	movi r2, 0xFF
-	movi r3, 0xFF0
+	movia r1, 0xF
+	movia r2, 0xFF
+	movia r3, 0xFF0
 	andi r4, r1, 0xFF
 	andi r5, r2, 0xF
 	andi r6, r1, 0xFF0
