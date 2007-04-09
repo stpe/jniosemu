@@ -5,7 +5,7 @@
 # r5 = 1
 # r6 = 0
 # r7 = 0
-# r8 = 1
+# r8 = 0
 
 	.data
 	.global main

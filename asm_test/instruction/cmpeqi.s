@@ -2,8 +2,8 @@
 # r2 = -2
 # r3 = 1
 # r4 = 0
-# r5 = 1
-# r6 = 0
+# r5 = 0
+# r6 = 1
 
  .data
  .global main

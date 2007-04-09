@@ -12,5 +12,5 @@ test: 	.word -1
 main:
 	movia r1, test
 	ldw r2, 0(r1)
-	ldw r3, 1(r1)
+	ldw r3, 4(r1)
 	
