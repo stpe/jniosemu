@@ -12,7 +12,7 @@ main:
 	movia r1, -1
 	movia r2, 0b0110
 	srli r3, r1, 4
-	srli r4, r2, 0xFFFFFFFE
+	srli r4, r2, 66
 	
 
 
