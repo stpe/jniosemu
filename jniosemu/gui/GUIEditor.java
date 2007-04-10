@@ -658,8 +658,8 @@ public class GUIEditor extends JPanel
 	 */
 	private void updateUndoRedoState()
 	{
-		eventManager.sendEvent(EventManager.EVENT.EDITOR_UPDATE_UNDO_STATE, new Boolean(this.undo.canUndo()));
-		eventManager.sendEvent(EventManager.EVENT.EDITOR_UPDATE_REDO_STATE, new Boolean(this.undo.canRedo()));
+		eventManager.sendEvent(EventManager.EVENT.EDITOR_UPDATE_UNDO_STATE, Boolean.valueOf(this.undo.canUndo()));
+		eventManager.sendEvent(EventManager.EVENT.EDITOR_UPDATE_REDO_STATE, Boolean.valueOf(this.undo.canRedo()));
 	}
 
 	/**

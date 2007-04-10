@@ -288,7 +288,8 @@ public class GUIMemoryView extends JFrame
 			String tmp = "";
 			for (int i = 0; i < b.length; i++)
 			{
-				tmp = tmp + Integer.toHexString( (b[i] & 0xFF) | 0x100 ).substring(1,3) + " ";
+				tmp = tmp.concat(Integer.toHexString( (b[i] & 0xFF) | 0x100 ).substring(1,3));
+				tmp = tmp.concat(" ");
 			}
 
 			g.drawString(tmp, 100, 11);
@@ -300,7 +301,7 @@ public class GUIMemoryView extends JFrame
 				if (b[i] >= 32 && b[i] <= 126)
 					tmp = tmp + ((char) b[i]);
 				else
-					tmp = tmp + ".";
+					tmp = tmp.concat(".");
 			}
 
 			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, 11);

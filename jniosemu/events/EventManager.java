@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Any object may send an event by simply calling the sendEvent
  * method.
  */
-public class EventManager
+public final class EventManager
 {
 	public static enum EVENT {
 		ABOUT_VIEW,												// Show About window of application
