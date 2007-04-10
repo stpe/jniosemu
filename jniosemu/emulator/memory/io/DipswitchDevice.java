@@ -82,6 +82,8 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
+		this.resetState();
+
 		this.changed = true;
 		this.stateChanged = false;
 
@@ -98,6 +100,7 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 
 			this.stateChanged = false;
 		}
+
 		return false;
 	}
 
