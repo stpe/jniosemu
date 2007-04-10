@@ -372,7 +372,6 @@ public class Compiler
 										CompilerInstruction cins = InstructionManager.get(ins, mInstruction.group(3), aLineNumber);
 										this.instructions.add(cins);
 									} catch (InstructionException e) {
-										System.out.println("instruction syntax error");
 										throw new CompilerException(aLineNumber, e.getMessage());
 									}
 								}

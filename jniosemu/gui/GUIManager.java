@@ -177,6 +177,9 @@ public class GUIManager
 		editorSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 		                                            editor, editorMessages);
 
+		// remove splitpane keyboard bindings (it eats F8)
+		SwingUtilities.replaceUIInputMap(editorSplitPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, null);
+
 		editorPanel.add(editorSplitPane, BorderLayout.CENTER);
 		editorPanel.add(statusBar, BorderLayout.PAGE_END);
 
@@ -203,6 +206,8 @@ public class GUIManager
 		                                              emulatorLeftPanel, emulator);
 		emulatorPanel.add(emulatorSplitPane, BorderLayout.CENTER);
 
+		// remove splitpane keyboard bindings (it eats F8)
+		SwingUtilities.replaceUIInputMap(emulatorSplitPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, null);
 
 		// emulator: right panel
 		JPanel emulatorRightPanel = new JPanel(new BorderLayout());
