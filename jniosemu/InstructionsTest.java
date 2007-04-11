@@ -12,8 +12,9 @@ import jniosemu.editor.Editor;
 import java.util.regex.*;
 import java.util.LinkedList;
 
-
 public class InstructionsTest {
+
+	public static final int TEST_FAILED = -1;
 		
 	static int numSucceded = 0;
 	static String error_msg;
@@ -38,18 +39,21 @@ public class InstructionsTest {
 		
 		// Sort files in directory.
 		Arrays.sort(s);
-
+		
 		for(int i=0;i<s.length;i++) {
 			File f = new File(path+"/"+s[i]);
 			if(f.isFile()) {
 				numFiles++;
-				System.out.print("Test [" + i + "] (" + s[i] + ") ");
-				if(processFile(path+"/"+s[i])) {
-					numSucceded++;
-					System.out.println("successful.");
+				
+				System.out.print("Test [" + i + "] (" + s[i] + ")");
+				
+				int result = processFile(path+"/"+s[i]);
+				
+				if(result == TEST_FAILED) {
+					System.out.println("\t\t\t failed: ("+error_msg+")");
 				} else {
-					System.out.println("failed: ("+error_msg+")");
- 				}
+					System.out.println("\t" + result + " checks \t successful");
+				}
 			}
 		}
 	
@@ -58,7 +62,7 @@ public class InstructionsTest {
 		System.exit(0);
 	}
 
-	public static boolean processFile(String filename) {
+	public static int processFile(String filename) {
 
 		String fileContent;
 
@@ -67,17 +71,20 @@ public class InstructionsTest {
 		}
 		catch(IOException e) {
 			error_msg = e.getMessage();
-			return false;
+			return TEST_FAILED;
 		}
 
 		LinkedList<String> regNum = new LinkedList<String>();
 		LinkedList<String> regValue = new LinkedList<String>();
 
+		int regCount = 0;
+
 		Pattern pLabels = Pattern.compile("# r(\\d) = (.*)\n");
-                Matcher mLabels = pLabels.matcher(fileContent);
-                while (mLabels.find()) {
+		Matcher mLabels = pLabels.matcher(fileContent);
+		while (mLabels.find()) {
 			regNum.add(mLabels.group(1));
 			regValue.add(mLabels.group(2));
+			regCount++;
 		}
 
 		EventManager eventManager = new EventManager();
@@ -101,19 +108,18 @@ public class InstructionsTest {
 			}
 			catch(Exception e) {
 				error_msg = e.getMessage();
-				return false;					
+				return TEST_FAILED;
 			}
 			if(registerManager.read(registerNum) != registerValue) {
 				error_msg = new String("Register r"+registerNum+"="+registerValue+" failed");
-				return false;
+				return TEST_FAILED;
 			}
 				
 		}
 
 		emulatorManager.reset();
 	
-		return true;
-
+		return regCount;
 	}
 
 }
