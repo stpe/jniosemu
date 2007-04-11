@@ -55,7 +55,7 @@ public class InstructionsTest {
 	
 		System.out.println("Tests done. ("+numFiles+" total: " + numSucceded + " successful, "+(numFiles - numSucceded)+" failed.)");
 
-
+		System.exit(0);
 	}
 
 	public static boolean processFile(String filename) {
