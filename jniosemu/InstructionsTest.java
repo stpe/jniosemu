@@ -1,25 +1,28 @@
 package jniosemu;
 
 import java.util.Vector;
+import java.util.Arrays;
 import java.io.*;
 import jniosemu.events.EventManager;
 import jniosemu.emulator.EmulatorManager;
 import jniosemu.emulator.register.RegisterManager;
 import jniosemu.emulator.register.Register;
+import jniosemu.emulator.compiler.Compiler;
 import jniosemu.editor.Editor;
+import java.util.regex.*;
+import java.util.LinkedList;
+
 
 public class InstructionsTest {
 		
-	public void readRegValues() {
-
-		// Open file and read what the 
-		// registers should have as value.
-
-	}
+	static int numSucceded = 0;
+	static String error_msg;
 
 	public static void main(String [] args) {
 		
-		String path = "asm_test/instruction";
+		int numFiles = 0;
+		String path = "../JNiosEmu/trunk/asm_test/instruction/";
+		error_msg = new String("");
 
 		if(args.length > 0) {
 			path = args[0];
@@ -32,11 +35,26 @@ public class InstructionsTest {
 			System.out.println("Error: No such directory");
 			return;
 		}
+		
+		// Sort files in directory.
+		Arrays.sort(s);
+
 		for(int i=0;i<s.length;i++) {
 			File f = new File(path+"/"+s[i]);
-			if(f.isFile())
-				processFile(path+"/"+s[i]);
+			if(f.isFile()) {
+				numFiles++;
+				System.out.print("Test [" + i + "] (" + s[i] + ") ");
+				if(processFile(path+"/"+s[i])) {
+					numSucceded++;
+					System.out.println("successful.");
+				} else {
+					System.out.println("failed: ("+error_msg+")");
+ 				}
+			}
 		}
+	
+		System.out.println("Tests done. ("+numFiles+" total: " + numSucceded + " successful, "+(numFiles - numSucceded)+" failed.)");
+
 
 	}
 
@@ -48,11 +66,19 @@ public class InstructionsTest {
 			fileContent = Editor.read(filename);
 		}
 		catch(IOException e) {
-			System.out.println(e.getMessage());
+			error_msg = e.getMessage();
 			return false;
 		}
 
-		// Parsa ut registervärdena från fileContent.
+		LinkedList<String> regNum = new LinkedList<String>();
+		LinkedList<String> regValue = new LinkedList<String>();
+
+		Pattern pLabels = Pattern.compile("# r(\\d) = (.*)\n");
+                Matcher mLabels = pLabels.matcher(fileContent);
+                while (mLabels.find()) {
+			regNum.add(mLabels.group(1));
+			regValue.add(mLabels.group(2));
+		}
 
 		EventManager eventManager = new EventManager();
 
@@ -61,21 +87,30 @@ public class InstructionsTest {
 		EmulatorManager emulatorManager = new EmulatorManager(eventManager);
 		emulatorManager.compile(fileContent);
 
-		for (int i = 0; i < 2; i++) {
-			emulatorManager.runAll();
+		emulatorManager.runAll();
 
-			// Wait until EMULATOR_DONE
+		// Wait until EMULATOR_DONE
 
-			RegisterManager registerManager = emulatorManager.getRegisterManager();
+		RegisterManager registerManager = emulatorManager.getRegisterManager();
 
-			// Check register if right value
-			Vector<Register> registers = registerManager.get();
-			for (Register register : registers) {
-				System.out.println(register.getName() +": "+ register.getValue());
+		int registerNum, registerValue = 0;
+		for(int j=0;j<regNum.size();j++) {
+			registerNum = java.lang.Integer.parseInt(regNum.get(j));
+			try {
+				registerValue = (int)Compiler.parseValue(regValue.get(j), null);
 			}
-
-			emulatorManager.reset();
+			catch(Exception e) {
+				error_msg = e.getMessage();
+				return false;					
+			}
+			if(registerManager.read(registerNum) != registerValue) {
+				error_msg = new String("Register r"+registerNum+"="+registerValue+" failed");
+				return false;
+			}
+				
 		}
+
+		emulatorManager.reset();
 	
 		return true;
 
