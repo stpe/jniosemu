@@ -8,6 +8,7 @@ import javax.swing.border.*;
 
 import jniosemu.events.*;
 import jniosemu.emulator.*;
+import jniosemu.Utilities;
 
 /**
  * Creates and manages the GUI component of the LEDs.
@@ -74,8 +75,8 @@ import jniosemu.emulator.*;
 		);
 		
 		// load image icons
-		icons[0] = new ImageIcon("graphics/io/led_off.png");
-		icons[1] = new ImageIcon("graphics/io/led_on.png");
+		icons[0] = new ImageIcon(Utilities.loadImage("graphics/io/led_off.png"));
+		icons[1] = new ImageIcon(Utilities.loadImage("graphics/io/led_on.png"));
 
 		// create LEDs		
 		for(int i = 0; i < leds.length; i++)

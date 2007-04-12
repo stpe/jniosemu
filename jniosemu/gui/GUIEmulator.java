@@ -8,6 +8,7 @@ import java.util.*;
 
 import jniosemu.events.*;
 import jniosemu.emulator.*;
+import jniosemu.Utilities;
 
 /**
  * Creates and manages the GUI component of the emulator view.
@@ -102,8 +103,8 @@ import jniosemu.emulator.*;
 		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);		
 
 		// get breakpoint images
-		breakPointSetIcon = new ImageIcon("graphics/emulator/breakpoint_set.png");
-		breakPointUnsetIcon = new ImageIcon("graphics/emulator/breakpoint_unset.png");
+		breakPointSetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_set.png"));
+		breakPointUnsetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_unset.png"));
 
 		// put everything into the emulator panel
 		this.setLayout(new BorderLayout());

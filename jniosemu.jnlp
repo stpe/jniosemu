@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.5+" codebase="http://emil.hesslow.se/jniosemu/">
+	<information>
+	  <title>JNiosEmu</title>
+	  <vendor>Group 20</vendor>
+	  <homepage href="http://emil.hesslow.se/jniosemu/" />
+	  <description>Emulate JNios2 on your computer</description>
+		<icon href="images/icon.gif" />
+    <icon href="images/splash.jpg" kind="splash" />
+	</information>
+	<offline-allowed/>
+	<security>
+		<all-permissions/>
+	</security>
+	<resources>
+	  <j2se version="1.2+" />
+	  <jar href="jniosemu.jar"/>
+	</resources>
+	<application-desc main-class="jniosemu.JNiosEmu" />
+</jnlp>

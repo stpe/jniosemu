@@ -8,6 +8,7 @@ import javax.swing.border.*;
 
 import jniosemu.events.*;
 import jniosemu.emulator.*;
+import jniosemu.Utilities;
 
 /**
  * Creates and manages the GUI component of the dipswitches.
@@ -74,8 +75,8 @@ import jniosemu.emulator.*;
 		);
 
 		// load image icons
-		icons[0] = new ImageIcon("graphics/io/dipswitch_unset.png");
-		icons[1] = new ImageIcon("graphics/io/dipswitch_set.png");
+		icons[0] = new ImageIcon(Utilities.loadImage("graphics/io/dipswitch_unset.png"));
+		icons[1] = new ImageIcon(Utilities.loadImage("graphics/io/dipswitch_set.png"));
 
 		// create dipswitches		
 		for(int i = 0; i < dipswitches.length; i++)

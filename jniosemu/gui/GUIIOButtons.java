@@ -8,6 +8,7 @@ import javax.swing.border.*;
 
 import jniosemu.events.*;
 import jniosemu.emulator.*;
+import jniosemu.Utilities;
 
 /**
  * Creates and manages the GUI component of the buttons.
@@ -74,8 +75,8 @@ import jniosemu.emulator.*;
 		);
 		
 		// load image icons
-		icons[0] = new ImageIcon("graphics/io/button.png");
-		icons[1] = new ImageIcon("graphics/io/button_pressed.png");
+		icons[0] = new ImageIcon(Utilities.loadImage("graphics/io/button.png"));
+		icons[1] = new ImageIcon(Utilities.loadImage("graphics/io/button_pressed.png"));
 
 		// create buttons		
 		for(int i = 0; i < buttons.length; i++)

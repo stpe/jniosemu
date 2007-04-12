@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.awt.Component;
 
 import jniosemu.events.*;
+import jniosemu.Utilities;
 
 /**
  * Toolbar in GUI.
@@ -133,7 +134,7 @@ public class GUIToolBar extends JToolBar
 			button.setToolTipText(toolTipText);
 			button.addActionListener(this);
 
-			button.setIcon(new ImageIcon(imgLocation, altText));
+			button.setIcon(new ImageIcon(Utilities.loadImage(imgLocation), altText));
 
 			return button;
 	}

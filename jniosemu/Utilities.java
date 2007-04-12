@@ -1,6 +1,9 @@
 package jniosemu;
 
 import java.util.Vector;
+import java.net.URL;
+
+import jniosemu.events.EventManager;
 
 public class Utilities
 {
@@ -113,5 +116,16 @@ public class Utilities
 		String hex = "00000000" + Integer.toHexString(value);
 		return "0x" + hex.substring(hex.length()-8, hex.length());
 	}
-		
+
+	/**
+	 * Uses classLoader to load an image. Needed for placing images in jar-files
+	 *
+	 * @param path  Relative path to the image
+	 * @return  URL to the image
+	 */
+	public static URL loadImage(String path) {
+		EventManager tmp = new EventManager();
+		ClassLoader classLoader = tmp.getClass().getClassLoader();
+		return classLoader.getResource(path);
+	}
 }

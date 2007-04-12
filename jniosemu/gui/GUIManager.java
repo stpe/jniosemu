@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import jniosemu.events.*;
+import jniosemu.Utilities;
 
 /**
  * The GUI Manager creates all components of the GUI and
@@ -111,7 +112,7 @@ public class GUIManager
 		// create and set up the window.
 		frame = new JFrame("JNiosEmu");
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.setIconImage((new ImageIcon("graphics/icon.png")).getImage());
+		frame.setIconImage((new ImageIcon(Utilities.loadImage("graphics/icon.png"))).getImage());
 		frame.setContentPane(mainPanel);
 
 		// add listener for window close
@@ -234,14 +235,14 @@ public class GUIManager
 
 		tabbedPane.addTab(
 			"Editor",
-			new ImageIcon("graphics/tabs/editor.png"),
+			new ImageIcon(Utilities.loadImage("graphics/tabs/editor.png")),
 			editorPanel,
 			"Edit source file"
 		);
 
 		tabbedPane.addTab(
 			"Emulator",
-			new ImageIcon("graphics/tabs/emulator.png"),
+			new ImageIcon(Utilities.loadImage("graphics/tabs/emulator.png")),
 			emulatorPanel,
 			"Monitor emulation"
 		);
