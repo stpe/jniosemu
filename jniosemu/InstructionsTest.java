@@ -52,6 +52,7 @@ public class InstructionsTest {
 				if(result == TEST_FAILED) {
 					System.out.println("\t\t\t failed: ("+error_msg+")");
 				} else {
+					numSucceded++;
 					System.out.println("\t" + result + " checks \t successful");
 				}
 			}
