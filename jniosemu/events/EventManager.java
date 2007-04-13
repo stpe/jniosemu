@@ -70,11 +70,13 @@ public final class EventManager
 		MEMORY_CHANGE,										// If the memory changed
 		PROGRAMCOUNTER_CHANGE,						// Program counter in emulated program has changed
 		REGISTER_CHANGE,									// Regiser in emulated program has changed
-		SERIAL_INPUT,											// Send a charater to emulated serial port
-		SERIAL_OUTPUT,										// Send a charater out of emulated serial port
+		SERIAL_INPUT,											// Send a character to emulated serial port
+		SERIAL_OUTPUT,										// Send a character out of emulated serial port
+		CONSOLE_OUTPUT,										// Send a character to console
 		STATE_CHANGE,											// Update state (disabled/enabled) of elements in menu and toolbar
 		VARIABLE_VIEW,										// Show Variables View window
-		SERIAL_CONSOLE_VIEW								// Show Serial Console window
+		SERIAL_CONSOLE_VIEW,							// Show Serial Console window
+		CONSOLE_VIEW											// Show Console window
 	};
 
 	/**

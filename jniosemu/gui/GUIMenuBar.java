@@ -142,9 +142,9 @@ public class GUIMenuBar extends JMenuBar
 		menu.add(submenu);
 		
 		ButtonGroup speedGroup = new ButtonGroup();
-		
-		item = new JRadioButtonMenuItem("Full");
-		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.FULL);
+
+		item = new JRadioButtonMenuItem("Slow");
+		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.SLOW);
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
@@ -154,11 +154,19 @@ public class GUIMenuBar extends JMenuBar
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
-		item = new JRadioButtonMenuItem("Slow");
-		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.SLOW);
+
+		item = new JRadioButtonMenuItem("Full");
+		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.FULL);
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
+
+		item = new JRadioButtonMenuItem("Fast");
+		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.FAST);
+		item.addActionListener(this);
+		speedGroup.add(item);
+		submenu.add(item);
+		
 
 		// View menu
 		menu = new JMenu("View");
@@ -175,6 +183,11 @@ public class GUIMenuBar extends JMenuBar
 		menu.add(item);
 		
 		menu.addSeparator();
+
+		item = createMenuItem("Console...", EventManager.EVENT.CONSOLE_VIEW.toString(),
+		          KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+		stateManager.addItem(EventManager.EVENT.CONSOLE_VIEW, item);
+		menu.add(item);
 		
 		item = createMenuItem("Serial Console...", EventManager.EVENT.SERIAL_CONSOLE_VIEW.toString());
 		stateManager.addItem(EventManager.EVENT.SERIAL_CONSOLE_VIEW, item);

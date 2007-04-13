@@ -21,7 +21,7 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * The different speed that is possible to run the emulator in
 	 */
-	public static enum SPEED {FULL, NORMAL, SLOW};
+	public static enum SPEED {FULL, NORMAL, SLOW, FAST};
 	/**
 	 * Program counter address
 	 */

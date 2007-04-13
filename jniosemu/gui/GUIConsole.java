@@ -10,9 +10,9 @@ import jniosemu.events.*;
 import jniosemu.emulator.*;
 
 /**
- * Creates and manages the GUI component of the serial console.
+ * Creates and manages the GUI component of the console.
  */
- public class GUISerialConsole extends JFrame
+ public class GUIConsole extends JFrame
                               implements ActionListener, EventObserver {
 
 	/**
@@ -24,12 +24,7 @@ import jniosemu.emulator.*;
 	/**
 	 * Text area for received data from serial.
 	 */
-	private JTextArea recvTextArea;
-
-	/**
-	 * Text area where user enter data to be sent to serial.
-	 */
-	private JTextArea sendTextArea;
+	private JTextArea consoleTextArea;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -41,9 +36,9 @@ import jniosemu.emulator.*;
 	 *
 	 * @param  eventManager  The Event Manager object.
 	 */
-	public GUISerialConsole(EventManager eventManager)
+	public GUIConsole(EventManager eventManager)
 	{
-		super("Serial Console");
+		super("Console");
 
 		this.eventManager = eventManager;
 
@@ -51,7 +46,7 @@ import jniosemu.emulator.*;
 
 		// add events to listen to
 		EventManager.EVENT[] events = {
-			EventManager.EVENT.SERIAL_OUTPUT,
+			EventManager.EVENT.CONSOLE_OUTPUT,
 			EventManager.EVENT.EMULATOR_RESET
 		};
 
@@ -62,68 +57,23 @@ import jniosemu.emulator.*;
 	 * Setup GUI components and attributes.
 	 *
 	 * @post      components created and added to panel
-	 * @calledby  GUISerialConsole
+	 * @calledby  GUIConsole
 	 */
 	private void setup()
 	{
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-		recvTextArea = new JTextArea();
+		consoleTextArea = new JTextArea();
 		
-		recvTextArea.setEditable(false);
-		recvTextArea.setLineWrap(true);
-		recvTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		consoleTextArea.setEditable(false);
+		consoleTextArea.setLineWrap(true);
+		consoleTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
 		// put scrollbars around received data text area
-		JScrollPane recvScrollPane =
-		    new JScrollPane(recvTextArea,
+		JScrollPane consoleScrollPane =
+		    new JScrollPane(consoleTextArea,
 		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
-		sendTextArea = new JTextArea() {
-			/**
-			 * Override to intercept KeyEvents and send typed character.
-			 */
-			protected void processEvent(AWTEvent e)
-			{
-				if (e instanceof KeyEvent && e.getID() == KeyEvent.KEY_TYPED)
-				{
-					eventManager.sendEvent(
-						EventManager.EVENT.SERIAL_INPUT, 
-						((KeyEvent) e).getKeyChar()
-					);
-				} 
-				
-				// let textarea process keyevent as usual
-				super.processEvent(e);
-			}
-    };
-
-		sendTextArea.setEditable(true);
-		sendTextArea.setLineWrap(true);
-		sendTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-
-		// put scrollbars around send data text area
-		JScrollPane sendScrollPane =
-		    new JScrollPane(sendTextArea,
-		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		JPanel recvPanel = new JPanel(new BorderLayout());
-		JLabel recvLabel = new JLabel("Received");
-		recvLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		recvPanel.add(recvLabel, BorderLayout.PAGE_START);
-		recvPanel.add(recvScrollPane, BorderLayout.CENTER);
-		
-		JPanel sendPanel = new JPanel(new BorderLayout());
-		JLabel sendLabel = new JLabel("Send");
-		sendLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		sendPanel.add(sendLabel, BorderLayout.PAGE_START);
-		sendPanel.add(sendScrollPane, BorderLayout.CENTER);
-
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-		                            recvPanel, sendPanel);
-		splitPane.setDividerLocation(150);
 		
     // button
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -140,7 +90,7 @@ import jniosemu.emulator.*;
     JPanel contentPanel = new JPanel(new BorderLayout());
     contentPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     
-    contentPanel.add(splitPane, BorderLayout.CENTER);
+    contentPanel.add(consoleScrollPane, BorderLayout.CENTER);
     contentPanel.add(buttonPanel, BorderLayout.PAGE_END);
     
     contentPane.add(contentPanel, BorderLayout.CENTER);
@@ -149,17 +99,16 @@ import jniosemu.emulator.*;
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
 		switch (eventIdentifier) {
-			case SERIAL_OUTPUT:
+			case CONSOLE_OUTPUT:
 				// append character last
-				recvTextArea.append( ((Character) obj).toString() );
+				consoleTextArea.append( ((Character) obj).toString() );
 				
 				// move caret to last position to force scroll
-				recvTextArea.setCaretPosition(recvTextArea.getDocument().getLength());
+				consoleTextArea.setCaretPosition(consoleTextArea.getDocument().getLength());
 
 				break;
 			case EMULATOR_RESET:
-				recvTextArea.setText("");
-				sendTextArea.setText("");
+				consoleTextArea.setText("");
 				break;
 		}
 	}
