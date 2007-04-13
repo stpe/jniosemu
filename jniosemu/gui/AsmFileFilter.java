@@ -24,7 +24,7 @@ public class AsmFileFilter extends FileFilter
 
   public String getDescription()
   {
-      return "Assembler Files";
+      return "Assembler Files (*.s)";
   }
 
   /**

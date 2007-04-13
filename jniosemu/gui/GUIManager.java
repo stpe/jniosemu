@@ -326,12 +326,13 @@ public class GUIManager
 	 */
 	private void showException(Exception e)
 	{
-		e.printStackTrace();
+		// print stack trace to stdout
+//		e.printStackTrace();
 
 		JOptionPane.showMessageDialog(
 			frame,
-      "Exception",
 			e.getMessage(),
+      "Error",
 			JOptionPane.ERROR_MESSAGE
 		);
 	}
@@ -380,7 +381,9 @@ public class GUIManager
 	private void showVariableView()
 	{
 		GUIVariableView windowFrame = new GUIVariableView(this.eventManager);
+		
 		windowFrame.setSize(new Dimension(200, 260));
+		windowFrame.setIconImage(this.frame.getIconImage());
 		windowFrame.setLocationRelativeTo(this.frame);
 		windowFrame.setVisible(true);
 	}
@@ -397,6 +400,7 @@ public class GUIManager
 		GUIMemoryView windowFrame = new GUIMemoryView(this.eventManager);
 
 		windowFrame.setSize(new Dimension(280, 360));
+		windowFrame.setIconImage(this.frame.getIconImage());
 		windowFrame.setLocationRelativeTo(this.frame);
 		windowFrame.setVisible(true);		
 	}
@@ -413,6 +417,7 @@ public class GUIManager
 		GUISerialConsole windowFrame = new GUISerialConsole(this.eventManager);
 
 		windowFrame.setSize(new Dimension(440, 300));
+		windowFrame.setIconImage(this.frame.getIconImage());
 		windowFrame.setLocationRelativeTo(this.frame);
 		windowFrame.setVisible(true);		
 	}
@@ -429,6 +434,7 @@ public class GUIManager
 		GUIConsole windowFrame = new GUIConsole(this.eventManager);
 
 		windowFrame.setSize(new Dimension(320, 200));
+		windowFrame.setIconImage(this.frame.getIconImage());
 		windowFrame.setLocationRelativeTo(this.frame);
 		windowFrame.setVisible(true);		
 	}

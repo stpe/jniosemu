@@ -35,7 +35,8 @@ public class Editor
       }
     }
     finally {
-      in.close();
+    	if (in != null)
+      	in.close();
     }
 
     return sb.toString();
@@ -71,7 +72,8 @@ public class Editor
     }
     finally
     {
-			out.close();
+    	if (out != null)
+				out.close();
     }
   }
 }

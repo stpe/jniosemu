@@ -22,7 +22,7 @@ import jniosemu.emulator.*;
 	private transient EventManager eventManager;
 
 	/**
-	 * Text area for received data from serial.
+	 * Text area for console.
 	 */
 	private JTextArea consoleTextArea;
 

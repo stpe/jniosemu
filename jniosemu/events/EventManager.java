@@ -278,11 +278,11 @@ public final class EventManager
 			for (EventObserver eventObserver : eventObservers)
 			{
 				// have a try-catch so the EventManager don't die if something goes wrong
-				try {
+//				try {
 					eventObserver.update(queueObj.eventIdentifier, queueObj.obj);
-				} catch (Exception e) {
-					System.out.println("EventObserver.update() error: "+ e.getMessage());
-				}
+//				} catch (Exception e) {
+//					System.out.println("EventObserver.update() error: "+ e.getMessage());
+//				}
 			}
 		}		
 		
