@@ -27,21 +27,21 @@ public class GUIMemoryView extends JFrame
 	 * Panel used to contain all lists.
 	 */
 	private JPanel listPanel;
-	
-	/**
-	 * Lists used to display content of each memory block.
-	 */
-	private ArrayList<JList> memoryLists = null;
-	
+
 	/**
 	 * Reference to memory blocks to display.
 	 */
 	private ArrayList<MemoryBlock> memoryBlocks = null;
 	
 	/**
+	 * Lists used to display content of each memory block.
+	 */
+	private JList[] memoryLists = null;
+	
+	/**
 	 * Track if a memory block should be repainted or not.
 	 */
-	private ArrayList<Boolean> memoryUpdateState = null;
+	private boolean[] memoryUpdateState = null;
 	
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -83,14 +83,6 @@ public class GUIMemoryView extends JFrame
 		listPanel = new JPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.PAGE_AXIS));
 
-/*		
-		listPanel.setBorder(
-			BorderFactory.createCompoundBorder(
-				BorderFactory.createEmptyBorder(4, 4, 0, 4),
-				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
-			)
-		);	
-*/
 		JScrollPane scrollPane = new JScrollPane(listPanel);
 
     // button
@@ -150,17 +142,15 @@ public class GUIMemoryView extends JFrame
 	{
 		listPanel.removeAll();
 		
-		memoryLists = new ArrayList<JList>();
-		memoryUpdateState = new ArrayList<Boolean>();
+		memoryLists = new JList[this.memoryBlocks.size()];
+		memoryUpdateState = new boolean[this.memoryBlocks.size()];
 		
 		for(int i = 0; i < this.memoryBlocks.size(); i++)
 		{
-			memoryLists.add(
-				this.addList( (MemoryBlock) memoryBlocks.get(i) )
-			);
+			memoryLists[i] = this.addList( (MemoryBlock) memoryBlocks.get(i) );
 			
 			// redraw first time
-			memoryUpdateState.add(true);
+			memoryUpdateState[i] = true;
 		}
 		
 		this.updateLists();
@@ -171,20 +161,20 @@ public class GUIMemoryView extends JFrame
 	 */
 	private void updateLists()
 	{
-		for(int i = 0; i < this.memoryLists.size(); i++)
+		for(int i = 0; i < this.memoryLists.length; i++)
 		{
 			MemoryBlock memBlock = (MemoryBlock) memoryBlocks.get(i);
 			
-			if (memBlock.isChanged() || memoryUpdateState.get(i))
+			if (memBlock.isChanged() || memoryUpdateState[i])
 			{
 				Vector<MemoryInt> memVector =  memBlock.getMemoryVector();
 	
 				if (memVector != null)
-					memoryLists.get(i).setListData(memVector);
+					memoryLists[i].setListData(memVector);
 				
 				// if memory block has changed, do also redraw next time
 				// in order to remove indication
-				memoryUpdateState.set(i, memBlock.isChanged());
+				memoryUpdateState[i] = memBlock.isChanged();
 			}
 		}		
 	}
@@ -274,11 +264,11 @@ public class GUIMemoryView extends JFrame
 			// address
 			g.drawString(Utilities.intToHexString(memInt.getAddress()), xOffset, yOffset);
 
-			// memory as hex
-			byte[] b = memInt.getMemory();
-			
 			xOffset = 100;
 			int spaceWidth = metrics.stringWidth(" ");
+
+			// memory as hex
+			byte[] b = memInt.getMemory();
 			
 			for (int i = 0; i < b.length; i++)
 			{
