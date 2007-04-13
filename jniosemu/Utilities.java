@@ -3,8 +3,6 @@ package jniosemu;
 import java.util.Vector;
 import java.net.URL;
 
-import jniosemu.events.EventManager;
-
 public class Utilities
 {
 	public static int vectorToInt(Vector<Boolean> vector) {
@@ -124,7 +122,7 @@ public class Utilities
 	 * @return  URL to the image
 	 */
 	public static URL loadImage(String path) {
-		EventManager tmp = new EventManager();
+		Utilities tmp = new Utilities();
 		ClassLoader classLoader = tmp.getClass().getClassLoader();
 		return classLoader.getResource(path);
 	}

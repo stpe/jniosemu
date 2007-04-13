@@ -5,6 +5,7 @@ import java.util.Queue;
 import jniosemu.Utilities;
 import jniosemu.emulator.memory.MemoryBlock;
 import jniosemu.emulator.memory.MemoryException;
+import jniosemu.emulator.memory.MemoryInt;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
@@ -74,15 +75,20 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	}
 
 	public boolean resetState() {
+		this.clearState();
+
 		this.changed = false;
 
 		if (!this.inputBuffer.isEmpty() && (memory[8] & 0x80) == 0) {
 			memory[0] = (byte)(this.inputBuffer.poll() & 0xFF);
+			this.setState(0, MemoryInt.STATE.WRITE);
 			memory[8] |= 0x80;
+			this.setState(8, MemoryInt.STATE.WRITE);
 			this.changed = true;
 		}
 		if ((memory[8] & 0x40) == 0) {
 			memory[8] |= 0x40;
+			this.setState(8, MemoryInt.STATE.WRITE);
 			this.changed = true;
 		}
 
@@ -101,6 +107,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.WRITE);
 		this.changed = true;
 	}
 
@@ -110,6 +117,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 		byte ret = 0;
 		if (mapAddr == 0) {
 			memory[8] &= 0x7F;
+			this.setState(8, MemoryInt.STATE.WRITE);
 			ret = memory[0];
 		} else if (mapAddr >= 1 && mapAddr < 4 || mapAddr >= 8 && mapAddr < 16) {
 			ret = memory[mapAddr];
@@ -117,6 +125,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.READ);
 		this.changed = true;
 		return ret;
 	}

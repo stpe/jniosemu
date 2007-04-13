@@ -10,7 +10,6 @@ import jniosemu.events.EventManager;
  */
 public class MemoryManager
 {
-	public static enum STATE {UNTOUCHED, READ, WRITE};
 	/**
 	 * Address in the memory where the program is placed.
 	 */
@@ -31,8 +30,6 @@ public class MemoryManager
 	 * Contains the different MemoryBlocks
 	 */
 	private ArrayList<MemoryBlock> memoryBlocks = new ArrayList<MemoryBlock>();
-
-	private HashMap<Integer, STATE> state = new HashMap<Integer, STATE>();
 
 	/**
 	 * Init MemoryManager with program.
@@ -58,8 +55,6 @@ public class MemoryManager
 	}
 
 	public void reset(byte[] program, byte[] variables) {
-		this.state.clear();
-
 		for (MemoryBlock memoryBlock : this.memoryBlocks)
 			memoryBlock.reset();
 
@@ -71,14 +66,6 @@ public class MemoryManager
 	public void resetState() {
 		for (MemoryBlock memoryBlock : this.memoryBlocks)
 			memoryBlock.resetState();
-	}
-
-	public void setState(int addr, STATE state) {
-		if (state == STATE.UNTOUCHED) {
-			this.state.remove(addr);
-		} else {
-			this.state.put(addr, state);
-		}
 	}
 
 	/**
@@ -94,13 +81,11 @@ public class MemoryManager
 	public byte readByte(int addr) throws MemoryException {
 		for (MemoryBlock block: this.memoryBlocks) {
 			if (block.inRange(addr)) {
-				byte ret = block.readByte(addr);
-				this.setState(addr, STATE.READ);
-				return ret;
+				return block.readByte(addr);
 			}
 		}
 
-		throw new MemoryException(addr);		
+		throw new MemoryException(addr);
 	}
 
 	/**
@@ -117,7 +102,6 @@ public class MemoryManager
 		for (MemoryBlock block: this.memoryBlocks) {
 			if (block.inRange(addr)) {
 				block.writeByte(addr, value);
-				this.setState(addr, STATE.WRITE);
 				return;
 			}
 		}

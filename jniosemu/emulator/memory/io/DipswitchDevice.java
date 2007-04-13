@@ -4,6 +4,7 @@ import java.util.Vector;
 import jniosemu.Utilities;
 import jniosemu.emulator.memory.MemoryBlock;
 import jniosemu.emulator.memory.MemoryException;
+import jniosemu.emulator.memory.MemoryInt;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
@@ -32,7 +33,7 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 	/**
 	 * Containing the states of each dipswitch
 	 */
-	private Vector<Boolean> state;
+	private Vector<Boolean> value;
 	/**
 	 * Used EventManager
 	 */
@@ -44,7 +45,7 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 	/**
 	 * 
 	 */
-	private boolean stateChanged = false;
+	private boolean valueChanged = false;
 
 	/**
 	 * Init ButtonDevice
@@ -67,9 +68,9 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 
 		this.eventManager.addEventObserver(EventManager.EVENT.DIPSWITCH_TOGGLE, this);
 
-		this.state = new Vector<Boolean>(COUNT);
+		this.value = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
-			this.state.add(i, false);
+			this.value.add(i, false);
 
 		this.reset();
 	}
@@ -85,20 +86,21 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 		this.resetState();
 
 		this.changed = true;
-		this.stateChanged = false;
+		this.valueChanged = false;
 
 		this.sendEvent();
 	}
 
 	public boolean resetState() {
+		this.clearState();
 		this.changed = false;
 
-		if (this.stateChanged) {
+		if (this.valueChanged) {
 			this.changed = true;
-			memory[0] = Utilities.vectorToByte(this.state);
-			this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
+			memory[0] = Utilities.vectorToByte(this.value);
+			this.setState(0, MemoryInt.STATE.WRITE);
 
-			this.stateChanged = false;
+			this.valueChanged = false;
 		}
 
 		return false;
@@ -110,12 +112,14 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 
 	public byte readByte(int addr) throws MemoryException {
 		byte ret = 0;
+		int mapAddr = this.mapAddr(addr);
 		try {
-			ret = memory[this.mapAddr(addr)];
+			ret = memory[mapAddr];
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.READ);
 		this.changed = true;
 		return ret;
 	}
@@ -126,7 +130,7 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 	 * @calledby ButtonDevice(), reset(), update()
 	 */
 	private void sendEvent() {
-		this.eventManager.sendEvent(EventManager.EVENT.DIPSWITCH_UPDATE, this.state);
+		this.eventManager.sendEvent(EventManager.EVENT.DIPSWITCH_UPDATE, this.value);
 	}
 
 	/**
@@ -137,9 +141,9 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 	 * @param index button index
 	 * @param state new state
 	 */
-	private void setState(int index, boolean state) {
-		this.stateChanged = true;
-		this.state.set(index, state);
+	private void setValue(int index, boolean value) {
+		this.valueChanged = true;
+		this.value.set(index, value);
 
 		this.sendEvent();
 	}
@@ -149,7 +153,7 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 		switch(eventIdentifier) {
 			case DIPSWITCH_TOGGLE:
 				int index = ((Integer)obj).intValue();
-				this.setState(index, !this.state.get(index));
+				this.setValue(index, !this.value.get(index));
 				break;
 		}
 	}

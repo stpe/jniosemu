@@ -4,6 +4,7 @@ import java.util.Vector;
 import jniosemu.Utilities;
 import jniosemu.emulator.memory.MemoryBlock;
 import jniosemu.emulator.memory.MemoryException;
+import jniosemu.emulator.memory.MemoryInt;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
@@ -32,7 +33,7 @@ public class LedDevice extends MemoryBlock
 	/**
 	 * Containing the states of each dipswitch
 	 */
-	private Vector<Boolean> state;
+	private Vector<Boolean> value;
 	/**
 	 * Used EventManager
 	 */
@@ -67,15 +68,19 @@ public class LedDevice extends MemoryBlock
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
+		this.resetState();
+
 		this.changed = true;
-		this.state = new Vector<Boolean>(COUNT);
+		this.value = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
-			this.state.add(i, false);
+			this.value.add(i, false);
 
 		this.sendEvent();
 	}
 
 	public boolean resetState() {
+		this.clearState();
+
 		this.changed = false;
 		return false;
 	}
@@ -87,23 +92,26 @@ public class LedDevice extends MemoryBlock
 			value &= (byte)0xf;
 			memory[0] = value;
 
-			this.state = Utilities.intToVector(Utilities.unsignedbyteToInt(value), COUNT);
+			this.value = Utilities.intToVector(Utilities.unsignedbyteToInt(value), COUNT);
 			this.sendEvent();
 		} else if (mapAddr < 0 || mapAddr > 3) {
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.WRITE);
 		this.changed = true;
 	}
 
 	public byte readByte(int addr) throws MemoryException {
 		byte ret = 0;
+		int mapAddr = this.mapAddr(addr);
 		try {
-			ret = memory[this.mapAddr(addr)];
+			ret = memory[mapAddr];
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.READ);
 		this.changed = true;
 		return ret;
 	}
@@ -114,7 +122,7 @@ public class LedDevice extends MemoryBlock
 	 * @calledby ButtonDevice(), reset(), update()
 	 */
 	public void sendEvent() {
-		this.eventManager.sendEvent(EventManager.EVENT.LED_UPDATE, this.state);
+		this.eventManager.sendEvent(EventManager.EVENT.LED_UPDATE, this.value);
 	}
 
 }

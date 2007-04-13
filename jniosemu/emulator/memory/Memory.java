@@ -30,27 +30,33 @@ public class Memory extends MemoryBlock
 
 	public byte readByte(int addr) throws MemoryException {
 		byte value = 0;
+		int mapAddr = this.mapAddr(addr);
 		try {
-			value = memory[mapAddr(addr)];
+			value = memory[mapAddr];
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.READ);
 		this.changed = true;
 		return value;
 	}
 
 	public void writeByte(int addr, byte value) throws MemoryException {
+		int mapAddr = this.mapAddr(addr);
 		try {
-			memory[mapAddr(addr)] = value;
+			memory[mapAddr] = value;
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.WRITE);
 		this.changed = true;
 	}
 
 	public void reset() {
+		this.resetState();
+
 		this.changed = true;
 		this.memory = new byte[this.length];
 
@@ -59,6 +65,8 @@ public class Memory extends MemoryBlock
 	}
 
 	public boolean resetState() {
+		this.clearState();
+
 		this.changed = false;
 		return false;
 	}

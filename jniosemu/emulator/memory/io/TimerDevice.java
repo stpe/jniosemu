@@ -4,6 +4,7 @@ import java.util.Queue;
 import jniosemu.Utilities;
 import jniosemu.emulator.memory.MemoryBlock;
 import jniosemu.emulator.memory.MemoryException;
+import jniosemu.emulator.memory.MemoryInt;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
@@ -61,6 +62,7 @@ public class TimerDevice extends MemoryBlock
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
+		this.clearState();
 		this.changed = true;
 		this.memory = new byte[this.length];
 		this.counter = 0;
@@ -69,6 +71,7 @@ public class TimerDevice extends MemoryBlock
 	}
 
 	public boolean resetState() {
+		this.clearState();
 		this.changed = false;
 
 		if (this.counting) {
@@ -78,13 +81,13 @@ public class TimerDevice extends MemoryBlock
 				this.memory[0] |= 0x1;
 				this.changed = true;
 				this.updateCounter();
-				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
+				this.setState(0, MemoryInt.STATE.WRITE);
 			} else {
 				this.counting = false;
 				this.memory[0] |= 0x1;
 				this.memory[0] &= 0xFD;
 				this.changed = true;
-				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
+				this.setState(0, MemoryInt.STATE.WRITE);
 			}
 		}
 
@@ -110,12 +113,12 @@ public class TimerDevice extends MemoryBlock
 			if ((value & 0x8) > 0) {
 				this.counting = false;
 				memory[0] &= 0xFD;
-				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
+				this.setState(0, MemoryInt.STATE.WRITE);
 			}
 			if ((value & 0x4) > 0) {
 				this.counting = true;
 				memory[0] |= 0x2;
-				this.memoryManager.setState(this.start, MemoryManager.STATE.WRITE);
+				this.setState(0, MemoryInt.STATE.WRITE);
 
 				if (this.counter == 0)
 					this.updateCounter();
@@ -124,7 +127,7 @@ public class TimerDevice extends MemoryBlock
 			byte[] snapshot = Utilities.longToByteArray(this.counter);
 			for (int i = 0; i < snapshot.length; i++) {
 				memory[16 + i] = snapshot[i];
-				this.memoryManager.setState(this.start + i, MemoryManager.STATE.WRITE);
+				this.setState(i, MemoryInt.STATE.WRITE);
 			}
 		} else if (mapAddr >= 8 && mapAddr < 16) {
 			this.memory[mapAddr] = value;
@@ -132,19 +135,21 @@ public class TimerDevice extends MemoryBlock
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.WRITE);
 		this.changed = true;
 	}
 
 	public byte readByte(int addr) throws MemoryException {
 		byte ret = 0;
+		int mapAddr = this.mapAddr(addr);
 		try {
-			ret = memory[this.mapAddr(addr)];
+			ret = memory[mapAddr];
 		} catch (Exception e) {
 			throw new MemoryException(addr);
 		}
 
+		this.setState(mapAddr, MemoryInt.STATE.READ);
 		this.changed = true;
 		return ret;
 	}
-
 }

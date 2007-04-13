@@ -1,6 +1,7 @@
 package jniosemu.emulator.memory;
 
 import java.util.Vector;
+import java.util.HashMap;
 
 /**
  * Contains a part of the memory.
@@ -27,6 +28,8 @@ public abstract class MemoryBlock
 	protected boolean changed = true;
 
 	protected Vector<MemoryInt> memoryVector;
+
+	private HashMap<Integer, MemoryInt.STATE> state = new HashMap<Integer, MemoryInt.STATE>();
 
 	/**
 	 * Get the name of the part.
@@ -134,8 +137,16 @@ public abstract class MemoryBlock
 
 		for (int i = 0; i < this.length; i += 4) {
 			byte[] memoryInt = new byte[4];
+			MemoryInt.STATE[] state = new MemoryInt.STATE[4];
+			for (int j = 0; j < 4; j++) {
+				MemoryInt.STATE tmp = this.state.get(i + j);
+				if (tmp == null)
+					state[j] = MemoryInt.STATE.UNTOUCHED;
+				else
+					state[j] = tmp;
+			}
 			System.arraycopy(this.memory, i, memoryInt, 0, 4);
-			this.memoryVector.add(new MemoryInt(this.start+i, memoryInt));
+			this.memoryVector.add(new MemoryInt(this.start+i, memoryInt, state));
 		}
 	}
 
@@ -144,5 +155,17 @@ public abstract class MemoryBlock
 			this.updateMemoryVector();
 
 		return this.memoryVector;
+	}
+
+	protected void setState(int index, MemoryInt.STATE state) {
+		if (state == MemoryInt.STATE.UNTOUCHED) {
+			this.state.remove(index);
+		} else {
+			this.state.put(index, state);
+		}
+	}
+
+	protected void clearState() {
+		this.state.clear();
 	}
 }
