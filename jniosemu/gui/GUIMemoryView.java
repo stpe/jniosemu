@@ -39,6 +39,11 @@ public class GUIMemoryView extends JFrame
 	private ArrayList<MemoryBlock> memoryBlocks = null;
 	
 	/**
+	 * Track if a memory block should be repainted or not.
+	 */
+	private ArrayList<Boolean> memoryUpdateState = null;
+	
+	/**
 	 * Initiates the creation of GUI components and adds itself to
 	 * the Event Manager as an observer.
 	 *
@@ -125,6 +130,7 @@ public class GUIMemoryView extends JFrame
 		titleLabel.setLabelFor(memoryList);
 		titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) titleLabel.getMinimumSize().getHeight()));
+		titleLabel.setOpaque(true);
 		titleLabel.setBorder(
 			BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
 		);
@@ -145,12 +151,16 @@ public class GUIMemoryView extends JFrame
 		listPanel.removeAll();
 		
 		memoryLists = new ArrayList<JList>();
+		memoryUpdateState = new ArrayList<Boolean>();
 		
 		for(int i = 0; i < this.memoryBlocks.size(); i++)
 		{
 			memoryLists.add(
 				this.addList( (MemoryBlock) memoryBlocks.get(i) )
 			);
+			
+			// redraw first time
+			memoryUpdateState.add(true);
 		}
 		
 		this.updateLists();
@@ -165,12 +175,16 @@ public class GUIMemoryView extends JFrame
 		{
 			MemoryBlock memBlock = (MemoryBlock) memoryBlocks.get(i);
 			
-			if (memBlock.isChanged())
+			if (memBlock.isChanged() || memoryUpdateState.get(i))
 			{
 				Vector<MemoryInt> memVector =  memBlock.getMemoryVector();
 	
 				if (memVector != null)
 					memoryLists.get(i).setListData(memVector);
+				
+				// if memory block has changed, do also redraw next time
+				// in order to remove indication
+				memoryUpdateState.set(i, memBlock.isChanged());
 			}
 		}		
 	}
