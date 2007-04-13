@@ -77,14 +77,15 @@ public class GUIMemoryView extends JFrame
 		// list
 		listPanel = new JPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.PAGE_AXIS));
-		
+
+/*		
 		listPanel.setBorder(
 			BorderFactory.createCompoundBorder(
 				BorderFactory.createEmptyBorder(4, 4, 0, 4),
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
 			)
 		);	
-
+*/
 		JScrollPane scrollPane = new JScrollPane(listPanel);
 
     // button
@@ -118,15 +119,15 @@ public class GUIMemoryView extends JFrame
 		memoryList.setAlignmentX(Component.CENTER_ALIGNMENT);
 		memoryList.setBackground(Color.WHITE);
 		memoryList.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		memoryList.setCellRenderer(new RegisterCellRenderer());
-		memoryList.setBorder(
-			BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
-		);
+		memoryList.setCellRenderer(new MemoryCellRenderer());
 		
 		JLabel titleLabel = new JLabel(" " + memBlock.getName(), JLabel.LEFT);
 		titleLabel.setLabelFor(memoryList);
 		titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) titleLabel.getMinimumSize().getHeight()));
+		titleLabel.setBorder(
+			BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
+		);
 		
 		this.listPanel.add(titleLabel);
 		this.listPanel.add(memoryList);		
@@ -169,14 +170,7 @@ public class GUIMemoryView extends JFrame
 				Vector<MemoryInt> memVector =  memBlock.getMemoryVector();
 	
 				if (memVector != null)
-				{
 					memoryLists.get(i).setListData(memVector);
-					System.out.println("MemoryView update: MemoryVector size " + memVector.size() + " for block " + memBlock.getName());
-				}
-				else
-				{
-					System.out.println("MemoryView update: MemoryVector null for block " + memBlock.getName());
-				}
 			}
 		}		
 	}
@@ -213,12 +207,12 @@ public class GUIMemoryView extends JFrame
 	/**
 	 * Custom cell renderer for the lists in the Memory View.
 	 */
-	class RegisterCellRenderer extends JLabel
+	class MemoryCellRenderer extends JLabel
 												 implements ListCellRenderer {
 
 			private MemoryInt memInt;
 
-			public RegisterCellRenderer() {
+			public MemoryCellRenderer() {
 					setOpaque(true);
 					setHorizontalAlignment(CENTER);
 					setVerticalAlignment(CENTER);
@@ -236,7 +230,6 @@ public class GUIMemoryView extends JFrame
 					this.memInt = (MemoryInt) value;
 					setText("."); // trigger repaint
 
- 
 					if (isSelected) { 
 						setBackground(list.getSelectionBackground()); 
 						setForeground(list.getSelectionForeground()); 
@@ -253,49 +246,55 @@ public class GUIMemoryView extends JFrame
 
 			if (isOpaque()) 
 			{ 
-/*				
-					// paint background
-					switch (regObj.getState())
-					{
-						case READ:
-							g.setColor(new Color(220, 255, 220));
-							break;
-						case WRITE:
-							g.setColor(new Color(255, 220, 220));
-							break;
-						default:
-							g.setColor(getBackground());
-					}
-*/
 					g.setColor(getBackground());
 					g.fillRect(0, 0, getWidth(), getHeight());
 			}
 
 			FontMetrics metrics = g.getFontMetrics(getFont());
-	/*	
-			if (regObj.getState() == Register.STATE.DISABLED)
-				g.setColor(new Color(196, 196, 196));
-			else
-		*/
-				g.setColor(new Color(0, 0, 0));
+
+			g.setColor(Color.black);
+			
+			int yOffset = 12;
+			int xOffset = 2;
 			
 			// address
-			g.drawString(Utilities.intToHexString(memInt.getAddress()), 2, 11);
+			g.drawString(Utilities.intToHexString(memInt.getAddress()), xOffset, yOffset);
 
 			// memory as hex
 			byte[] b = memInt.getMemory();
 			
-			String tmp = "";
+			xOffset = 100;
+			int spaceWidth = metrics.stringWidth(" ");
+			
 			for (int i = 0; i < b.length; i++)
 			{
-				tmp = tmp.concat(Integer.toHexString( (b[i] & 0xFF) | 0x100 ).substring(1,3));
-				tmp = tmp.concat(" ");
+				switch (memInt.getState(i))
+				{
+					case READ:
+						g.setColor(GUIManager.HIGHLIGHT_GREEN);
+						break;
+					case WRITE:
+						g.setColor(GUIManager.HIGHLIGHT_RED);
+						break;
+					default:
+						g.setColor(getBackground());
+						break;
+				}
+
+				String tmp = Integer.toHexString( (b[i] & 0xFF) | 0x100 ).substring(1, 3);
+
+				int stringWidth = metrics.stringWidth(tmp);
+				
+				g.fillRect(xOffset - 2, 1, metrics.stringWidth(tmp) + 4, metrics.getHeight() - 3);
+				g.setColor(Color.black);
+				
+				g.drawString(tmp, xOffset, yOffset);
+				
+				xOffset = xOffset + stringWidth + spaceWidth;
 			}
 
-			g.drawString(tmp, 100, 11);
-
 			// memory as ascii
-			tmp = "";
+			String tmp = "";
 			for (int i = 0; i < b.length; i++)
 			{
 				if (b[i] >= 32 && b[i] <= 126)
@@ -304,7 +303,7 @@ public class GUIMemoryView extends JFrame
 					tmp = tmp.concat(".");
 			}
 
-			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, 11);
+			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, yOffset);
 		}
 
 	}

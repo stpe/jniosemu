@@ -109,8 +109,20 @@ import jniosemu.emulator.*;
 		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
+		JPanel recvPanel = new JPanel(new BorderLayout());
+		JLabel recvLabel = new JLabel("Received");
+		recvLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		recvPanel.add(recvLabel, BorderLayout.PAGE_START);
+		recvPanel.add(recvScrollPane, BorderLayout.CENTER);
+		
+		JPanel sendPanel = new JPanel(new BorderLayout());
+		JLabel sendLabel = new JLabel("Send");
+		sendLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		sendPanel.add(sendLabel, BorderLayout.PAGE_START);
+		sendPanel.add(sendScrollPane, BorderLayout.CENTER);
+
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-		                            recvScrollPane, sendScrollPane);
+		                            recvPanel, sendPanel);
 		splitPane.setDividerLocation(150);
 		
     // button
@@ -125,8 +137,13 @@ import jniosemu.emulator.*;
     Container contentPane = getContentPane();
     contentPane.setLayout(new BorderLayout());
     
-    contentPane.add(splitPane, BorderLayout.CENTER);
-    contentPane.add(buttonPanel, BorderLayout.PAGE_END);
+    JPanel contentPanel = new JPanel(new BorderLayout());
+    contentPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+    
+    contentPanel.add(splitPane, BorderLayout.CENTER);
+    contentPanel.add(buttonPanel, BorderLayout.PAGE_END);
+    
+    contentPane.add(contentPanel, BorderLayout.CENTER);
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)

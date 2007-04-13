@@ -164,11 +164,13 @@ public class GUIMenuBar extends JMenuBar
 		menu = new JMenu("View");
 		this.add(menu);
 
-		item = createMenuItem("Variables...", EventManager.EVENT.VARIABLE_VIEW.toString());
+		item = createMenuItem("Variables...", EventManager.EVENT.VARIABLE_VIEW.toString(),
+		          KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		stateManager.addItem(EventManager.EVENT.VARIABLE_VIEW, item);
 		menu.add(item);
 		
-		item = createMenuItem("Memory...", EventManager.EVENT.MEMORY_VIEW.toString());
+		item = createMenuItem("Memory...", EventManager.EVENT.MEMORY_VIEW.toString(),
+		          KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		stateManager.addItem(EventManager.EVENT.MEMORY_VIEW, item);
 		menu.add(item);
 		

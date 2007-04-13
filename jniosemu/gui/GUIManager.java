@@ -26,6 +26,12 @@ public class GUIManager
    */
 	public static final int WINDOW_HEIGHT = 600;
 
+	public static final Color HIGHLIGHT_GREEN          = new Color(220, 255, 220);
+	public static final Color HIGHLIGHT_SELECTED_GREEN = new Color(150, 185, 150);
+	public static final Color HIGHLIGHT_RED            = new Color(255, 220, 220);
+	public static final Color HIGHLIGHT_SELECTED_RED   = new Color(185, 150, 150);
+	public static final Color FONT_DISABLED            = new Color(196, 196, 196);
+
 	/**
 	 * Tab number of editor.
 	 */
