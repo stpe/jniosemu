@@ -127,7 +127,7 @@ public class TimerDevice extends MemoryBlock
 			byte[] snapshot = Utilities.longToByteArray(this.counter);
 			for (int i = 0; i < snapshot.length; i++) {
 				memory[16 + i] = snapshot[i];
-				this.setState(i, MemoryInt.STATE.WRITE);
+				this.setState(16 + i, MemoryInt.STATE.WRITE);
 			}
 		} else if (mapAddr >= 8 && mapAddr < 16) {
 			this.memory[mapAddr] = value;

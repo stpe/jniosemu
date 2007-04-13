@@ -400,9 +400,13 @@ public class EmulatorManager implements EventObserver
 				this.toggleBreakpoint(((Integer)obj).intValue());
 				break;
 			case EMULATOR_SPEED:
-				this.speed = (SPEED)obj;
+				this.setSpeed((SPEED)obj);
 				break;
 		}
+	}
+
+	public void setSpeed(SPEED speed) {
+		this.speed = speed;
 	}
 
 	/**

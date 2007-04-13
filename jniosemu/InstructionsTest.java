@@ -22,7 +22,7 @@ public class InstructionsTest {
 	public static void main(String [] args) {
 		
 		int numFiles = 0;
-		String path = "../JNiosEmu/trunk/asm_test/instruction/";
+		String path = "asm_test/instruction/";
 		error_msg = new String("");
 
 		if(args.length > 0) {
@@ -94,31 +94,33 @@ public class InstructionsTest {
 
 		EmulatorManager emulatorManager = new EmulatorManager(eventManager);
 		emulatorManager.compile(fileContent);
+		emulatorManager.setSpeed(EmulatorManager.SPEED.FULL);
 
-		emulatorManager.runAll();
+		for (int i = 0; i < 2; i++) {
+			emulatorManager.runAll();
 
-		// Wait until EMULATOR_DONE
+			// Wait until EMULATOR_DONE
 
-		RegisterManager registerManager = emulatorManager.getRegisterManager();
+			RegisterManager registerManager = emulatorManager.getRegisterManager();
 
-		int registerNum, registerValue = 0;
-		for(int j=0;j<regNum.size();j++) {
-			registerNum = java.lang.Integer.parseInt(regNum.get(j));
-			try {
-				registerValue = (int)Compiler.parseValue(regValue.get(j), null);
+			int registerNum, registerValue = 0;
+			for(int j=0;j<regNum.size();j++) {
+				registerNum = java.lang.Integer.parseInt(regNum.get(j));
+				try {
+					registerValue = (int)Compiler.parseValue(regValue.get(j), null);
+				}
+				catch(Exception e) {
+					error_msg = e.getMessage();
+					return TEST_FAILED;
+				}
+				if(registerManager.read(registerNum) != registerValue) {
+					error_msg = new String("Register r"+registerNum+"="+registerValue+" failed");
+					return TEST_FAILED;
+				}
 			}
-			catch(Exception e) {
-				error_msg = e.getMessage();
-				return TEST_FAILED;
-			}
-			if(registerManager.read(registerNum) != registerValue) {
-				error_msg = new String("Register r"+registerNum+"="+registerValue+" failed");
-				return TEST_FAILED;
-			}
-				
+
+			emulatorManager.reset();
 		}
-
-		emulatorManager.reset();
 	
 		return regCount;
 	}
