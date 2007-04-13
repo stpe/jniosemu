@@ -151,8 +151,7 @@ public abstract class MemoryBlock
 	}
 
 	public Vector<MemoryInt> getMemoryVector() {
-		if (this.isChanged())
-			this.updateMemoryVector();
+		this.updateMemoryVector();
 
 		return this.memoryVector;
 	}
