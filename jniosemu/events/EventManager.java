@@ -275,7 +275,12 @@ public final class EventManager
 			// iterate over all listening observers
 			for (EventObserver eventObserver : eventObservers)
 			{
-				eventObserver.update(queueObj.eventIdentifier, queueObj.obj);
+				// have a try-catch so the EventManager don't die if something goes wrong
+				try {
+					eventObserver.update(queueObj.eventIdentifier, queueObj.obj);
+				} catch (Exception e) {
+					System.out.println("EventObserver.update() error: "+ e.getMessage());
+				}
 			}
 		}		
 		

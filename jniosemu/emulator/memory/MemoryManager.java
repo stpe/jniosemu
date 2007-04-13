@@ -43,9 +43,9 @@ public class MemoryManager
 	 */
 	public MemoryManager(EventManager eventManager, byte[] program, byte[] variables)
 	{
-		this.memoryBlocks.add(new Memory("PROGRAM", PROGRAMSTARTADDR, program.length, program));
-		this.memoryBlocks.add(new Memory("VARIABLES", VARIABLESTARTADDR, variables.length, variables));
-		this.memoryBlocks.add(new Memory("STACK", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
+		this.memoryBlocks.add(new Memory("Text", PROGRAMSTARTADDR, program.length, program));
+		this.memoryBlocks.add(new Memory("Data", VARIABLESTARTADDR, variables.length, variables));
+		this.memoryBlocks.add(new Memory("Stack", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
 
 		this.memoryBlocks.add(new ButtonDevice(eventManager, this));
 		this.memoryBlocks.add(new LedDevice(eventManager, this));
@@ -58,9 +58,9 @@ public class MemoryManager
 		for (MemoryBlock memoryBlock : this.memoryBlocks)
 			memoryBlock.reset();
 
-		this.memoryBlocks.set(0, new Memory("PROGRAM", PROGRAMSTARTADDR, program.length, program));
-		this.memoryBlocks.set(1, new Memory("VARIABLES", VARIABLESTARTADDR, variables.length, variables));
-		this.memoryBlocks.set(2, new Memory("STACK", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
+		this.memoryBlocks.set(0, new Memory("Text", PROGRAMSTARTADDR, program.length, program));
+		this.memoryBlocks.set(1, new Memory("Data", VARIABLESTARTADDR, variables.length, variables));
+		this.memoryBlocks.set(2, new Memory("Stack", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
 	}
 
 	public void resetState() {

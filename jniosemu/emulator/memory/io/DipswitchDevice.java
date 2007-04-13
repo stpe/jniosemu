@@ -25,7 +25,7 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 	/**
 	 * Name of memoryblock
 	 */
-	private static final String MEMORYNAME = "DIPSWITCHES";
+	private static final String MEMORYNAME = "Dipswitches";
 	/**
 	 * Number of buttons
 	 */

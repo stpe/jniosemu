@@ -137,16 +137,8 @@ public abstract class MemoryBlock
 
 		for (int i = 0; i < this.length; i += 4) {
 			byte[] memoryInt = new byte[4];
-			MemoryInt.STATE[] state = new MemoryInt.STATE[4];
-			for (int j = 0; j < 4; j++) {
-				MemoryInt.STATE tmp = this.state.get(i + j);
-				if (tmp == null)
-					state[j] = MemoryInt.STATE.UNTOUCHED;
-				else
-					state[j] = tmp;
-			}
 			System.arraycopy(this.memory, i, memoryInt, 0, 4);
-			this.memoryVector.add(new MemoryInt(this.start+i, memoryInt, state));
+			this.memoryVector.add(new MemoryInt(this.start+i, memoryInt, this));
 		}
 	}
 
@@ -154,6 +146,15 @@ public abstract class MemoryBlock
 		this.updateMemoryVector();
 
 		return this.memoryVector;
+	}
+
+	protected MemoryInt.STATE getState(int address) {
+		MemoryInt.STATE state = this.state.get(address - this.start);
+		if (state == null) {
+			return MemoryInt.STATE.UNTOUCHED;
+		} else {
+			return state;
+		}
 	}
 
 	protected void setState(int index, MemoryInt.STATE state) {

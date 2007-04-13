@@ -70,6 +70,8 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	 * @param memory current MemoryManager
 	 */
 	public void reset() {
+		this.resetState();
+		this.clearState();
 		this.changed = true;
 		this.inputBuffer.clear();
 	}

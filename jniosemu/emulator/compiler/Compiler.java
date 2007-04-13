@@ -377,6 +377,8 @@ public class Compiler
 								}
 							}
 						}
+					} else {
+						throw new CompilerException(aLineNumber, "Wrong syntax");
 					}
 				}
 			}

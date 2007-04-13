@@ -5,12 +5,12 @@ public class MemoryInt
 	public static enum STATE {UNTOUCHED, READ, WRITE};
 	private final int address;
 	private final byte[] memoryInt;
-	private final STATE[] states;
+	private final MemoryBlock memoryBlock;
 
-	public MemoryInt (int address, byte[] memoryInt, STATE[] states) {
+	public MemoryInt (int address, byte[] memoryInt, MemoryBlock memoryBlock) {
 		this.address = address;
 		this.memoryInt = memoryInt;
-		this.states = states;
+		this.memoryBlock = memoryBlock;
 	}
 
 	public int getAddress() {
@@ -22,6 +22,6 @@ public class MemoryInt
 	}
 
 	public STATE getState(int index) {
-		return states[index];
+		return this.memoryBlock.getState(this.address + index);
 	}
 }

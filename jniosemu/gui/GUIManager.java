@@ -88,6 +88,7 @@ public class GUIManager
 			EventManager.EVENT.APPLICATION_TITLE_CHANGE,
 			EventManager.EVENT.APPLICATION_TAB_CHANGE,
 			EventManager.EVENT.APPLICATION_TAB_TOGGLE,
+			EventManager.EVENT.APPLICATION_START,
 			EventManager.EVENT.EMULATOR_READY,
 			EventManager.EVENT.EXCEPTION,
 			EventManager.EVENT.MEMORY_VIEW,
@@ -190,8 +191,6 @@ public class GUIManager
 		editorPanel.add(editorSplitPane, BorderLayout.CENTER);
 		editorPanel.add(statusBar, BorderLayout.PAGE_END);
 
-		toggleErrorMessages(false);		// hide error messages at startup
-
 		// emulator panel
 		JPanel emulatorPanel = new JPanel(new BorderLayout());
 		emulatorPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -261,6 +260,9 @@ public class GUIManager
 		switch(eventIdentifier) {
 			case ABOUT_VIEW:
 				showAbout();
+				break;
+			case APPLICATION_START:
+				toggleErrorMessages(false);
 				break;
 			case APPLICATION_TAB_CHANGE:
 				changeTab( ((Integer) obj).intValue() );
@@ -421,12 +423,12 @@ public class GUIManager
 		// do nothing if state already is set
 		if (makeVisible == editorMessages.isVisible())
 			return;
-		
+
 		javax.swing.plaf.basic.BasicSplitPaneUI ui = (javax.swing.plaf.basic.BasicSplitPaneUI) editorSplitPane.getUI();
 		ui.getDivider().setVisible(makeVisible);
-		
+
 		editorMessages.setVisible(makeVisible);
-		
+
 		// set percentages the editor should occupy (messages gets the rest)
 		editorSplitPane.setDividerLocation(0.85);
 	}
