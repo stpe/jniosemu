@@ -69,7 +69,8 @@ public final class EventManager
 		MEMORY_VIEW,											// Show Memory View window
 		MEMORY_CHANGE,										// If the memory changed
 		PROGRAMCOUNTER_CHANGE,						// Program counter in emulated program has changed
-		REGISTER_CHANGE,									// Regiser in emulated program has changed
+		REGISTER_CHANGE,									// Register in emulated program has changed
+		REGISTER_VIEW_SELECT,							// A register is selected in the registers list
 		SERIAL_INPUT,											// Send a character to emulated serial port
 		SERIAL_OUTPUT,										// Send a character out of emulated serial port
 		CONSOLE_OUTPUT,										// Send a character to console

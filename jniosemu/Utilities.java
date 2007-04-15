@@ -105,7 +105,7 @@ public class Utilities
 	}
 
 	/**
-	 * Converts integer to a string of the hexadecimal value.
+	 * Converts integer to a formatted string of the hexadecimal value.
 	 *
 	 * @param   value  decimal value to convert
 	 * @return         hexadecimal value as string
@@ -113,6 +113,22 @@ public class Utilities
 	public static String intToHexString(int value) {
 		String hex = "00000000" + Integer.toHexString(value);
 		return "0x" + hex.substring(hex.length()-8, hex.length());
+	}
+
+	/**
+	 * Converts integer to a formatted string of the binary value.
+	 *
+	 * @param   value  decimal value to convert
+	 * @return         binary value as string
+	 */
+	public static String intToBinaryString(int value) {
+		String bin = "00000000000000000000000000000000" + Integer.toBinaryString(value);
+		
+		return
+			bin.substring(bin.length() - 32, bin.length() - 24) + " " +
+			bin.substring(bin.length() - 24, bin.length() - 16) + " " +
+			bin.substring(bin.length() - 16, bin.length() - 8) + " " +
+			bin.substring(bin.length() - 8, bin.length());
 	}
 
 	/**

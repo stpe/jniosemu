@@ -208,6 +208,9 @@ public class GUIManager
 		GUIRegisters registers = new GUIRegisters(this.eventManager);
 		emulatorLeftPanel.add(registers, BorderLayout.CENTER);
 
+		GUIRegisterView registerView = new GUIRegisterView(this.eventManager);
+		emulatorLeftPanel.add(registerView, BorderLayout.PAGE_END);
+
 		// split pane between emulator and register view
 		JSplitPane emulatorSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 		                                              emulatorLeftPanel, emulator);

@@ -1,6 +1,7 @@
 package jniosemu.gui;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.*;
@@ -12,7 +13,7 @@ import jniosemu.emulator.register.*;
  * Creates and manages the GUI component of the register view in the emulator.
  */
 public class GUIRegisters extends JPanel 
-											 implements EventObserver {
+											 implements EventObserver, ListSelectionListener {
 
 	/**
 	 * Reference to EventManager used to receive
@@ -61,7 +62,9 @@ public class GUIRegisters extends JPanel
 		registerList = new JList();
 		registerList.setBackground(Color.WHITE);
 		registerList.setFont(new Font("Monospaced", Font.PLAIN, 11));
+		registerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		registerList.setCellRenderer(new RegisterCellRenderer());
+		registerList.addListSelectionListener(this);
 		
 		// scrollbars
 		JScrollPane scrollPane = new JScrollPane(registerList);
@@ -71,9 +74,36 @@ public class GUIRegisters extends JPanel
 		this.add(scrollPane, BorderLayout.CENTER);		
 	}
 
+	/**
+	 * Set new vector of registers.
+	 *
+	 * @param registers Register vector to set.
+	 */
 	public void setRegisters(Vector<Register> registers)
 	{
+		// get currently selected register (if any)
+		int index = registerList.getSelectedIndex();
+		
 		registerList.setListData(registers);
+		
+		// (re)set selected register
+		if (index != -1)
+			registerList.setSelectedIndex(index);
+	}
+
+	public void valueChanged(ListSelectionEvent e) {
+		if (e.getValueIsAdjusting() == false) 
+		{
+			int index = registerList.getSelectedIndex();
+			
+			if (index != -1)
+			{
+				// register selected
+				Register reg = (Register) registerList.getModel().getElementAt(index);
+
+				eventManager.sendEvent(EventManager.EVENT.REGISTER_VIEW_SELECT, reg);
+			}
+		}
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
@@ -167,7 +197,7 @@ public class GUIRegisters extends JPanel
 			
 			g.drawString(regObj.getName(), 2, 11);
 
-			String tmp = regObj.getValue();	
+			String tmp = regObj.getValueAsString();	
 
 			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, 11);
 		}

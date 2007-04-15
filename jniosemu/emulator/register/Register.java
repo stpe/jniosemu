@@ -67,6 +67,17 @@ public class Register
 	}
 
 	/**
+	 * Get integer representation of value
+	 *
+	 * @calledby GUIRegister
+	 *
+	 * @return value
+	 */
+	public int getValue() {
+		return this.value;
+	}
+
+	/**
 	 * Get string representation of value
 	 *
 	 * @calledby GUIRegister
@@ -74,7 +85,7 @@ public class Register
 	 *
 	 * @return value
 	 */
-	public String getValue() {
+	public String getValueAsString() {
 		return this.value +" ("+ Utilities.intToHexString(this.value) +")";
 	}
 
