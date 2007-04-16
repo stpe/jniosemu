@@ -24,11 +24,11 @@ public class Variable
 		switch(type) {
 			case BYTE:
 				this.value = new byte[1];
-				this.value[0] = (byte)(Compiler.parseValue(aValue, null) & 0xFF);
+				this.value[0] = (byte)(Compiler.parseValue(aValue) & 0xFF);
 				break;
 			case WORD:
 				this.value = new byte[4];
-				int value = (int)(Compiler.parseValue(aValue, null) & 0xFFFFFFFF);
+				int value = (int)(Compiler.parseValue(aValue) & 0xFFFFFFFF);
 				this.value[0] = (byte)(value        & 0xFF);
 				this.value[1] = (byte)(value >>> 8  & 0xFF);
 				this.value[2] = (byte)(value >>> 16 & 0xFF);

@@ -95,6 +95,10 @@ public class Compiler
 		return aValue;
 	}
 
+	public static long parseValue(String aValue) throws InstructionException {
+		return parseValue(aValue, null, 0, 1);
+	}
+
 	/**
 	 * Translate a value into a number. Handle +, -, *, / and many other. Also handle labels.
 	 *
@@ -106,7 +110,7 @@ public class Compiler
 	 * @return The value
 	 * @throws InstructionException  If we can't parse the value
 	 */
-	public static long parseValue(String aValue, Hashtable<String, Integer> aLabels) throws InstructionException {
+	public static long parseValue(String aValue, Hashtable<String, Integer> aLabels, int aAddr, int aDivider) throws InstructionException {
 		if (aValue.length() == 0)
 			return 0;
 
@@ -120,7 +124,7 @@ public class Compiler
 			while (mLabels.find()) {
 				String match = mLabels.group(0);
 				if (aLabels.containsKey(match)) {
-					long newValue = (long)aLabels.get(match);
+					long newValue = (long)(aLabels.get(match) - aAddr) / aDivider;
 					aValue = stringReplace(aValue, match, Long.toString(newValue));
 				}
 			}
@@ -135,7 +139,7 @@ public class Compiler
 			Matcher mParenthesis = pParenthesis.matcher(aValue);
 			while (mParenthesis.find()) {
 				found = true;
-				long inner = parseValue(mParenthesis.group(3), aLabels);
+				long inner = parseValue(mParenthesis.group(3), aLabels, aAddr, aDivider);
 
 				// If a macro is found take care of it
 				if (mParenthesis.group(2) != null) {

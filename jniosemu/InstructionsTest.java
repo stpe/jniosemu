@@ -107,7 +107,7 @@ public class InstructionsTest {
 			for(int j=0;j<regNum.size();j++) {
 				registerNum = java.lang.Integer.parseInt(regNum.get(j));
 				try {
-					registerValue = (int)Compiler.parseValue(regValue.get(j), null);
+					registerValue = (int)Compiler.parseValue(regValue.get(j));
 				}
 				catch(Exception e) {
 					error_msg = e.getMessage();

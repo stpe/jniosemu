@@ -128,16 +128,14 @@ public class CompilerITypeInstruction extends CompilerInstruction
 	 * @throws InstructionException  If the immediate value can't be parsed
 	 */
 	public void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException {
-		long imm = 0;
 		try {
-			imm = Compiler.parseValue(this.tImm, aLabels) & 0xFFFFFFFF;
+			if (this.instructionInfo.getSyntax() == InstructionInfo.Syntax.BRANCH || this.instructionInfo.getSyntax() == InstructionInfo.Syntax.BRANCH_COND) {
+				this.imm = (int)(Compiler.parseValue(this.tImm, aLabels, aAddr + 4, 1) & 0xFFFFFFFF);
+			} else {
+				this.imm = (int)(Compiler.parseValue(this.tImm, aLabels, 0, 1) & 0xFFFFFFFF);
+			}
 		} catch (InstructionException e) {
 			throw new InstructionException(this.instructionInfo.getName(), "Error parsing immediate value ("+ this.tImm +")");
 		}
-
-		if (this.instructionInfo.getSyntax() == InstructionInfo.Syntax.BRANCH || this.instructionInfo.getSyntax() == InstructionInfo.Syntax.BRANCH_COND)
-			this.imm = (int)(imm - aAddr - 4);
-		else
-			this.imm = (int)imm;
 	}
 }

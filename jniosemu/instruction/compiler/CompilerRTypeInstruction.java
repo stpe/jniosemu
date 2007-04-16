@@ -158,7 +158,7 @@ public class CompilerRTypeInstruction extends CompilerInstruction
 	 */
 	public void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException {
 		try {
-			this.imm = (int)(Compiler.parseValue(this.tImm, aLabels) & 0xFFFFFFFF);
+			this.imm = (int)(Compiler.parseValue(this.tImm, aLabels, 0, 1) & 0xFFFFFFFF);
 		} catch (InstructionException e) {
 			throw new InstructionException(this.instructionInfo.getName(), "Error parsing immediate value ("+ this.tImm +")");
 		}
