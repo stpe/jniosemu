@@ -69,6 +69,26 @@ public class GUIManager
 	private GUIEditorMessages editorMessages;
 
 	/**
+	 * Variable View window.
+	 */
+	GUIVariableView frameVariableView = null;
+
+	/**
+	 * Memory View window.
+	 */
+	GUIMemoryView frameMemoryView = null;
+
+	/**
+	 * Serial Console window.
+	 */
+	GUISerialConsole frameSerialConsole = null;
+
+	/**
+	 * Console window.
+	 */
+	GUIConsole frameConsole = null;
+
+	/**
 	 * Initiates the creation of GUI components and adds itself to
 	 * the Event Manager as an observer.
 	 *
@@ -383,12 +403,15 @@ public class GUIManager
 	 */
 	private void showVariableView()
 	{
-		GUIVariableView windowFrame = new GUIVariableView(this.eventManager);
+		if (frameVariableView == null)
+		{
+			frameVariableView = new GUIVariableView(this.eventManager);
+			frameVariableView.setSize(new Dimension(200, 260));
+			frameVariableView.setIconImage(this.frame.getIconImage());
+			frameVariableView.setLocationRelativeTo(this.frame);
+		}		
 		
-		windowFrame.setSize(new Dimension(200, 260));
-		windowFrame.setIconImage(this.frame.getIconImage());
-		windowFrame.setLocationRelativeTo(this.frame);
-		windowFrame.setVisible(true);
+		frameVariableView.setVisible(true);
 	}
 	
 	/**
@@ -400,12 +423,15 @@ public class GUIManager
 	 */	
 	private void showMemoryView()
 	{
-		GUIMemoryView windowFrame = new GUIMemoryView(this.eventManager);
+		if (frameMemoryView == null)
+		{
+			frameMemoryView = new GUIMemoryView(this.eventManager);
+			frameMemoryView.setSize(new Dimension(280, 360));
+			frameMemoryView.setIconImage(this.frame.getIconImage());
+			frameMemoryView.setLocationRelativeTo(this.frame);
+		}
 
-		windowFrame.setSize(new Dimension(280, 360));
-		windowFrame.setIconImage(this.frame.getIconImage());
-		windowFrame.setLocationRelativeTo(this.frame);
-		windowFrame.setVisible(true);		
+		frameMemoryView.setVisible(true);
 	}
 
 	/**
@@ -417,12 +443,15 @@ public class GUIManager
 	 */	
 	private void showSerialConsole()
 	{
-		GUISerialConsole windowFrame = new GUISerialConsole(this.eventManager);
+		if (frameSerialConsole == null)
+		{
+			frameSerialConsole = new GUISerialConsole(this.eventManager);
+			frameSerialConsole.setSize(new Dimension(440, 300));
+			frameSerialConsole.setIconImage(this.frame.getIconImage());
+			frameSerialConsole.setLocationRelativeTo(this.frame);
+		}
 
-		windowFrame.setSize(new Dimension(440, 300));
-		windowFrame.setIconImage(this.frame.getIconImage());
-		windowFrame.setLocationRelativeTo(this.frame);
-		windowFrame.setVisible(true);		
+		frameSerialConsole.setVisible(true);		
 	}
 
 	/**
@@ -434,12 +463,15 @@ public class GUIManager
 	 */	
 	private void showConsole()
 	{
-		GUIConsole windowFrame = new GUIConsole(this.eventManager);
+		if (frameConsole == null)
+		{
+			frameConsole = new GUIConsole(this.eventManager);
+			frameConsole.setSize(new Dimension(320, 200));
+			frameConsole.setIconImage(this.frame.getIconImage());
+			frameConsole.setLocationRelativeTo(this.frame);
+		}
 
-		windowFrame.setSize(new Dimension(320, 200));
-		windowFrame.setIconImage(this.frame.getIconImage());
-		windowFrame.setLocationRelativeTo(this.frame);
-		windowFrame.setVisible(true);		
+		frameConsole.setVisible(true);		
 	}
 
 	/**
