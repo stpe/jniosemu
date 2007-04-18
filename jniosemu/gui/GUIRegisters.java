@@ -45,6 +45,10 @@ public class GUIRegisters extends JPanel
 		setup();
 		
 		// add events to listen to
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.REGISTER_CHANGE,
+			EventManager.EVENT.COMPILER_COMPILE
+		};		
 		this.eventManager.addEventObserver(EventManager.EVENT.REGISTER_CHANGE, this);		
 	}
 
@@ -56,14 +60,18 @@ public class GUIRegisters extends JPanel
 	 */	
 	private void setup()
 	{
-		this.setPreferredSize(new Dimension(190, 0));
+		this.setPreferredSize(new Dimension(150, 0));
 
 		// registers
 		registerList = new JList();
 		registerList.setBackground(Color.WHITE);
 		registerList.setFont(new Font("Monospaced", Font.PLAIN, 11));
 		registerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		registerList.setCellRenderer(new RegisterCellRenderer());
+		registerList.setCellRenderer(
+			new RegisterCellRenderer(
+				registerList.getFontMetrics(registerList.getFont())
+			)
+		);
 		registerList.addListSelectionListener(this);
 		
 		// scrollbars
@@ -91,8 +99,13 @@ public class GUIRegisters extends JPanel
 			registerList.setSelectedIndex(index);
 	}
 
-	public void valueChanged(ListSelectionEvent e) {
+	/**
+	 * Called whenever currently selected register changes.
+	 */
+	public void valueChanged(ListSelectionEvent e) 
+	{
 		if (e.getValueIsAdjusting() == false) 
+		// && registerList.isFocusOwner()) // only send event if register list has focus
 		{
 			int index = registerList.getSelectedIndex();
 			
@@ -113,93 +126,111 @@ public class GUIRegisters extends JPanel
 				Vector<Register> tmp = (Vector<Register>) obj;
 				setRegisters( tmp );
 				break;
+			case COMPILER_COMPILE:
+				registerList.clearSelection();
+				break;
 		}
 	}
 
 	/**
 	 * Custom cell renderer for the JList in the register view.
 	 */
-	class RegisterCellRenderer extends JLabel
+	class RegisterCellRenderer extends JPanel
 												 implements ListCellRenderer {
 
-			private Register regObj;
+		private Register regObj;
 
-			public RegisterCellRenderer() {
-					setOpaque(true);
-					setHorizontalAlignment(CENTER);
-					setVerticalAlignment(CENTER);
-			}
+		private final FontMetrics metrics;
+		private final int baseline;
+		private final int width;
+    private final int height;
 
-			public Component getListCellRendererComponent(
-																				 JList list,
-																				 Object value,
-																				 int index,
-																				 boolean isSelected,
-																				 boolean cellHasFocus) {
+		public RegisterCellRenderer(FontMetrics metrics) {
+			super();
+			setOpaque(true);
+			setFont(registerList.getFont());
+			
+			this.baseline = metrics.getAscent();
+			this.height = metrics.getHeight();
+			this.width = registerList.getWidth();
+			this.metrics = metrics;
+		}
 
-					this.setFont(registerList.getFont());
+    /** 
+     * Return the renderers fixed size.  
+     */
+		public Dimension getPreferredSize()
+		{
+			return new Dimension(width, height);
+		}
 
-					this.regObj = (Register) value;
-					setText("."); // trigger repaint
- 
-					if (isSelected)
-					{ 
-						switch (this.regObj.getState())
-						{
-							case READ:
-								setBackground(GUIManager.HIGHLIGHT_SELECTED_GREEN);
-								break;
-							case WRITE:
-								setBackground(GUIManager.HIGHLIGHT_SELECTED_RED);
-								break;
-							default:
-								setBackground(list.getSelectionBackground());
-						}
-						
-						setForeground(list.getSelectionForeground()); 
-					} 
-					else 
-					{ 
-						switch (this.regObj.getState())
-						{
-							case READ:
-								setBackground(GUIManager.HIGHLIGHT_GREEN);
-								break;
-							case WRITE:
-								setBackground(GUIManager.HIGHLIGHT_RED);
-								break;
-							default:
-								setBackground(list.getBackground());
-						}
-						
-						setForeground(list.getForeground());
-					} 
-
-					return this;
-			}
-
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-
-			if (isOpaque()) 
+		/**
+		 * Cell rendered methos sets background/foreground
+		 * color and stores Register object.
+		 */
+		public Component getListCellRendererComponent(
+																			 JList list,
+																			 Object value,
+																			 int index,
+																			 boolean isSelected,
+																			 boolean cellHasFocus) 
+		{
+			this.regObj = (Register) value;
+			
+			if (isSelected)
 			{ 
-					// paint background
-					g.setColor(getBackground());
-					g.fillRect(0, 0, getWidth(), getHeight());
-			}
+				switch (this.regObj.getState())
+				{
+					case READ:
+						setBackground(GUIManager.HIGHLIGHT_SELECTED_GREEN);
+						break;
+					case WRITE:
+						setBackground(GUIManager.HIGHLIGHT_SELECTED_RED);
+						break;
+					default:
+						setBackground(list.getSelectionBackground());
+				}
+			} 
+			else 
+			{ 
+				switch (this.regObj.getState())
+				{
+					case READ:
+						setBackground(GUIManager.HIGHLIGHT_GREEN);
+						break;
+					case WRITE:
+						setBackground(GUIManager.HIGHLIGHT_RED);
+						break;
+					default:
+						setBackground(list.getBackground());
+				}
+			} 
 
-			FontMetrics metrics = g.getFontMetrics(getFont());
-		
+			return this;
+		}
+
+		/**
+		 * Custom paint method bypassing standard JComponent
+		 * painting to optimize performance.
+		 */
+		public void paintComponent(Graphics g) 
+		{
+			// clear background
+			g.setColor(getBackground());
+			g.fillRect(0, 0, getWidth(), getHeight());
+
+			// draw not supported registers in another color
 			if (regObj.getState() == Register.STATE.DISABLED)
 				g.setColor(GUIManager.FONT_DISABLED);
 			else
 				g.setColor(Color.black);
 			
-			g.drawString(regObj.getName(), 2, 11);
+			// register name
+			g.drawString(regObj.getName(), 2, this.baseline);
 
+			// register value
 			String tmp = regObj.getValueAsString();	
-
-			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, 11);
+			g.drawString(tmp, getWidth() - this.metrics.stringWidth(tmp) - 2, this.baseline);
 		}
 
 	}

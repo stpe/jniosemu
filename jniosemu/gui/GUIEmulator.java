@@ -5,6 +5,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.*;
+import java.lang.Math;
 
 import jniosemu.events.*;
 import jniosemu.emulator.*;
@@ -17,9 +18,21 @@ import jniosemu.Utilities;
 											 implements MouseListener, EventObserver {
 
 	/**
-	 * Defines the width of the breakpoint column. 
+	 * Defines the width, offset and offset in percent for columns
+	 * in the emulator view.
 	 */
 	private static int BREAKPOINT_AREA_WIDTH = 18;
+	private static int INSTRUCTION_OFFSET = 110;
+	private static float INSTRUCTION_OFFSET_PERCENT = 0.20f;
+	private static int SOURCECODE_OFFSET = 250;
+	private static float SOURCECODE_OFFSET_PERCENT = 0.50f;
+
+	/**
+	 * Colors used for highlighting currently executed line
+	 * in emulatov view.
+	 */
+	private static Color CURRENT_LINE_COLOR = new Color(255, 255, 0);
+	private static Color SIBLING_LINE_COLOR = new Color(255, 255, 220);
 
 	/**
 	 * Reference to EventManager used to receive
@@ -93,7 +106,11 @@ import jniosemu.Utilities;
 		listView = new JList();
 		listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		listView.setBackground(Color.WHITE);
-		listView.setCellRenderer(new EmulatorCellRenderer());
+		listView.setCellRenderer(
+			new EmulatorCellRenderer(
+				listView.getFontMetrics(listView.getFont())
+			)
+		);
 
 		listView.addMouseListener(this);
 
@@ -208,105 +225,124 @@ import jniosemu.Utilities;
 	/**
 	 * Custom cell renderer for the JList in the emulator view.
 	 */
-	class EmulatorCellRenderer extends JLabel
+	class EmulatorCellRenderer extends JPanel
 												 implements ListCellRenderer {
 
-			/**
-			 * ProgramLine object for the current cell that is drawn.
-			 */
-			private ProgramLine lineObj;
+		/**
+		 * ProgramLine object for the current cell that is drawn.
+		 */
+		private ProgramLine lineObj;
+		
+		private final int baseline;
+		private final int width;
+    private final int height;
+		
+		public EmulatorCellRenderer(FontMetrics metrics) {
+			super();
+			setOpaque(true);
+			setFont(listView.getFont());
 			
-			public EmulatorCellRenderer() {
-					setOpaque(true);
-					setHorizontalAlignment(CENTER);
-					setVerticalAlignment(CENTER);
+			this.baseline = metrics.getAscent();
+			this.height = metrics.getHeight();
+			this.width = listView.getWidth();
+		}
+
+    /** 
+     * Return the renderers fixed size.  
+     */
+		public Dimension getPreferredSize()
+		{
+			return new Dimension(width, height);
+		}
+		
+		/**
+		 * Cell rendered methos sets background/foreground
+		 * color and stores ProgramLine for row.
+		 */
+		public Component getListCellRendererComponent(
+																			 JList list,
+																			 Object value,
+																			 int index,
+																			 boolean isSelected,
+																			 boolean cellHasFocus)
+		{
+			this.lineObj = (ProgramLine) value;
+
+			setBackground(list.getBackground());
+			setForeground(list.getForeground());
+
+			return this;
+		}
+
+		/**
+		 * Custom paint method bypassing standard JComponent
+		 * painting to optimize performance.
+		 */
+		public void paintComponent(Graphics g) 
+		{
+			// clear background
+			g.setColor(getBackground());
+			g.fillRect(0, 0, getWidth(), getHeight());
+
+			// current executing program line highlight
+			ProgramLine.SIBLINGSTATUS status = lineObj.isSibling(currentIndex);
+
+			if (status != ProgramLine.SIBLINGSTATUS.NONE) {
+				g.setColor(CURRENT_LINE_COLOR);
+				g.fillRect(3, 0, getWidth()-6, getHeight());
 			}
 
-			public Component getListCellRendererComponent(
-																				 JList list,
-																				 Object value,
-																				 int index,
-																				 boolean isSelected,
-																				 boolean cellHasFocus) {
-
-					this.setFont(listView.getFont());
-
-					this.lineObj = (ProgramLine) value;
-					setText("."); // trigger repaint
-
-					/*
-					if (isSelected) {
-							setBackground(list.getSelectionBackground());
-							setForeground(list.getSelectionForeground());
-					} else {
-					*/
-							setBackground(list.getBackground());
-							setForeground(list.getForeground());
-					// }
-
-					// indicate program counter
-					/*
-					if (index == currentIndex)
-						setBackground(new Color(255, 255, 0));
-					*/
-
-					return this;
+			switch (status) {
+				case FIRST:
+					g.setColor(SIBLING_LINE_COLOR);
+					g.fillRect(4, 1, getWidth()-8, getHeight()-1);
+					break;
+				case MIDDLE:
+					g.setColor(SIBLING_LINE_COLOR);
+					g.fillRect(4, 0, getWidth()-8, getHeight());
+					break;
+				case LAST:
+					g.setColor(SIBLING_LINE_COLOR);
+					g.fillRect(4, 0, getWidth()-8, getHeight()-1);
+					break;
 			}
 
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
+			g.setColor(getForeground());
 
-			if (isOpaque())
-			{
-				ProgramLine.SIBLINGSTATUS status = lineObj.isSibling(currentIndex);
+			int xOffset = 3;
 
-				g.setColor(getBackground());
-				g.fillRect(0, 0, getWidth(), getHeight());
-
-				if (status != ProgramLine.SIBLINGSTATUS.NONE) {
-					g.setColor(new Color(255, 255, 0));
-					g.fillRect(3, 0, getWidth()-6, getHeight());
-				}
-
-				switch (status) {
-					case FIRST:
-						g.setColor(new Color(255, 255, 220));
-						g.fillRect(4, 1, getWidth()-8, getHeight()-1);
-						break;
-					case MIDDLE:
-						g.setColor(new Color(255, 255, 220));
-						g.fillRect(4, 0, getWidth()-8, getHeight());
-						break;
-					case LAST:
-						g.setColor(new Color(255, 255, 220));
-						g.fillRect(4, 0, getWidth()-8, getHeight()-1);
-						break;
-				}
-			}
-
-			g.setColor(new Color(0, 0, 0));
-
-			int yOffset = 12;
-			
-			// draw breakpoint
+			// breakpoint
 			switch (lineObj.getBreakPoint())
 			{
 				case TRUE:
-					g.drawImage(breakPointSetIcon.getImage(), 3, 0, null);
+					g.drawImage(breakPointSetIcon.getImage(), xOffset, 1, null);
 					break;
 				case FALSE:
-					g.drawImage(breakPointUnsetIcon.getImage(), 3, 0, null);
+					g.drawImage(breakPointUnsetIcon.getImage(), xOffset, 1, null);
 					break;
 			}
 
+			xOffset = BREAKPOINT_AREA_WIDTH;
+			
+			// opcode
 			if (lineObj.getOpCode() != null)
-				g.drawString(lineObj.getOpCode(), BREAKPOINT_AREA_WIDTH, yOffset);
+				g.drawString(lineObj.getOpCode(), xOffset, this.baseline);
 
+			// instruction
 			if (lineObj.getInstruction() != null)
-				g.drawString(lineObj.getInstruction(), 110, yOffset);
+			{
+				xOffset = (int) Math.max(INSTRUCTION_OFFSET, INSTRUCTION_OFFSET_PERCENT * getWidth());
+				
+				g.drawString(lineObj.getInstruction(), xOffset, this.baseline);
+			}
 
+			// source line
 			if (lineObj.getSourceCodeLine() != null)
-				g.drawString(lineObj.getSourceCodeLine(), 240, yOffset);
+			{
+				xOffset = (int) Math.max(SOURCECODE_OFFSET, SOURCECODE_OFFSET_PERCENT * getWidth());
+
+				g.drawString(lineObj.getSourceCodeLine(), xOffset, this.baseline);
+			}
 		}
 
 	}

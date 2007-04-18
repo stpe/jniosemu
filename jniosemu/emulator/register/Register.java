@@ -86,7 +86,7 @@ public class Register
 	 * @return value
 	 */
 	public String getValueAsString() {
-		return this.value +" ("+ Utilities.intToHexString(this.value) +")";
+		return Utilities.intToHexString(this.value);
 	}
 
 	/**
