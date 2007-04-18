@@ -28,7 +28,9 @@ public class MacroManager
 		addMacro("MOV",     "rC, rA",        "ADD \\rC, \\rA, r0", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
 		addMacro("MOVHI",   "rB, imm",       "ORHI \\rB, r0, \\imm", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
 		addMacro("MOVI",    "rB, imm",       "ADDI \\rB, r0, \\imm", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
-		addMacro("MOVIA",   "rB, imm",       "ORHI \\rB, r0, %hiadj(\\imm)\nADDI \\rB, \\rB, %lo(\\imm)", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
+		// The last & 0xFFFF is there because else the value could be 0x10000 which means that
+		// it would be out of range
+		addMacro("MOVIA",   "rB, imm",       "ORHI \\rB, r0, %hiadj(\\imm) & 0xFFFF\nADDI \\rB, \\rB, %lo(\\imm)", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
 		addMacro("MOVUI",   "rB, imm",       "ORI \\rB, r0, \\imm", -1, InstructionManager.INSTRUCTION_CATEGORY.MOVE);
 		addMacro("NOP",     null,            "ADD r0, r0, r0", -1, InstructionManager.INSTRUCTION_CATEGORY.OTHER);
 		addMacro("SUBI",    "rB, rA, imm",   "ADDI \\rB, \\rA, -(\\imm)", -1, InstructionManager.INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);

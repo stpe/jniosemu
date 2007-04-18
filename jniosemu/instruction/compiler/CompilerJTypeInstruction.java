@@ -80,11 +80,18 @@ public class CompilerJTypeInstruction extends CompilerInstruction
 	 * @throws InstructionException  If the immediate value can't be parsed
 	 */
 	public void link(Hashtable<String, Integer> aLabels, int aAddr) throws InstructionException {
+		long imm;
 		try {
-			this.imm = (int)(Compiler.parseValue(this.tImm, aLabels, 0, 4) & 0xFFFFFFFF);
+			imm = Compiler.parseValue(this.tImm, aLabels, 0, 4);
 		} catch (InstructionException e) {
 			throw new InstructionException(this.instructionInfo.getName(), "Error parsing immediate value ("+ this.tImm +")");
 		}
+
+		this.imm = (int)(imm & 0x3FFFFFF);
+
+		long mask = (long)0xFFFFFFFF;
+		if ((imm >> 26) != 0 && (imm >> 26 & mask) > 0)
+			throw new InstructionException(this.instructionInfo.getName(), "Immediate value is out of range");
 	}
 }
 
