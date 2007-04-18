@@ -75,7 +75,7 @@ public class GUIEditorMessages extends JPanel
 		 */
 		MouseListener mouseListener = new MouseAdapter() 
 		{
-			private static final String LINE_NUMBER_PREFIX = "Line: ";
+			private static final String LINE_NUMBER_PREFIX = "Line ";
 			
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
@@ -85,7 +85,7 @@ public class GUIEditorMessages extends JPanel
 					// unable to get location					
 					if (index == -1)
 						return;
-					
+
 					// get error message where clicked
 					String errorMsg = "";
 					try {
@@ -94,13 +94,13 @@ public class GUIEditorMessages extends JPanel
 						// no error message row at point where clicked
 						return;
 					}
-					
+
 					// get the line number
 					errorMsg = errorMsg.substring(
 						errorMsg.indexOf(LINE_NUMBER_PREFIX) + LINE_NUMBER_PREFIX.length(),
 						errorMsg.indexOf(':')
 					);
-					
+
 					int lineNumber = -1;
 					
 					try {
@@ -109,7 +109,7 @@ public class GUIEditorMessages extends JPanel
 						// wasn't a number, do nothing
 						return;
 					}
-					
+
 					// send event to move caret in editor
 					eventManager.sendEvent(EventManager.EVENT.EDITOR_MOVE_TO_LINE, Integer.valueOf(lineNumber));
 				}
