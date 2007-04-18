@@ -64,9 +64,19 @@ public class GUIManager
 	private JSplitPane editorSplitPane;
 	
 	/**
+	 * Splitter used between emulator and editor messages.
+	 */
+	private JSplitPane emulatorSplitPane;
+	
+	/**
 	 * Reference to editor messages object.
 	 */
 	private GUIEditorMessages editorMessages;
+
+	/**
+	 * Reference to emulator messages object.
+	 */
+	private GUIEmulatorMessages emulatorMessages;
 
 	/**
 	 * Variable View window.
@@ -202,7 +212,7 @@ public class GUIManager
 		// status bar
 		GUIStatusBar statusBar = new GUIStatusBar(this.eventManager);
 
-		// split pane between editor and editor messages		
+		// split pane between editor and editor messages
 		editorSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 		                                            editor, editorMessages);
 
@@ -219,6 +229,16 @@ public class GUIManager
 		// emulator
 		GUIEmulator emulator = new GUIEmulator(this.eventManager);
 
+		// emulator messages
+		emulatorMessages = new GUIEmulatorMessages(this.eventManager);
+
+		// split pane between editor and editor messages
+		emulatorSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+		                                            emulator, emulatorMessages);
+
+		// remove splitpane keyboard bindings (it eats F8)
+		SwingUtilities.replaceUIInputMap(emulatorSplitPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, null);
+
 		// emulator: left panel
 		JPanel emulatorLeftPanel = new JPanel(new BorderLayout());
 
@@ -232,12 +252,12 @@ public class GUIManager
 		emulatorLeftPanel.add(registerView, BorderLayout.PAGE_END);
 
 		// split pane between emulator and register view
-		JSplitPane emulatorSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-		                                              emulatorLeftPanel, emulator);
-		emulatorPanel.add(emulatorSplitPane, BorderLayout.CENTER);
+		JSplitPane registerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+		                                              emulatorLeftPanel, emulatorSplitPane);
+		emulatorPanel.add(registerSplitPane, BorderLayout.CENTER);
 
 		// remove splitpane keyboard bindings (it eats F8)
-		SwingUtilities.replaceUIInputMap(emulatorSplitPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, null);
+		SwingUtilities.replaceUIInputMap(registerSplitPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, null);
 
 		// emulator: right panel
 		JPanel emulatorRightPanel = new JPanel(new BorderLayout());
@@ -286,7 +306,8 @@ public class GUIManager
 				showAbout();
 				break;
 			case APPLICATION_START:
-				toggleErrorMessages(false);
+				toggleEditorMessages(false);
+				toggleEmulatorMessages(false);
 				break;
 			case APPLICATION_TAB_CHANGE:
 				changeTab( ((Integer) obj).intValue() );
@@ -299,6 +320,7 @@ public class GUIManager
 				break;
 			case EMULATOR_READY:
 				changeTab( Integer.valueOf(TAB_EMULATOR) );
+				toggleEmulatorMessages(false);
 				break;
 			case EXCEPTION:
 				showException( (Exception) obj );
@@ -316,10 +338,13 @@ public class GUIManager
 				showConsole();
 				break;
 			case COMPILER_COMPILE:
-				toggleErrorMessages(false);
+				toggleEditorMessages(false);
 				break;
 			case COMPILER_ERROR:
-				toggleErrorMessages(true);
+				toggleEditorMessages(true);
+				break;
+			case EMULATOR_ERROR:
+				toggleEmulatorMessages(true);
 				break;
 		}
 	}
@@ -475,24 +500,46 @@ public class GUIManager
 	}
 
 	/**
-	 * Show or hide the error messages list.
+	 * Show or hide the editor error messages list.
 	 *
 	 * @param makeVisible  set to true to show error messages
 	 */
-	private void toggleErrorMessages(boolean makeVisible)
+	private void toggleEditorMessages(boolean makeVisible)
+	{
+		toggleMessagesSplitpane(makeVisible, editorMessages, editorSplitPane);
+	}
+
+	/**
+	 * Show or hide the emulator error messages list.
+	 *
+	 * @param makeVisible  set to true to show error messages
+	 */
+	private void toggleEmulatorMessages(boolean makeVisible)
+	{
+		toggleMessagesSplitpane(makeVisible, emulatorMessages, emulatorSplitPane);
+	}
+
+	/**
+	 * Show or hide the editor error messages list.
+	 *
+	 * @param makeVisible  set to true to show error messages
+	 * @param msgView      component to toggle
+	 * @param splitpane    splitpane to toggle
+	 */
+	private void toggleMessagesSplitpane(boolean makeVisible, JComponent msgView, JSplitPane splitpane)
 	{
 		// do nothing if state already is set
-		if (makeVisible == editorMessages.isVisible())
+		if (makeVisible == msgView.isVisible())
 			return;
 
-		javax.swing.plaf.basic.BasicSplitPaneUI ui = (javax.swing.plaf.basic.BasicSplitPaneUI) editorSplitPane.getUI();
+		javax.swing.plaf.basic.BasicSplitPaneUI ui = (javax.swing.plaf.basic.BasicSplitPaneUI) splitpane.getUI();
 		ui.getDivider().setVisible(makeVisible);
 
-		editorMessages.setVisible(makeVisible);
+		msgView.setVisible(makeVisible);
 
 		// set percentages the editor should occupy (messages gets the rest)
-		editorSplitPane.setDividerLocation(0.85);
-	}
+		splitpane.setDividerLocation(0.90);
+	}	
 
 }
 
