@@ -65,9 +65,9 @@ public abstract class MemoryBlock
 	}
 
 	/**
-	 * Get the length of the memory part.
+	 * Get the length of the memory block.
 	 *
-	 * @return Length of the memory part
+	 * @return Length of the memory block
 	 */
 	public int getLength() {
 		return this.length;

@@ -67,6 +67,9 @@ public class GUIMemoryView extends JFrame
 		};
 
 		this.eventManager.addEventObserver(events, this);
+
+		// trigger an update
+		eventManager.sendEvent(EventManager.EVENT.MEMORY_REQUEST_UPDATE);
 	}
 
 	/**
@@ -176,7 +179,7 @@ public class GUIMemoryView extends JFrame
 				// in order to remove indication
 				memoryUpdateState[i] = memBlock.isChanged();
 			}
-		}		
+		}
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)

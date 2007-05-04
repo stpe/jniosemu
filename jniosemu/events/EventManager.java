@@ -36,6 +36,8 @@ public final class EventManager
 		COMPILER_COMPILE,									// Start compiling
 		COMPILER_COMPILE_INIT,						// Start compile requested from GUI
 		COMPILER_ERROR,										// Error occured during compilation
+		CONSOLE_OUTPUT,										// Send a character to console
+		CONSOLE_VIEW,											// Show Console window
 		DIPSWITCH_TOGGLE,									// IO dipswitches in GUI has changed
 		DIPSWITCH_UPDATE,									// Update state of dipswitches
 		DOCUMENT_NEW,											// New document
@@ -66,18 +68,20 @@ public final class EventManager
 		EMULATOR_BREAKPOINT_TOGGLE,				// Breakpoint has been toggled in GUI
 		EXCEPTION,												// Exception has occured
 		LED_UPDATE,												// Update state of leds
-		MEMORY_VIEW,											// Show Memory View window
 		MEMORY_CHANGE,										// If the memory changed
+		MEMORY_REQUEST_UPDATE,						// Trigger a MEMORY_CHANGE event
+		MEMORY_VIEW,											// Show Memory View window
 		PROGRAMCOUNTER_CHANGE,						// Program counter in emulated program has changed
 		REGISTER_CHANGE,									// Register in emulated program has changed
 		REGISTER_VIEW_SELECT,							// A register is selected in the registers list
+		SERIAL_CONSOLE_VIEW,							// Show Serial Console window
 		SERIAL_INPUT,											// Send a character to emulated serial port
 		SERIAL_OUTPUT,										// Send a character out of emulated serial port
-		CONSOLE_OUTPUT,										// Send a character to console
 		STATE_CHANGE,											// Update state (disabled/enabled) of elements in menu and toolbar
-		VARIABLE_VIEW,										// Show Variables View window
-		SERIAL_CONSOLE_VIEW,							// Show Serial Console window
-		CONSOLE_VIEW											// Show Console window
+		VARIABLE_CHANGE,									// If variables have changed (send memory block)
+		VARIABLE_REQUEST_UPDATE,					// Trigger a VARIABLE_CHANGE and VARIABLE_VECTOR event
+		VARIABLE_VECTOR,									// Vector of Variable for Variable View
+		VARIABLE_VIEW,										// Show Variable View window
 	};
 
 	/**

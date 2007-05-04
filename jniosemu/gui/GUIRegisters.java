@@ -123,8 +123,7 @@ public class GUIRegisters extends JPanel
 	{
 		switch (eventIdentifier) {
 			case REGISTER_CHANGE:
-				Vector<Register> tmp = (Vector<Register>) obj;
-				setRegisters( tmp );
+				setRegisters( (Vector<Register>) obj );
 				break;
 			case COMPILER_COMPILE:
 				registerList.clearSelection();
@@ -220,16 +219,16 @@ public class GUIRegisters extends JPanel
 			g.fillRect(0, 0, getWidth(), getHeight());
 
 			// draw not supported registers in another color
-			if (regObj.getState() == Register.STATE.DISABLED)
+			if (this.regObj.getState() == Register.STATE.DISABLED)
 				g.setColor(GUIManager.FONT_DISABLED);
 			else
 				g.setColor(Color.black);
 			
 			// register name
-			g.drawString(regObj.getName(), 2, this.baseline);
+			g.drawString(this.regObj.getName(), 2, this.baseline);
 
 			// register value
-			String tmp = regObj.getValueAsString();	
+			String tmp = this.regObj.getValueAsString();	
 			g.drawString(tmp, getWidth() - this.metrics.stringWidth(tmp) - 2, this.baseline);
 		}
 
