@@ -34,8 +34,8 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * MemoryManager that is used
 	 */
-	private MemoryManager memory;
-	private MemoryBlock variableMemory;
+	private MemoryManager memory = null;
+	private MemoryBlock variableMemory = null;
 	/**
 	 * RegisterManager that is used
 	 */
@@ -55,7 +55,7 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * Current program
 	 */
-	private Program program;
+	private Program program = null;
 	/**
 	 * Current speed
 	 */
@@ -416,11 +416,14 @@ public class EmulatorManager implements EventObserver
 				this.setSpeed((SPEED)obj);
 				break;
 			case MEMORY_REQUEST_UPDATE:
-				this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());
+				if (this.memory != null)
+					this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());
 				break;
 			case VARIABLE_REQUEST_UPDATE:
-				this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_VECTOR, this.program.getVariables());
-				this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_CHANGE, this.variableMemory);
+				if (this.program != null)
+					this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_VECTOR, this.program.getVariables());
+				if (this.variableMemory != null)
+					this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_CHANGE, this.variableMemory);
 				break;
 		}
 	}
