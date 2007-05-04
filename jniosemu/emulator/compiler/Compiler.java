@@ -334,10 +334,34 @@ public class Compiler
 									throw new CompilerException(aLineNumber, e.getMessage());
 								}
 							} else if (name.equals("skip")) {
-								long count = this.parseValue(mInstruction.group(3));
-								for (long i = 0; i < count; i++) {
-									this.variables.add(new Variable(this.lastLabel, (byte)0));
-									this.lastLabel = null;
+								try {
+									long count = this.parseValue(mInstruction.group(3));
+									for (long i = 0; i < count; i++) {
+										this.variables.add(new Variable(this.lastLabel, (byte)0));
+										this.lastLabel = null;
+									}
+								} catch (InstructionException e) {
+									throw new CompilerException(aLineNumber, e.getMessage());
+								}
+							} else if (name.equals("fill")) {
+								String[] variables = mInstruction.group(3).split(",");
+								if (variables.length != 3)
+									throw new CompilerException(aLineNumber, "Not enough arguments");
+
+								try {
+									long count = this.parseValue(variables[0]);
+									long size = this.parseValue(variables[1]);
+									byte[] value = Utilities.longToByteArray(this.parseValue(variables[2]));
+
+									for (long i = 0; i < count; i++) {
+										for (long j = 0; j < size; j++) {
+											this.variables.add(new Variable(this.lastLabel, value[(int)(size - j - 1)]));
+											this.lastLabel = null;
+										}
+									}
+
+								} catch (InstructionException e) {
+									throw new CompilerException(aLineNumber, e.getMessage());
 								}
 							} else if (name.equals("end")) {
 								// Not sure if we have to do anything but we have it here so we don't get an error
@@ -416,7 +440,7 @@ public class Compiler
 	 * @throws CompilerException  If an instruction can't link
 	 */
 	public Program link() throws CompilerException {
-		int size = 4;
+		int size = 0;
 		for (Variable variable: this.variables)
 			size += variable.getLength();
 		byte[] binaryVariables = new byte[size];
