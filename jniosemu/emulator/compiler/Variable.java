@@ -2,51 +2,51 @@ package jniosemu.emulator.compiler;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import jniosemu.Utilities;
 import jniosemu.instruction.InstructionException;
 
 public class Variable
 {
-	static enum Type {BYTE, WORD, ASCII, ASCIZ};
+	static enum TYPE {BYTE, HWORD, WORD, ASCII, ASCIZ};
 	private String name;
-	private Type type;
-	private byte[] value;
+	private TYPE type;
+	private int startAddr;
+	private byte[] startValue;
 
 	/**
 	 * Init a Variable
 	 *
 	 * @param aName		Name of the variable
 	 * @param aType		Type of variable
-	 * @param aValue	Value of the variable
+	 * @param aStartValue	Start value of the variable
 	 */
-	public Variable (String aName, Type aType, String aValue) throws InstructionException {
+	public Variable (String aName, TYPE aType, String aStartValue) throws InstructionException {
 		this.type = aType;
 		this.name = aName;
-		switch(type) {
+		switch(this.type) {
 			case BYTE:
-				this.value = new byte[1];
-				this.value[0] = (byte)(Compiler.parseValue(aValue) & 0xFF);
+				this.startValue = new byte[1];
+				this.startValue[0] = (byte)(Compiler.parseValue(aStartValue) & 0xFF);
+				break;
+			case HWORD:
+				this.startValue = Utilities.shortToByteArray((short)Compiler.parseValue(aStartValue));
 				break;
 			case WORD:
-				this.value = new byte[4];
-				int value = (int)(Compiler.parseValue(aValue) & 0xFFFFFFFF);
-				this.value[0] = (byte)(value        & 0xFF);
-				this.value[1] = (byte)(value >>> 8  & 0xFF);
-				this.value[2] = (byte)(value >>> 16 & 0xFF);
-				this.value[3] = (byte)(value >>> 24 & 0xFF);
+				this.startValue = Utilities.intToByteArray((int)Compiler.parseValue(aStartValue));
 				break;
 			case ASCII:
 			case ASCIZ:
 				Pattern pString = Pattern.compile("\"(.*)\"");
-				Matcher mString = pString.matcher(aValue);
+				Matcher mString = pString.matcher(aStartValue);
 				if (mString.matches()) {
 					String valueStr = mString.group(1);
 					int length = valueStr.length();
-					if (type == Type.ASCIZ)
+					if (type == TYPE.ASCIZ)
 						length++;
-					this.value = new byte[length];
+					this.startValue = new byte[length];
 					char[] chars = valueStr.toCharArray();
 					for (int i = 0; i < chars.length; i++) {
-						this.value[i] = (byte)(chars[i] & 0xFF);
+						this.startValue[i] = (byte)(chars[i] & 0xFF);
 					}
 				} else {
 					throw new InstructionException();
@@ -69,7 +69,23 @@ public class Variable
 	 *
 	 * @return	value of the variable
 	 */
-	public byte[] getValue() {
-		return this.value;
+	public byte[] getStartValue() {
+		return this.startValue;
+	}
+
+	public int getLength() {
+		return this.startValue.length;
+	}
+
+	public TYPE getType() {
+		return this.type;
+	}
+
+	public void setStartAddr(int startAddr) {
+		this.startAddr = startAddr;
+	}
+
+	public int getStartAddr() {
+		return this.startAddr;
 	}
 }

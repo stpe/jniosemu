@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import jniosemu.emulator.memory.MemoryManager;
+import jniosemu.emulator.compiler.Variable;
 import jniosemu.instruction.InstructionManager;
 import jniosemu.instruction.compiler.CompilerInstruction;
 import jniosemu.instruction.emulator.Instruction;
@@ -22,7 +23,7 @@ public class Program
 	/**
 	 * Binary representation of the variables
 	 */
-	private final byte[] variables;
+	private final byte[] variabledata;
 	/**
 	 * Start address
 	 */
@@ -31,6 +32,7 @@ public class Program
 	 * Contains all ProgramLine:s
 	 */
 	private Vector<ProgramLine> programLines = new Vector<ProgramLine>();
+	private Vector<Variable> variables = new Vector<Variable>();
 	/**
 	 * Used for fast get linenumber from address
 	 */
@@ -47,14 +49,16 @@ public class Program
 	 *
 	 * @param lines  Sourcecode lines
 	 * @param instructions  Program in the form of binary data
+	 * @param variables  Vector containing all variables
 	 * @param program  Binary program
-	 * @param variables  Variables as binary
+	 * @param variabledata  Variables as binary
 	 * @param startAddr  Start position in the memory (what to set pc before starting to emulate)
 	 */
-	public Program(String[] lines, ArrayList<CompilerInstruction> instructions, byte[] program, byte[] variables, int startAddr) {
+	public Program(String[] lines, ArrayList<CompilerInstruction> instructions, Vector<Variable> variables, byte[] program, byte[] variabledata, int startAddr) {
 		this.startAddr = startAddr;
 		this.program = program;
 		this.variables = variables;
+		this.variabledata = variabledata;
 
 		int sourceCodeLineNumber = 1;
 		int addr = MemoryManager.PROGRAMSTARTADDR;
@@ -162,7 +166,7 @@ public class Program
 	 * @return Variables in the form of binary data
 	 */
 	public byte[] getBinaryVariables() {
-		return this.variables;
+		return this.variabledata;
 	}
 
 	/**
@@ -192,5 +196,9 @@ public class Program
 		} catch (Exception e) {}
 
 		return false;
+	}
+
+	public Vector<Variable> getVariables() {
+		return this.variables;
 	}
 }

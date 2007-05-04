@@ -8,6 +8,7 @@ import jniosemu.events.EventManager;
 import jniosemu.events.EventObserver;
 import jniosemu.emulator.compiler.Compiler;
 import jniosemu.emulator.compiler.CompilerException;
+import jniosemu.emulator.memory.MemoryBlock;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionManager;
@@ -34,6 +35,7 @@ public class EmulatorManager implements EventObserver
 	 * MemoryManager that is used
 	 */
 	private MemoryManager memory;
+	private MemoryBlock variableMemory;
 	/**
 	 * RegisterManager that is used
 	 */
@@ -85,7 +87,9 @@ public class EmulatorManager implements EventObserver
 			EventManager.EVENT.EMULATOR_RESET,
 			EventManager.EVENT.EMULATOR_RUN,
 			EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE,
-			EventManager.EVENT.EMULATOR_SPEED
+			EventManager.EVENT.EMULATOR_SPEED,
+			EventManager.EVENT.MEMORY_REQUEST_UPDATE,
+			EventManager.EVENT.VARIABLE_REQUEST_UPDATE
 		};
 
 		eventManager.addEventObserver(events, this);
@@ -310,11 +314,17 @@ public class EmulatorManager implements EventObserver
 			this.memory.reset(this.program.getBinaryProgram(), this.program.getBinaryVariables());
 		}
 
+		for (MemoryBlock memoryBlock : this.memory.getMemoryBlocks()) {
+			if (memoryBlock.getStart() == MemoryManager.VARIABLESTARTADDR)
+				this.variableMemory = memoryBlock;
+		}
+
 		this.pc = this.program.getStartAddr();
 		this.register = new RegisterManager();
 
 		this.ended = false;
 		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_READY, this.program);
+		this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_VECTOR, this.program.getVariables());
 
 		this.pcChange();
 	}
@@ -402,6 +412,13 @@ public class EmulatorManager implements EventObserver
 			case EMULATOR_SPEED:
 				this.setSpeed((SPEED)obj);
 				break;
+			case MEMORY_REQUEST_UPDATE:
+				this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());
+				break;
+			case VARIABLE_REQUEST_UPDATE:
+				this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_VECTOR, this.program.getVariables());
+				this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_CHANGE, this.variableMemory);
+				break;
 		}
 	}
 
@@ -418,6 +435,7 @@ public class EmulatorManager implements EventObserver
 		this.eventManager.sendEvent(EventManager.EVENT.PROGRAMCOUNTER_CHANGE, Integer.valueOf(this.pc));
 		this.eventManager.sendEvent(EventManager.EVENT.REGISTER_CHANGE, this.register.get());
 		this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());
+		this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_CHANGE, this.variableMemory);
 	}
 
 	/**

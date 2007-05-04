@@ -1,10 +1,12 @@
 package jniosemu.emulator.compiler;
 
-import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+import jniosemu.Utilities;
 import jniosemu.emulator.Program;
 import jniosemu.emulator.compiler.macro.Macro;
 import jniosemu.emulator.compiler.macro.MacroManager;
@@ -39,7 +41,7 @@ public class Compiler
 	/**
 	 * Contains all Variable.
 	 */
-	private ArrayList<Variable> variables = new ArrayList<Variable>();
+	private Vector<Variable> variables = new Vector<Variable>();
 	/**
 	 * For managing macros.
 	 */
@@ -309,31 +311,25 @@ public class Compiler
 								}
 							} else if (name.equals("endm")) {
 								this.lastMacro = null;
-							} else if (name.equals("word")) {
+							} else if (name.equals("word") || name.equals("hword") || name.equals("byte") || name.equals("ascii") || name.equals("asciz") || name.equals("string")) {
 								try {
-									this.variables.add(new Variable(lastLabel, Variable.Type.WORD, mInstruction.group(3)));
-									this.lastLabel = null;
-								} catch (InstructionException e) {
-									throw new CompilerException(aLineNumber, e.getMessage());
-								}
-							} else if (name.equals("byte")) {
-								try {
-									this.variables.add(new Variable(lastLabel, Variable.Type.BYTE, mInstruction.group(3)));
-									this.lastLabel = null;
-								} catch (InstructionException e) {
-									throw new CompilerException(aLineNumber, e.getMessage());
-								}
-							} else if (name.equals("ascii")) {
-								try {
-									this.variables.add(new Variable(lastLabel, Variable.Type.ASCII, mInstruction.group(3)));
-									this.lastLabel = null;
-								} catch (InstructionException e) {
-									throw new CompilerException(aLineNumber, e.getMessage());
-								}
-							} else if (name.equals("asciz") || name.equals("string")) {
-								try {
-									this.variables.add(new Variable(lastLabel, Variable.Type.ASCIZ, mInstruction.group(3)));
-									this.lastLabel = null;
+									String[] variables = mInstruction.group(3).split(",");
+									Variable.TYPE type;
+									if (name.equals("word"))
+										type = Variable.TYPE.WORD;
+									else if (name.equals("hword"))
+										type = Variable.TYPE.HWORD;
+									else if (name.equals("byte"))
+										type = Variable.TYPE.BYTE;
+									else if (name.equals("ascii"))
+										type = Variable.TYPE.ASCII;
+									else
+										type = Variable.TYPE.ASCIZ;
+
+									for (String variable : variables) {
+										this.variables.add(new Variable(this.lastLabel, type, variable));
+										this.lastLabel = null;
+									}
 								} catch (InstructionException e) {
 									throw new CompilerException(aLineNumber, e.getMessage());
 								}
@@ -416,7 +412,7 @@ public class Compiler
 	public Program link() throws CompilerException {
 		int size = 4;
 		for (Variable variable: this.variables)
-			size += variable.getValue().length;
+			size += variable.getLength();
 		byte[] binaryVariables = new byte[size];
 
 		size = this.instructions.size()*4+4;
@@ -428,10 +424,13 @@ public class Compiler
 			if (variable.getName() != null)
 				this.labels.put(variable.getName(), MemoryManager.VARIABLESTARTADDR + addr);
 
-			byte[] value = variable.getValue();
+			variable.setStartAddr(addr);
+			byte[] value = variable.getStartValue();
+			System.arraycopy(value, 0, binaryVariables, addr, value.length);
+			/*
 			for (int i = 0; i < value.length; i++)
 				binaryVariables[addr+i] = value[i];
-
+			*/
 			addr += value.length;
 		}
 
@@ -444,11 +443,8 @@ public class Compiler
 				throw new CompilerException(instruction.getLineNumber(), e.getMessage());
 			}
 
-			int opcode = instruction.getOpcode();
-			binaryProgram[addr]     = (byte)(opcode        & 0xFF);
-			binaryProgram[addr + 1] = (byte)(opcode >>> 8  & 0xFF);
-			binaryProgram[addr + 2] = (byte)(opcode >>> 16 & 0xFF);
-			binaryProgram[addr + 3] = (byte)(opcode >>> 24 & 0xFF);
+			byte[] value = Utilities.intToByteArray(instruction.getOpcode());
+			System.arraycopy(value, 0, binaryProgram, addr, value.length);
 
 			addr += 4;
 		}
@@ -458,7 +454,7 @@ public class Compiler
 			pc = this.getGlobal("main");
 		} catch (CompilerException e) {}
 
-		return new Program(this.lines, this.instructions, binaryProgram, binaryVariables, pc);
+		return new Program(this.lines, this.instructions, this.variables, binaryProgram, binaryVariables, pc);
 	}
 
 	/**
