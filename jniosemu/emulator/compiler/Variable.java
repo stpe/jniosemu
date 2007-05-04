@@ -14,6 +14,13 @@ public class Variable
 	private int startAddr;
 	private byte[] startValue;
 
+	public Variable (String name, byte startValue) throws InstructionException {
+		this.type = TYPE.BYTE;
+		this.name = name;
+		this.startValue = new byte[1];
+		this.startValue[0] = startValue;
+	}
+
 	/**
 	 * Init a Variable
 	 *
@@ -21,24 +28,24 @@ public class Variable
 	 * @param aType		Type of variable
 	 * @param aStartValue	Start value of the variable
 	 */
-	public Variable (String aName, TYPE aType, String aStartValue) throws InstructionException {
-		this.type = aType;
-		this.name = aName;
+	public Variable (String name, TYPE type, String startValue) throws InstructionException {
+		this.type = type;
+		this.name = name;
 		switch(this.type) {
 			case BYTE:
 				this.startValue = new byte[1];
-				this.startValue[0] = (byte)(Compiler.parseValue(aStartValue) & 0xFF);
+				this.startValue[0] = (byte)(Compiler.parseValue(startValue) & 0xFF);
 				break;
 			case HWORD:
-				this.startValue = Utilities.shortToByteArray((short)Compiler.parseValue(aStartValue));
+				this.startValue = Utilities.shortToByteArray((short)Compiler.parseValue(startValue));
 				break;
 			case WORD:
-				this.startValue = Utilities.intToByteArray((int)Compiler.parseValue(aStartValue));
+				this.startValue = Utilities.intToByteArray((int)Compiler.parseValue(startValue));
 				break;
 			case ASCII:
 			case ASCIZ:
 				Pattern pString = Pattern.compile("\"(.*)\"");
-				Matcher mString = pString.matcher(aStartValue);
+				Matcher mString = pString.matcher(startValue);
 				if (mString.matches()) {
 					String valueStr = mString.group(1);
 					int length = valueStr.length();

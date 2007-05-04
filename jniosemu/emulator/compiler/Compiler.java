@@ -333,6 +333,12 @@ public class Compiler
 								} catch (InstructionException e) {
 									throw new CompilerException(aLineNumber, e.getMessage());
 								}
+							} else if (name.equals("skip")) {
+								long count = this.parseValue(mInstruction.group(3));
+								for (long i = 0; i < count; i++) {
+									this.variables.add(new Variable(this.lastLabel, (byte)0));
+									this.lastLabel = null;
+								}
 							} else if (name.equals("end")) {
 								// Not sure if we have to do anything but we have it here so we don't get an error
 							} else {
