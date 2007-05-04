@@ -47,9 +47,10 @@ public class GUIRegisters extends JPanel
 		// add events to listen to
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.REGISTER_CHANGE,
-			EventManager.EVENT.COMPILER_COMPILE
+			EventManager.EVENT.COMPILER_COMPILE,
+			EventManager.EVENT.EMULATOR_CLEAR
 		};		
-		this.eventManager.addEventObserver(EventManager.EVENT.REGISTER_CHANGE, this);		
+		this.eventManager.addEventObserver(events, this);		
 	}
 
 	/**
@@ -89,6 +90,13 @@ public class GUIRegisters extends JPanel
 	 */
 	public void setRegisters(Vector<Register> registers)
 	{
+		if (registers == null)
+		{
+			// clear registers view
+			registerList.setModel(new DefaultListModel());
+			return;
+		}
+		
 		// get currently selected register (if any)
 		int index = registerList.getSelectedIndex();
 		
@@ -127,6 +135,9 @@ public class GUIRegisters extends JPanel
 				break;
 			case COMPILER_COMPILE:
 				registerList.clearSelection();
+				break;
+			case EMULATOR_CLEAR:
+				setRegisters(null);
 				break;
 		}
 	}

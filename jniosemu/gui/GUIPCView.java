@@ -47,7 +47,8 @@ import jniosemu.Utilities;
 		// add events to listen to
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.PROGRAMCOUNTER_CHANGE,
-			EventManager.EVENT.EMULATOR_RESET
+			EventManager.EVENT.EMULATOR_RESET,
+			EventManager.EVENT.EMULATOR_CLEAR
 		};
 
 		this.eventManager.addEventObserver(events, this);
@@ -87,6 +88,7 @@ import jniosemu.Utilities;
 				setPC( ((Integer) obj).intValue());
 				break;
 			case EMULATOR_RESET:
+			case EMULATOR_CLEAR:
 				setPC(0);
 				break;
 		}

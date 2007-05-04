@@ -356,12 +356,15 @@ public class GUIManager
 	 */
 	private void showAbout()
 	{
-		JOptionPane.showMessageDialog(
-			frame,
-      "JNiosEmu",
-			"About",
-			JOptionPane.INFORMATION_MESSAGE
-		);
+		eventManager.sendEvent(EventManager.EVENT.EMULATOR_CLEAR);
+/*
+		JDialog aboutDialog = new GUIAbout(frame);
+		
+		aboutDialog.setIconImage(this.frame.getIconImage());
+		aboutDialog.pack();
+		aboutDialog.setLocationRelativeTo(this.frame);		
+		aboutDialog.setVisible(true);
+*/		
 	}
 
 	/**

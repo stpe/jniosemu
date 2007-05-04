@@ -47,7 +47,9 @@ import jniosemu.emulator.*;
 		// add events to listen to
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.CONSOLE_OUTPUT,
-			EventManager.EVENT.EMULATOR_RESET
+			EventManager.EVENT.EMULATOR_RESET,
+			EventManager.EVENT.EMULATOR_READY,
+			EventManager.EVENT.EMULATOR_CLEAR
 		};
 
 		this.eventManager.addEventObserver(events, this);
@@ -108,6 +110,8 @@ import jniosemu.emulator.*;
 
 				break;
 			case EMULATOR_RESET:
+			case EMULATOR_READY:
+			case EMULATOR_CLEAR:
 				consoleTextArea.setText("");
 				break;
 		}

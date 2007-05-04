@@ -43,9 +43,14 @@ public class GUIRegisterView extends JPanel
 		this.eventManager = eventManager;
 		
 		setup();
-		
+
 		// add events to listen to
-		this.eventManager.addEventObserver(EventManager.EVENT.REGISTER_VIEW_SELECT, this);		
+		EventManager.EVENT[] events = {
+			EventManager.EVENT.REGISTER_VIEW_SELECT,
+			EventManager.EVENT.COMPILER_COMPILE,
+			EventManager.EVENT.EMULATOR_CLEAR
+		};				
+		this.eventManager.addEventObserver(events, this);		
 	}
 
 	/**
@@ -122,6 +127,10 @@ public class GUIRegisterView extends JPanel
 		switch (eventIdentifier) {
 			case REGISTER_VIEW_SELECT:
 				setRegisterView( (Register) obj );
+				break;
+			case COMPILER_COMPILE:
+			case EMULATOR_CLEAR:
+				setRegisterView(null);
 				break;
 		}
 	}

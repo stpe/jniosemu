@@ -63,7 +63,8 @@ public class GUIMemoryView extends JFrame
 
 		// add events to listen to
 		EventManager.EVENT[] events = {
-			EventManager.EVENT.MEMORY_CHANGE
+			EventManager.EVENT.MEMORY_CHANGE,
+			EventManager.EVENT.EMULATOR_CLEAR,
 		};
 
 		this.eventManager.addEventObserver(events, this);
@@ -197,6 +198,11 @@ public class GUIMemoryView extends JFrame
 					// otherwise update existing
 					updateLists();
 			
+				break;
+			case EMULATOR_CLEAR:
+				listPanel.removeAll();
+				this.memoryBlocks = null;
+				this.memoryLists = null;
 				break;
 		}
 	}

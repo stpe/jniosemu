@@ -87,6 +87,7 @@ import jniosemu.Utilities;
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.EMULATOR_BREAKPOINT_UPDATE,
 			EventManager.EVENT.EMULATOR_READY,
+			EventManager.EVENT.EMULATOR_CLEAR,
 			EventManager.EVENT.PROGRAMCOUNTER_CHANGE
 		};
 		this.eventManager.addEventObserver(events, this);
@@ -140,6 +141,14 @@ import jniosemu.Utilities;
 	{
 		this.program = prg;
 		
+		if (prg == null)
+		{
+			// clear emulator view
+			listView.setModel(new DefaultListModel());
+			return;
+		}
+		
+		// set new program lines as data for jlist
 		listView.setListData( prg.getProgramLines() );
 	}
 
@@ -159,6 +168,9 @@ import jniosemu.Utilities;
 	 */
 	private void setProgramCounterIndicator(int addr)
 	{
+		if (program == null)
+			return;
+			
 		currentIndex = program.getLineNumber(addr);
 
 		if (currentIndex != -1)
@@ -180,6 +192,9 @@ import jniosemu.Utilities;
 				break;
 			case PROGRAMCOUNTER_CHANGE:
 				setProgramCounterIndicator( ((Integer) obj).intValue() );
+				break;
+			case EMULATOR_CLEAR:
+				setProgram(null);
 				break;
 		}
 	}

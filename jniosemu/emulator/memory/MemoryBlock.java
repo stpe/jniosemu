@@ -148,7 +148,7 @@ public abstract class MemoryBlock
 		return this.memoryVector;
 	}
 
-	protected MemoryInt.STATE getState(int address) {
+	public MemoryInt.STATE getState(int address) {
 		MemoryInt.STATE state = this.state.get(address - this.start);
 		if (state == null) {
 			return MemoryInt.STATE.UNTOUCHED;
