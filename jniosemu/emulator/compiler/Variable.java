@@ -100,7 +100,7 @@ public class Variable
 	public byte[] getValue(MemoryBlock memoryBlock) {
 		byte[] value = new byte[this.getLength()];
 		for (int i = 0; i < this.getLength(); i++) {
-			value[i] = memoryBlock.readByte(this.getStartAddr() + i);
+			value[i] = memoryBlock.readByte(this.startAddr + i);
 		}
 
 		return value;

@@ -336,7 +336,7 @@ public class Compiler
 							} else if (name.equals("skip")) {
 								try {
 									long count = this.parseValue(mInstruction.group(3));
-									for (long i = 0; i < count; i++) {
+									for (int i = 0; i < count; i++) {
 										this.variables.add(new Variable(this.lastLabel, (byte)0));
 										this.lastLabel = null;
 									}
@@ -353,9 +353,9 @@ public class Compiler
 									long size = this.parseValue(variables[1]);
 									byte[] value = Utilities.longToByteArray(this.parseValue(variables[2]));
 
-									for (long i = 0; i < count; i++) {
-										for (long j = 0; j < size; j++) {
-											this.variables.add(new Variable(this.lastLabel, value[(int)(size - j - 1)]));
+									for (int i = 0; i < count; i++) {
+										for (int j = 0; j < size; j++) {
+											this.variables.add(new Variable(this.lastLabel, value[(int)j]));
 											this.lastLabel = null;
 										}
 									}
@@ -454,7 +454,7 @@ public class Compiler
 			if (variable.getName() != null)
 				this.labels.put(variable.getName(), MemoryManager.VARIABLESTARTADDR + addr);
 
-			variable.setStartAddr(addr);
+			variable.setStartAddr(MemoryManager.VARIABLESTARTADDR + addr);
 			byte[] value = variable.getStartValue();
 			System.arraycopy(value, 0, binaryVariables, addr, value.length);
 			addr += value.length;
