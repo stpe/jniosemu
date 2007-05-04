@@ -443,6 +443,11 @@ public class Compiler
 		int size = 0;
 		for (Variable variable: this.variables)
 			size += variable.getLength();
+
+		int diff = size % 4;
+		if (diff > 0)
+			size += 4 - size;
+
 		byte[] binaryVariables = new byte[size];
 
 		size = this.instructions.size()*4+4;
