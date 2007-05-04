@@ -446,7 +446,9 @@ public class Compiler
 
 		int diff = size % 4;
 		if (diff > 0)
-			size += 4 - size;
+			size += 4 - diff;
+
+		System.out.println("size: "+ size);
 
 		byte[] binaryVariables = new byte[size];
 
