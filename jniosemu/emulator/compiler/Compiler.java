@@ -427,10 +427,6 @@ public class Compiler
 			variable.setStartAddr(addr);
 			byte[] value = variable.getStartValue();
 			System.arraycopy(value, 0, binaryVariables, addr, value.length);
-			/*
-			for (int i = 0; i < value.length; i++)
-				binaryVariables[addr+i] = value[i];
-			*/
 			addr += value.length;
 		}
 
@@ -445,7 +441,6 @@ public class Compiler
 
 			byte[] value = Utilities.intToByteArray(instruction.getOpcode());
 			System.arraycopy(value, 0, binaryProgram, addr, value.length);
-
 			addr += 4;
 		}
 

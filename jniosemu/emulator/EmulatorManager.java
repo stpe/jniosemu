@@ -276,14 +276,17 @@ public class EmulatorManager implements EventObserver
 	public void compile(String lines) {
 		Compiler compiler = new Compiler(lines);
 
-		this.program = null;
+		Program program = null;
 		try {
 			compiler.compile();
-			this.program = compiler.link();
+			program = compiler.link();
 		} catch (CompilerException e) {
 			this.eventManager.sendEvent(EventManager.EVENT.COMPILER_ERROR, e.getMessage());
+			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_CLEAR);
 			return;
 		}
+
+		this.program = program;
 
 		// Add old breakpoints to this program
 		for (Integer lineNumber: this.breakpoints.values())

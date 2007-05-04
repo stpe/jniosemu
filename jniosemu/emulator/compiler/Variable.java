@@ -3,6 +3,7 @@ package jniosemu.emulator.compiler;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import jniosemu.Utilities;
+import jniosemu.emulator.memory.MemoryBlock;
 import jniosemu.instruction.InstructionException;
 
 public class Variable
@@ -87,5 +88,14 @@ public class Variable
 
 	public int getStartAddr() {
 		return this.startAddr;
+	}
+
+	public byte[] getValue(MemoryBlock memoryBlock) {
+		byte[] value = new byte[this.getLength()];
+		for (int i = 0; i < this.getLength(); i++) {
+			value[i] = memoryBlock.readByte(this.getStartAddr() + i);
+		}
+
+		return value;
 	}
 }
