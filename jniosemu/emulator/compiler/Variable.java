@@ -8,7 +8,7 @@ import jniosemu.instruction.InstructionException;
 
 public class Variable
 {
-	static enum TYPE {BYTE, HWORD, WORD, ASCII, ASCIZ};
+	public static enum TYPE {BYTE, HWORD, WORD, ASCII, ASCIZ};
 	private String name;
 	private TYPE type;
 	private int startAddr;

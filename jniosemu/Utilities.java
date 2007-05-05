@@ -105,6 +105,44 @@ public class Utilities
 	}
 
 	/**
+	 * Converts byte array to string where non-printable
+	 * characters are displayed as a period (".").
+	 *
+	 * @param   value  byte array value
+	 * @return         string
+	 */
+	public static String byteArrayToString(byte[] value) {
+		String ret = "";
+
+		for (int i = 0; i < value.length; i++)
+		{
+			if (value[i] >= 32 && value[i] <= 126)
+				ret = ret + ((char) value[i]);
+			else
+				ret = ret.concat(".");
+		}
+		
+		return ret;
+	}
+
+	/**
+	 * Converts byte array to hex string.
+	 *
+	 * @param   value  byte array value
+	 * @return         string
+	 */
+	public static String byteArrayToHexString(byte[] value) {
+		String ret = "";
+		
+		for (int i = 0; i < value.length; i++)
+		{
+			ret = ret.concat( Integer.toHexString( (value[i] & 0xFF) | 0x100 ).substring(1, 3) );
+		}
+
+		return ret;		
+	}
+
+	/**
 	 * Converts integer to a formatted string of the hexadecimal value.
 	 *
 	 * @param   value  decimal value to convert

@@ -323,14 +323,7 @@ public class GUIMemoryView extends JFrame
 			}
 
 			// memory as ascii
-			String tmp = "";
-			for (int i = 0; i < b.length; i++)
-			{
-				if (b[i] >= 32 && b[i] <= 126)
-					tmp = tmp + ((char) b[i]);
-				else
-					tmp = tmp.concat(".");
-			}
+			String tmp = Utilities.byteArrayToString(b);
 
 			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, yOffset);
 		}

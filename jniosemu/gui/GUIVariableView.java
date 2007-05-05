@@ -281,11 +281,33 @@ import jniosemu.Utilities;
 			// variable name
 			g.drawString(this.varObj.getName(), 2, this.baseline);
 
-			// variable value
+			// variable type
+			g.drawString(this.varObj.getType().toString(), 100, this.baseline);
+
+			// variable value as byte array
 			byte[] byteArray = this.varObj.getValue(memBlock);
-			
-			String tmp = Utilities.byteArrayToBitString(byteArray);
-			g.drawString(tmp, getWidth() - this.metrics.stringWidth(tmp) - 2, this.baseline);
+
+			// format value
+			String value = "";
+
+			switch (this.varObj.getType())
+			{
+				case BYTE:
+				case HWORD:
+				case WORD:
+					value = "0x" + Utilities.byteArrayToHexString(byteArray);
+					break;
+				case ASCII:
+				case ASCIZ:
+					value = Utilities.byteArrayToString(byteArray);
+					break;
+				default:
+					value = "unknown type";
+			}
+
+			// draw variable value
+//			String tmp = Utilities.byteArrayToBitString(byteArray);
+			g.drawString(value, getWidth() - this.metrics.stringWidth(value) - 2, this.baseline);
 		}
 
 	}

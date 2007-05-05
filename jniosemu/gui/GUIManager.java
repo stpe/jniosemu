@@ -431,7 +431,7 @@ public class GUIManager
 		if (frameVariableView == null)
 		{
 			frameVariableView = new GUIVariableView(this.eventManager);
-			frameVariableView.setSize(new Dimension(200, 260));
+			frameVariableView.setSize(new Dimension(340, 300));
 			frameVariableView.setIconImage(this.frame.getIconImage());
 			frameVariableView.setLocationRelativeTo(this.frame);
 		}		
