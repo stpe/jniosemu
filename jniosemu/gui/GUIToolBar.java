@@ -71,12 +71,12 @@ public class GUIToolBar extends JToolBar
 		this.addSeparator();
 
 		button = makeButton("compile", EventManager.EVENT.COMPILER_COMPILE_INIT.toString(),
-												"Compile source code",
-												"Compile");
+												"Assemble source code",
+												"Assemble");
 		this.add(button);
 
 		button = makeButton("run", EventManager.EVENT.EMULATOR_RUN.toString(),
-												"Run compiled code in emulator",
+												"Run assembled code in emulator",
 												"Run");
 		this.add(button);
 
