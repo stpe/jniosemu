@@ -448,8 +448,6 @@ public class Compiler
 		if (diff > 0)
 			size += 4 - diff;
 
-		System.out.println("size: "+ size);
-
 		byte[] binaryVariables = new byte[size];
 
 		size = this.instructions.size()*4+4;

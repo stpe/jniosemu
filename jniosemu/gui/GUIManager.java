@@ -358,7 +358,7 @@ public class GUIManager
 	{
 		JDialog aboutDialog = new GUIAbout(frame);
 		
-		aboutDialog.setIconImage(this.frame.getIconImage());
+		// aboutDialog.setIconImage(this.frame.getIconImage());
 		aboutDialog.pack();
 		aboutDialog.setLocationRelativeTo(this.frame);		
 		aboutDialog.setVisible(true);

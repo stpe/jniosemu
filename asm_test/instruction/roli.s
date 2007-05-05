@@ -17,10 +17,10 @@ main:
 	movia r2, 0x00FF0FF0
 	movia r3, 0b01001000
 	movia r4, 0b11010100
-	roli r5, r1, 0b01001000
-	roli r6, r2, 0b01001000
-	roli r7, r1, 0b11000100
-	roli r8, r0, 0b11010100
+	roli r5, r1, 0b00001000
+	roli r6, r2, 0b00001000
+	roli r7, r1, 0b00000100
+	roli r8, r0, 0b00010100
 	
 
 

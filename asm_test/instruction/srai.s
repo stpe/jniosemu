@@ -11,8 +11,8 @@
 main:
 	movia r1, 0b1100
 	movia r2, 0b0110
-	srai r3, r1, 2
-	srai r4, r2, 66
+	srai r3, r1, 0b00010
+	srai r4, r2, 0b00010
 	
 
 

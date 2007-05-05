@@ -166,8 +166,7 @@ public class CompilerRTypeInstruction extends CompilerInstruction
 
 		this.imm = (int)(imm & 0x1F);
 
-		long mask = (long)0xFFFFFFFF;
-		if ((imm >> 5) != 0 && (imm >> 5 & mask) > 0)
+		if ((imm >> 5) != 0 && (imm >> 5) != -1)
 			throw new InstructionException(this.instructionInfo.getName(), "Immediate value is out of range");
 	}
 }

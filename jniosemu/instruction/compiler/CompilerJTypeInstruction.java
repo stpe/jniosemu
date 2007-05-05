@@ -89,8 +89,7 @@ public class CompilerJTypeInstruction extends CompilerInstruction
 
 		this.imm = (int)(imm & 0x3FFFFFF);
 
-		long mask = (long)0xFFFFFFFF;
-		if ((imm >> 26) != 0 && (imm >> 26 & mask) > 0)
+		if ((imm >> 26) != 0 && (imm >> 26) != -1)
 			throw new InstructionException(this.instructionInfo.getName(), "Immediate value is out of range");
 	}
 }
