@@ -64,7 +64,7 @@ public class GUIMemoryView extends JFrame
 		// add events to listen to
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.MEMORY_CHANGE,
-			EventManager.EVENT.EMULATOR_CLEAR,
+			EventManager.EVENT.EMULATOR_CLEAR
 		};
 
 		this.eventManager.addEventObserver(events, this);
@@ -183,6 +183,24 @@ public class GUIMemoryView extends JFrame
 		}
 	}
 
+	/**
+	 * Clears and empty all lists.
+	 */
+	private void clearLists()
+	{
+		if (memoryLists == null)
+			return;
+		
+		for(int i = 0; i < this.memoryLists.length; i++)
+		{
+			// clear list
+			memoryLists[i].setModel(new DefaultListModel());
+		}
+		
+		this.memoryBlocks = null;
+		this.memoryLists = null;
+	}
+
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
 		switch (eventIdentifier) {
@@ -200,9 +218,7 @@ public class GUIMemoryView extends JFrame
 			
 				break;
 			case EMULATOR_CLEAR:
-				listPanel.removeAll();
-				this.memoryBlocks = null;
-				this.memoryLists = null;
+				clearLists();
 				break;
 		}
 	}

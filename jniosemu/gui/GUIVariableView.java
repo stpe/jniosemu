@@ -25,6 +25,11 @@ import jniosemu.Utilities;
 	private transient EventManager eventManager;
 
 	/**
+	 * Panel used to contain the list.
+	 */
+	private JPanel listPanel;
+
+	/**
 	 * List object used to show variables with values.
 	 */
 	private JList variableList;
@@ -55,7 +60,8 @@ import jniosemu.Utilities;
 		// add events to listen to
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.VARIABLE_CHANGE,
-			EventManager.EVENT.VARIABLE_VECTOR
+			EventManager.EVENT.VARIABLE_VECTOR,
+			EventManager.EVENT.EMULATOR_CLEAR
 		};
 
 		this.eventManager.addEventObserver(events, this);
@@ -75,7 +81,7 @@ import jniosemu.Utilities;
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		// list
-		JPanel listPanel = new JPanel(new GridLayout(1,1));
+		listPanel = new JPanel(new GridLayout(1,1));
 		
 		listPanel.setBorder(
 			BorderFactory.createCompoundBorder(
@@ -121,6 +127,9 @@ import jniosemu.Utilities;
 			case VARIABLE_VECTOR:
 				System.out.println("VARIABLE_VECTOR");
 				variableList.setListData( (Vector<Variable>) obj );
+				break;
+			case EMULATOR_CLEAR:
+				variableList.setModel(new DefaultListModel());
 				break;
 		}
 	}
@@ -169,7 +178,10 @@ import jniosemu.Utilities;
 		}
 
 		/**
+		 * Get read/write/untouched state of variable.
 		 *
+		 * @param  var  variable to check state of
+		 * @return      state of variable
 		 */
 		private MemoryInt.STATE getVariableState(Variable var)
 		{
