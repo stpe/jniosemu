@@ -112,6 +112,14 @@ public abstract class MemoryBlock
 	 */
 	public abstract byte readByte(int addr) throws MemoryException;
 
+	public byte readRawByte(int addr) {
+		try {
+			return this.memory[mapAddr(addr)];
+		} catch (Exception e) {
+			throw new MemoryException(addr);
+		}
+	}
+
 	/**
 	 * Write a byte to memory
 	 *
