@@ -134,7 +134,7 @@ public class Utilities
 	public static String byteArrayToHexString(byte[] value) {
 		String ret = "";
 		
-		for (int i = 0; i < value.length; i++)
+		for (int i = value.length - 1; i >= 0; i--)
 		{
 			ret = ret.concat( Integer.toHexString( (value[i] & 0xFF) | 0x100 ).substring(1, 3) );
 		}

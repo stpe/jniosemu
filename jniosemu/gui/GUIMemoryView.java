@@ -120,7 +120,11 @@ public class GUIMemoryView extends JFrame
 		memoryList.setAlignmentX(Component.CENTER_ALIGNMENT);
 		memoryList.setBackground(Color.WHITE);
 		memoryList.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		memoryList.setCellRenderer(new MemoryCellRenderer());
+		memoryList.setCellRenderer(
+			new MemoryCellRenderer(
+				memoryList
+			)
+		);
 		
 		JLabel titleLabel = new JLabel(" " + memBlock.getName(), JLabel.LEFT);
 		titleLabel.setLabelFor(memoryList);
@@ -236,61 +240,79 @@ public class GUIMemoryView extends JFrame
 	/**
 	 * Custom cell renderer for the lists in the Memory View.
 	 */
-	class MemoryCellRenderer extends JLabel
+	class MemoryCellRenderer extends JPanel
 												 implements ListCellRenderer {
 
 			private MemoryInt memInt;
 
-			public MemoryCellRenderer() {
-					setOpaque(true);
-					setHorizontalAlignment(CENTER);
-					setVerticalAlignment(CENTER);
+			private final FontMetrics metrics;
+			private final int baseline;
+			private final int width;
+	    private final int height;
+
+			public MemoryCellRenderer(JList list) {
+				super();
+				setOpaque(true);
+				setFont(list.getFont());
+				
+				this.metrics = list.getFontMetrics(list.getFont());
+				
+				this.baseline = metrics.getAscent();
+				this.height = metrics.getHeight();
+				this.width = list.getWidth();
 			}
 
+	    /** 
+	     * Return the renderers fixed size.  
+	     */
+			public Dimension getPreferredSize()
+			{
+				return new Dimension(width, height);
+			}
+		
+			/**
+			 * Sets background/foreground color and stores MemoryInt object.
+			 */
 			public Component getListCellRendererComponent(
 																				 JList list,
 																				 Object value,
 																				 int index,
 																				 boolean isSelected,
-																				 boolean cellHasFocus) {
+																				 boolean cellHasFocus)
+			{
+				this.memInt = (MemoryInt) value;
 
-					this.setFont(list.getFont());
+				if (isSelected) { 
+					setBackground(list.getSelectionBackground()); 
+					setForeground(list.getSelectionForeground()); 
+				} else { 
+					setBackground(list.getBackground()); 
+					setForeground(list.getForeground()); 
+				} 
 
-					this.memInt = (MemoryInt) value;
-					setText("."); // trigger repaint
-
-					if (isSelected) { 
-						setBackground(list.getSelectionBackground()); 
-						setForeground(list.getSelectionForeground()); 
-					} else { 
-						setBackground(list.getBackground()); 
-						setForeground(list.getForeground()); 
-					} 
-
-					return this;
+				return this;
 			}
 
+		/**
+		 * Custom paint method bypassing standard JComponent
+		 * painting to optimize performance and do custom drawing.
+		 */
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 
-			if (isOpaque()) 
-			{ 
-					g.setColor(getBackground());
-					g.fillRect(0, 0, getWidth(), getHeight());
-			}
-
-			FontMetrics metrics = g.getFontMetrics(getFont());
+			// clear background
+			g.setColor(getBackground());
+			g.fillRect(0, 0, getWidth(), getHeight());
 
 			g.setColor(Color.black);
 			
-			int yOffset = 12;
 			int xOffset = 2;
 			
 			// address
-			g.drawString(Utilities.intToHexString(memInt.getAddress()), xOffset, yOffset);
+			g.drawString(Utilities.intToHexString(memInt.getAddress()), xOffset, this.baseline);
 
 			xOffset = 100;
-			int spaceWidth = metrics.stringWidth(" ");
+			int spaceWidth = this.metrics.stringWidth(" ");
 
 			// memory as hex
 			byte[] b = memInt.getMemory();
@@ -312,12 +334,12 @@ public class GUIMemoryView extends JFrame
 
 				String tmp = Integer.toHexString( (b[i] & 0xFF) | 0x100 ).substring(1, 3);
 
-				int stringWidth = metrics.stringWidth(tmp);
+				int stringWidth = this.metrics.stringWidth(tmp);
 				
-				g.fillRect(xOffset - 2, 1, metrics.stringWidth(tmp) + 4, metrics.getHeight() - 3);
+				g.fillRect(xOffset - 2, 1, this.metrics.stringWidth(tmp) + 4, metrics.getHeight() - 3);
 				g.setColor(Color.black);
 				
-				g.drawString(tmp, xOffset, yOffset);
+				g.drawString(tmp, xOffset, this.baseline);
 				
 				xOffset = xOffset + stringWidth + spaceWidth;
 			}
@@ -325,7 +347,7 @@ public class GUIMemoryView extends JFrame
 			// memory as ascii
 			String tmp = Utilities.byteArrayToString(b);
 
-			g.drawString(tmp, getWidth() - metrics.stringWidth(tmp) - 2, yOffset);
+			g.drawString(tmp, getWidth() - this.metrics.stringWidth(tmp) - 2, this.baseline);
 		}
 
 	}

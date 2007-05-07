@@ -38,6 +38,11 @@ import jniosemu.Utilities;
 	 * Variable memory block.
 	 */
 	private MemoryBlock memBlock;
+	
+	/**
+	 * Track if variables should be redrawn.
+	 */
+	private boolean redrawState = true;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -120,12 +125,16 @@ import jniosemu.Utilities;
 	{
 		switch (eventIdentifier) {
 			case VARIABLE_CHANGE:
-				System.out.println("VARIABLE_CHANGE");
 				this.memBlock = (MemoryBlock) obj;
-				variableList.repaint();
+				if (this.memBlock.isChanged() || redrawState)
+				{
+					variableList.repaint();
+					
+					// if changed, redraw next time to remove indication
+					redrawState = this.memBlock.isChanged();
+				}
 				break;
 			case VARIABLE_VECTOR:
-				System.out.println("VARIABLE_VECTOR");
 				variableList.setListData( (Vector<Variable>) obj );
 				break;
 			case EMULATOR_CLEAR:
@@ -197,29 +206,14 @@ import jniosemu.Utilities;
 			// loop until first non-untouched state or end of variable			
 			while (state == MemoryInt.STATE.UNTOUCHED && addr < endAddr)
 			{
-				state = memBlock.getState(addr);
-				
-				switch (state)
-				{
-					case READ:
-						System.out.println(Utilities.intToHexString(addr) + " READ");
-						break;
-					case WRITE:
-						System.out.println(Utilities.intToHexString(addr) + " WRITE");
-						break;
-					default:
-						System.out.println(Utilities.intToHexString(addr) + " UNTOUCHED");
-				}				
-
-				addr++;
+				state = memBlock.getState(addr++);
 			}
 			
 			return state;
 		}
 
 		/**
-		 * Cell rendered methos sets background/foreground
-		 * color and stores Register object.
+		 * Sets background/foreground color and stores Variables object.
 		 */
 		public Component getListCellRendererComponent(
 																			 JList list,
@@ -264,7 +258,7 @@ import jniosemu.Utilities;
 
 		/**
 		 * Custom paint method bypassing standard JComponent
-		 * painting to optimize performance.
+		 * painting to optimize performance and do custom drawing.
 		 */
 		public void paintComponent(Graphics g) 
 		{
@@ -278,11 +272,14 @@ import jniosemu.Utilities;
 
 			g.setColor(Color.black);
 			
-			// variable name
-			g.drawString(this.varObj.getName(), 2, this.baseline);
+			// variable address
+			g.drawString(Utilities.intToHexString(this.varObj.getStartAddr()), 2, this.baseline);
 
 			// variable type
-			g.drawString(this.varObj.getType().toString(), 100, this.baseline);
+			g.drawString(this.varObj.getType().toString(), 90, this.baseline);
+			
+			// variable name
+			g.drawString(this.varObj.getName(), 140, this.baseline);
 
 			// variable value as byte array
 			byte[] byteArray = this.varObj.getValue(memBlock);
