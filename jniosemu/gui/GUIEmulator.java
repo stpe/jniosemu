@@ -104,6 +104,10 @@ import jniosemu.Utilities;
 	{
 		currentIndex = 0;
 
+		// get breakpoint images
+		breakPointSetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_set.png"));
+		breakPointUnsetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_unset.png"));
+
 		// emulator listview
 		listView = new JList();
 		listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -120,10 +124,6 @@ import jniosemu.Utilities;
 		JScrollPane scrollPane = new JScrollPane(listView,
 		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);		
-
-		// get breakpoint images
-		breakPointSetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_set.png"));
-		breakPointUnsetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_unset.png"));
 
 		// put everything into the emulator panel
 		this.setLayout(new BorderLayout());
@@ -257,16 +257,18 @@ import jniosemu.Utilities;
 		private final int baseline;
 		private final int width;
     private final int height;
+    private final int iconOffset;
 		
 		public EmulatorCellRenderer(FontMetrics metrics) {
 			super();
 			setOpaque(true);
 			setFont(listView.getFont());
-			System.out.println("cell font name: " + metrics.getFont().getName() + ", size: " + metrics.getFont().getSize());
+
 			this.baseline = metrics.getAscent();
 			this.height = metrics.getHeight();
 			this.width = listView.getWidth();
-			System.out.println("metrics baseline: " + this.baseline + ", height: " + this.height + ", width: " + this.width);
+			
+			this.iconOffset = (height - breakPointSetIcon.getIconHeight()) / 2;
 		}
 
     /** 
@@ -331,16 +333,16 @@ import jniosemu.Utilities;
 
 			g.setColor(getForeground());
 
-			int xOffset = 3;
+			int xOffset = 6;
 
 			// breakpoint
 			switch (lineObj.getBreakPoint())
 			{
 				case TRUE:
-					g.drawImage(breakPointSetIcon.getImage(), xOffset, 1, null);
+					g.drawImage(breakPointSetIcon.getImage(), xOffset, iconOffset, null);
 					break;
 				case FALSE:
-					g.drawImage(breakPointUnsetIcon.getImage(), xOffset, 1, null);
+					g.drawImage(breakPointUnsetIcon.getImage(), xOffset, iconOffset, null);
 					break;
 			}
 
