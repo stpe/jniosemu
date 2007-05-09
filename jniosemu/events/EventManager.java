@@ -71,6 +71,8 @@ public final class EventManager
 		MEMORY_REQUEST_UPDATE,						// Trigger a MEMORY_CHANGE event
 		MEMORY_VIEW,											// Show Memory View window
 		PROGRAMCOUNTER_CHANGE,						// Program counter in emulated program has changed
+		PROGRAM_REQUEST_UPDATE,						// Request program
+		PROGRAM_CHANGE,										// Program has changed
 		REGISTER_CHANGE,									// Register in emulated program has changed
 		REGISTER_VIEW_SELECT,							// A register is selected in the registers list
 		STATE_CHANGE,											// Update state (disabled/enabled) of elements in menu and toolbar

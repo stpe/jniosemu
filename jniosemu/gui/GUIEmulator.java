@@ -88,7 +88,8 @@ import jniosemu.Utilities;
 			EventManager.EVENT.EMULATOR_BREAKPOINT_UPDATE,
 			EventManager.EVENT.EMULATOR_READY,
 			EventManager.EVENT.EMULATOR_CLEAR,
-			EventManager.EVENT.PROGRAMCOUNTER_CHANGE
+			EventManager.EVENT.PROGRAMCOUNTER_CHANGE,
+			EventManager.EVENT.PROGRAM_CHANGE
 		};
 		this.eventManager.addEventObserver(events, this);
 	}
@@ -177,7 +178,11 @@ import jniosemu.Utilities;
 		{
 			listView.ensureIndexIsVisible(currentIndex);
 		}
-
+		else
+		{
+			eventManager.sendEvent(EventManager.EVENT.PROGRAM_REQUEST_UPDATE);
+		}
+		
 		listView.repaint();
 	}
 
@@ -188,6 +193,7 @@ import jniosemu.Utilities;
 				listView.repaint();
 				break;
 			case EMULATOR_READY:
+			case PROGRAM_CHANGE:
 				setProgram( (Program) obj );
 				break;
 			case PROGRAMCOUNTER_CHANGE:
@@ -260,6 +266,7 @@ import jniosemu.Utilities;
 			this.baseline = metrics.getAscent();
 			this.height = metrics.getHeight();
 			this.width = listView.getWidth();
+			System.out.println("metrics baseline: " + this.baseline + ", height: " + this.height + ", width: " + this.width);
 		}
 
     /** 

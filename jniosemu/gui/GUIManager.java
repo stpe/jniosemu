@@ -517,7 +517,6 @@ public class GUIManager
 	 */
 	private void toggleEmulatorMessages(boolean makeVisible)
 	{
-		System.out.println("toggleEmulatorMessages: " + makeVisible);
 		toggleMessagesSplitpane(makeVisible, emulatorMessages, emulatorSplitPane);
 	}
 
