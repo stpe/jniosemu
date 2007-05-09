@@ -47,12 +47,12 @@ public class MemoryManager
 		this.memoryBlocks.add(new Memory("Data", VARIABLESTARTADDR, variables.length, variables));
 		this.memoryBlocks.add(new Memory("Stack", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
 
-		this.memoryBlocks.add(new ButtonDevice(eventManager, this));
 		this.memoryBlocks.add(new LedDevice(eventManager, this));
+		this.memoryBlocks.add(new TimerDevice(eventManager, this));
+		this.memoryBlocks.add(new ButtonDevice(eventManager, this));
 		this.memoryBlocks.add(new DipswitchDevice(eventManager, this));
 		this.memoryBlocks.add(new SerialDevice(eventManager, this, "uart_0", 0x860, EventManager.EVENT.UART0_INPUT, EventManager.EVENT.UART0_OUTPUT));
 		this.memoryBlocks.add(new SerialDevice(eventManager, this, "uart_1", 0x880, EventManager.EVENT.UART1_INPUT, EventManager.EVENT.UART1_OUTPUT));
-		this.memoryBlocks.add(new TimerDevice(eventManager, this));
 	}
 
 	public void reset(byte[] program, byte[] variables) {
