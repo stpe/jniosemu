@@ -1,19 +1,11 @@
 package jniosemu.gui;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.awt.*;
-import javax.swing.border.*;
-
 import jniosemu.events.*;
-import jniosemu.emulator.*;
 
 /**
  * Creates and manages the GUI component of the console.
  */
- public class GUIConsole extends GUIUART
-                              implements ActionListener, EventObserver {
+ public class GUIConsole extends GUIUART {
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to

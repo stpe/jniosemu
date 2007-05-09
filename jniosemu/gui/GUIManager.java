@@ -491,7 +491,7 @@ public class GUIManager
 		if (frameConsole == null)
 		{
 			frameConsole = new GUIConsole(this.eventManager);
-			frameConsole.setSize(new Dimension(320, 200));
+			frameConsole.setSize(new Dimension(440, 300));
 			frameConsole.setIconImage(this.frame.getIconImage());
 			frameConsole.setLocationRelativeTo(this.frame);
 		}

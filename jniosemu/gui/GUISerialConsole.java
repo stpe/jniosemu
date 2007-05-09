@@ -1,19 +1,11 @@
 package jniosemu.gui;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.awt.*;
-import javax.swing.border.*;
-
 import jniosemu.events.*;
-import jniosemu.emulator.*;
 
 /**
  * Creates and manages the GUI component of the serial console.
  */
- public class GUISerialConsole extends GUIUART
-                              implements ActionListener, EventObserver {
+ public class GUISerialConsole extends GUIUART {
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
