@@ -123,8 +123,8 @@ public class GUIManager
 			EventManager.EVENT.EXCEPTION,
 			EventManager.EVENT.MEMORY_VIEW,
 			EventManager.EVENT.VARIABLE_VIEW,
-			EventManager.EVENT.SERIAL_CONSOLE_VIEW,
-			EventManager.EVENT.CONSOLE_VIEW,
+			EventManager.EVENT.UART0_VIEW,
+			EventManager.EVENT.UART1_VIEW,
 			EventManager.EVENT.COMPILER_COMPILE,
 			EventManager.EVENT.COMPILER_ERROR
 		};
@@ -331,10 +331,10 @@ public class GUIManager
 			case VARIABLE_VIEW:
 				showVariableView();
 				break;
-			case SERIAL_CONSOLE_VIEW:
+			case UART0_VIEW:
 				showSerialConsole();
 				break;
-			case CONSOLE_VIEW:
+			case UART1_VIEW:
 				showConsole();
 				break;
 			case COMPILER_COMPILE:

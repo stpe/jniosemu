@@ -75,6 +75,26 @@ public class GUIRegisters extends JPanel
 		);
 		registerList.addListSelectionListener(this);
 		
+		MouseListener mouseListener = new MouseAdapter() 
+		{
+			/**
+			 * Clear selection when selecting an already selected register.
+			 */
+			public void mouseClicked(MouseEvent e) 
+			{
+				if (registerList.isSelectionEmpty())
+					return;
+					
+				if (e.getClickCount() == 2) {
+					if (registerList.locationToIndex(e.getPoint()) == registerList.getSelectedIndex())
+					{
+						registerList.clearSelection();
+					}
+				}
+			}
+		};
+		registerList.addMouseListener(mouseListener);		
+		
 		// scrollbars
 		JScrollPane scrollPane = new JScrollPane(registerList);
 
@@ -113,7 +133,6 @@ public class GUIRegisters extends JPanel
 	public void valueChanged(ListSelectionEvent e) 
 	{
 		if (e.getValueIsAdjusting() == false) 
-		// && registerList.isFocusOwner()) // only send event if register list has focus
 		{
 			int index = registerList.getSelectedIndex();
 			
