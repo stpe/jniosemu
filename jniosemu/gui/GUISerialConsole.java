@@ -30,8 +30,8 @@ import jniosemu.emulator.*;
 		super(
 			eventManager, 
 			"UART_0", 
-			EventManager.EVENT.UART0_OUTPUT, 
-			EventManager.EVENT.UART0_INPUT
+			EventManager.EVENT.UART0_INPUT,
+			EventManager.EVENT.UART0_OUTPUT
 		);
 
 		// setup GUI
