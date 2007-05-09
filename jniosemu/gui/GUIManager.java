@@ -120,6 +120,7 @@ public class GUIManager
 			EventManager.EVENT.APPLICATION_TAB_TOGGLE,
 			EventManager.EVENT.APPLICATION_START,
 			EventManager.EVENT.EMULATOR_READY,
+			EventManager.EVENT.EMULATOR_ERROR,
 			EventManager.EVENT.EXCEPTION,
 			EventManager.EVENT.MEMORY_VIEW,
 			EventManager.EVENT.VARIABLE_VIEW,
@@ -516,6 +517,7 @@ public class GUIManager
 	 */
 	private void toggleEmulatorMessages(boolean makeVisible)
 	{
+		System.out.println("toggleEmulatorMessages: " + makeVisible);
 		toggleMessagesSplitpane(makeVisible, emulatorMessages, emulatorSplitPane);
 	}
 
