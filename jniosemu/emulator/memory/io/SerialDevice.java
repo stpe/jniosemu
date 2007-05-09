@@ -16,28 +16,24 @@ import jniosemu.events.EventObserver;
 public class SerialDevice extends MemoryBlock implements EventObserver
 {
 	/**
-	 * Address to memory where this is placed
-	 */
-	private static final int MEMORYADDR = 0x860;
-	/**
 	 * Length of memory that is used
 	 */
 	private static final int MEMORYLENGTH = 16;
-	/**
-	 * Name of memoryblock
-	 */
-	private static final String MEMORYNAME = "Serial";
 
 	private Queue<Character> inputBuffer = new LinkedList<Character>();
 	/**
 	 * Used EventManager
 	 */
 	private EventManager eventManager;
+
 	/**
 	 * Used MemoryManger
 	 */
 	private MemoryManager memoryManager;
 
+	private EventManager.EVENT inEvent = null;
+	private EventManager.EVENT outEvent = null;
+	
 	/**
 	 * Init ButtonDevice
 	 *
@@ -47,17 +43,20 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	 * @param memory  current MemoryManager
 	 * @param eventManager current EventManager
 	 */
-	public SerialDevice(EventManager eventManager, MemoryManager memoryManager) {
-		this.name = MEMORYNAME;
-		this.start = MEMORYADDR;
+	public SerialDevice(EventManager eventManager, MemoryManager memoryManager, String name, int startAddr, EventManager.EVENT inEvent, EventManager.EVENT outEvent) {
+		this.name = name;
+		this.start = startAddr;
 		this.length = MEMORYLENGTH;
+		this.inEvent = inEvent;
+		this.outEvent = outEvent;
 
 		this.memory = new byte[this.length];
 
 		this.eventManager = eventManager;
 		this.memoryManager = memoryManager;
 
-		this.eventManager.addEventObserver(EventManager.EVENT.SERIAL_INPUT, this);
+		if (this.inEvent != null)
+			this.eventManager.addEventObserver(this.inEvent, this);
 
 		this.reset();
 	}
@@ -102,7 +101,7 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 
 		if (mapAddr == 4) {
 			memory[4] = value;
-			this.eventManager.sendEvent(EventManager.EVENT.SERIAL_OUTPUT, (char)(value & 0xFF));
+			this.eventManager.sendEvent(this.outEvent, (char)(value & 0xFF));
 		} else if (mapAddr == 12) {
 			memory[12] = (byte)(value & 0xC0);
 		} else if (mapAddr < 4 || mapAddr >= 8 && mapAddr < 12 || mapAddr >= 16) {
@@ -134,10 +133,8 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
 	{
-		switch(eventIdentifier) {
-			case SERIAL_INPUT:
-				this.inputBuffer.offer(((Character)obj).charValue());
-				break;
+		if (eventIdentifier == this.inEvent) {
+			this.inputBuffer.offer(((Character)obj).charValue());
 		}
 	}
 }

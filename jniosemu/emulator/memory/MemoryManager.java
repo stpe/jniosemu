@@ -50,7 +50,8 @@ public class MemoryManager
 		this.memoryBlocks.add(new ButtonDevice(eventManager, this));
 		this.memoryBlocks.add(new LedDevice(eventManager, this));
 		this.memoryBlocks.add(new DipswitchDevice(eventManager, this));
-		this.memoryBlocks.add(new SerialDevice(eventManager, this));
+		this.memoryBlocks.add(new SerialDevice(eventManager, this, "uart_0", 0x860, EventManager.EVENT.UART0_INPUT, EventManager.EVENT.UART0_OUTPUT));
+		this.memoryBlocks.add(new SerialDevice(eventManager, this, "uart_1", 0x880, EventManager.EVENT.UART1_INPUT, EventManager.EVENT.UART1_OUTPUT));
 		this.memoryBlocks.add(new TimerDevice(eventManager, this));
 	}
 
