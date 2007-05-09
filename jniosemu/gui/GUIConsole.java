@@ -20,8 +20,8 @@ import jniosemu.events.*;
 	public GUIConsole(EventManager eventManager)
 	{
 		super(
-			eventManager, 
-			"UART_1", 
+			eventManager,
+			"UART_1",
 			EventManager.EVENT.UART1_INPUT,
 			EventManager.EVENT.UART1_OUTPUT
 		);

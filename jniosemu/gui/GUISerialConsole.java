@@ -20,8 +20,8 @@ import jniosemu.events.*;
 	public GUISerialConsole(EventManager eventManager)
 	{
 		super(
-			eventManager, 
-			"UART_0", 
+			eventManager,
+			"UART_0",
 			EventManager.EVENT.UART0_INPUT,
 			EventManager.EVENT.UART0_OUTPUT
 		);

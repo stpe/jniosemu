@@ -208,7 +208,7 @@ public class EmulatorManager implements EventObserver
 			Instruction instruction = InstructionManager.get(opCode);
 			instruction.run(this.emulator);
 			this.pc += 4;
-		} catch (EmulatorException e) {
+		} catch (Exception e) {
 			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_ERROR, e.getMessage());
 			this.ended = true;
 			return false;
