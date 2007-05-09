@@ -305,7 +305,7 @@ public class Compiler
 								Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
 								Matcher mMacro = pMacro.matcher(mInstruction.group(3));
 								if (mMacro.matches()) {
-									this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null, aLineNumber);
+									this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null, aLineNumber, null);
 								} else {
 									throw new CompilerException(aLineNumber, "Wrong syntax for a macro");
 								}
@@ -387,7 +387,7 @@ public class Compiler
 												this.parseLine(line, true, aLineNumber);
 											}
 										} catch (CompilerException e) {
-											throw new CompilerException(aLineNumber, "Macro "+ ins +": Compiler error:\n\t"+ macro.getLineNumberAsString(i) +": "+ e.getMessagePart());
+											throw new CompilerException(aLineNumber, "Macro "+ ins +": Assembler error:\n\t"+ macro.getLineNumberAsString(i) +": "+ e.getMessagePart());
 										}
 									}
 								} catch (MacroException e) {

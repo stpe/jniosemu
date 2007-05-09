@@ -3,7 +3,7 @@ package jniosemu.instruction;
 /**
  * Have info about one instruction
  */
-public class InstructionInfo
+public class InstructionInfo extends InstructionSyntax
 {
 	/**
 	 * The different type of instructions.
@@ -34,10 +34,6 @@ public class InstructionInfo
 	*/
 
 	/**
-	 * Name of instruction.
-	 */
-	private final String name;
-	/**
 	 * OpCode of the instruction
 	 */
 	private final int    opCode;
@@ -60,11 +56,12 @@ public class InstructionInfo
 	 * @param type    sype of instruction
 	 * @param syntax  syntax of the instruction
 	 */
-	public InstructionInfo(String name, int opCode, Type type, Syntax syntax) {
+	public InstructionInfo(String name, int opCode, Type type, Syntax syntax, CATEGORY category) {
 		this.name   = name.toLowerCase();
 		this.opCode = opCode;
 		this.type   = type;
 		this.syntax = syntax;
+		this.category = category;
 	}
 
 	/**
@@ -131,5 +128,46 @@ public class InstructionInfo
 	 */
 	public Syntax getSyntax() {
 		return this.syntax;
+	}
+
+	public String getArguments() throws InstructionException {
+		switch (this.type) {
+			case ITYPE:
+				switch (this.syntax) {
+					case DEFAULT:
+						return "rB, rA, imm";
+					case BRANCH_COND:
+						return "rA, rB, imm";
+					case BRANCH:
+						return "label";
+					case MEMORY:
+						return "rB, imm(rA)";
+				}
+				break;
+			case RTYPE:
+				switch (this.syntax) {
+					case DEFAULT:
+						return "rC, rA, rB";
+					case CALLJUMP:
+						return "rA";
+					case PC:
+						return "rC";
+					case SHIFT:
+						return "rC, rA, imm";
+					case CUSTOM:
+						return "imm, rC, rA, rB";
+					case NONE:
+						return "";
+				}
+				break;
+			case JTYPE:
+				switch (this.syntax) {
+					case DEFAULT:
+						return "imm";
+				}
+				break;
+		}
+
+		throw new InstructionException();
 	}
 }

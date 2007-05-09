@@ -32,23 +32,9 @@ public class InstructionManager
 	 */
 	private static ArrayList<InstructionInfo> instructions;
 	
-	/**
-	 * Categories for instructions used for instruction insert menu.
-	 */
-	public static enum INSTRUCTION_CATEGORY {
-		ARITHMETIC_LOGICAL,
-		MOVE,
-		COMPARISON,
-		SHIFT_ROTATE,
-		PROGRAM_CONTROL,
-		DATA_TRANSFER,
-		OTHER
-	}
+	private static ArrayList<InstructionSyntax> instructionSyntax;
 	
-	/**
-	 * Used to keep track of which category each instruction belongs to.
-	 */
-	private static HashMap<String, INSTRUCTION_CATEGORY> categorizedInstructions = new HashMap<String, INSTRUCTION_CATEGORY>();
+	private static HashMap<String, InstructionSyntax> syntaxNameHash;
 
 	/**
 	 * Init the InstructionManager by populating the instructions.
@@ -64,73 +50,86 @@ public class InstructionManager
 		opCodeHash = new HashMap<Integer, InstructionInfo>(50);
 		nameHash = new HashMap<String, InstructionInfo>(50);
 		instructions = new ArrayList<InstructionInfo>(50);
+		instructionSyntax = new ArrayList<InstructionSyntax>(70);
+		syntaxNameHash = new HashMap<String, InstructionSyntax>(70);
 
-		addInstruction("ADD",     0x1883A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("ADDI",    0x04,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("AND",     0x703A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("ANDHI",   0x2C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("ANDI",    0x0C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("BEQ",     0x26,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("BGE",     0x0e,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("BGEU",    0x2e,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("BLT",     0x16,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("BLTU",    0x36,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("BNE",     0x1e,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("BR",      0x06,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH,       INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("CALL",    0x0,        InstructionInfo.Type.JTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("CALLR",   0x3EE83A,   InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.CALLJUMP,     INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("CMPEQ",   0x1003A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPEQI",  0x20,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPGE",   0x403A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPGEI",  0x08,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPGEU",  0x1403A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPGEUI", 0x28,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPLT",   0x803A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPLTI",  0x10,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPLTU",  0x1803A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPLTUI", 0x30,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPNE",   0xC03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("CMPNEI",  0x18,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.COMPARISON);
-    addInstruction("DIV",     0x1283A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("DIVU",    0x1203A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("JMP",     0x683A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.CALLJUMP,     INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("LDB",     0x07,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       INSTRUCTION_CATEGORY.DATA_TRANSFER);
-    addInstruction("LDBU",    0x03,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       INSTRUCTION_CATEGORY.DATA_TRANSFER);
-    addInstruction("LDH",     0x0F,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       INSTRUCTION_CATEGORY.DATA_TRANSFER);
-    addInstruction("LDHU",    0x0B,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       INSTRUCTION_CATEGORY.DATA_TRANSFER);
-    addInstruction("LDW",     0x17,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       INSTRUCTION_CATEGORY.DATA_TRANSFER);
-    addInstruction("MUL",     0x1383A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("MULI",    0x24,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("MULXSS",  0xF83A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("MULXSU",  0xB83A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("MULXUU",  0x383A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("NEXTPC",  0xE03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.PC,           INSTRUCTION_CATEGORY.OTHER);
-    addInstruction("NOR",     0x303A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("OR",      0xB03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("ORHI",    0x34,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("ORI",     0x14,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("RET",     0xF800283A, InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.NONE,         INSTRUCTION_CATEGORY.PROGRAM_CONTROL);
-    addInstruction("ROL",     0x183A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("ROLI",    0x83A,      InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("ROR",     0x583A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("SLL",     0x983A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("SLLI",    0x903A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("SRA",     0x1D83A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("SRAI",    0x1D03A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("SRL",     0xD83A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("SRLI",    0xD03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        INSTRUCTION_CATEGORY.SHIFT_ROTATE);
-    addInstruction("STB",     0x05,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       INSTRUCTION_CATEGORY.DATA_TRANSFER);
-    addInstruction("STH",     0x0D,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       INSTRUCTION_CATEGORY.DATA_TRANSFER);
-    addInstruction("STW",     0x15,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       INSTRUCTION_CATEGORY.DATA_TRANSFER);
-    addInstruction("SUB",     0x1C83A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("XOR",     0xF03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("XORHI",   0x3C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
-    addInstruction("XORI",    0x1C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      INSTRUCTION_CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("ADD",     0x1883A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("ADDI",    0x04,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("AND",     0x703A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("ANDHI",   0x2C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("ANDI",    0x0C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("BEQ",     0x26,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("BGE",     0x0e,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("BGEU",    0x2e,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("BLT",     0x16,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("BLTU",    0x36,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("BNE",     0x1e,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH_COND,  InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("BR",      0x06,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.BRANCH,       InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("CALL",    0x0,        InstructionInfo.Type.JTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("CALLR",   0x3EE83A,   InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.CALLJUMP,     InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("CMPEQ",   0x1003A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPEQI",  0x20,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPGE",   0x403A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPGEI",  0x08,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPGEU",  0x1403A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPGEUI", 0x28,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPLT",   0x803A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPLTI",  0x10,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPLTU",  0x1803A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPLTUI", 0x30,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPNE",   0xC03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("CMPNEI",  0x18,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.COMPARISON);
+		addInstruction("DIV",     0x1283A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("DIVU",    0x1203A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("JMP",     0x683A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.CALLJUMP,     InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("LDB",     0x07,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDBU",    0x03,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDH",     0x0F,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDHU",    0x0B,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDW",     0x17,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("MUL",     0x1383A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("MULI",    0x24,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("MULXSS",  0xF83A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("MULXSU",  0xB83A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("MULXUU",  0x383A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("NEXTPC",  0xE03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.PC,           InstructionSyntax.CATEGORY.OTHER);
+		addInstruction("NOR",     0x303A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("OR",      0xB03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("ORHI",    0x34,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("ORI",     0x14,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("RET",     0xF800283A, InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.NONE,         InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
+		addInstruction("ROL",     0x183A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("ROLI",    0x83A,      InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("ROR",     0x583A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("SLL",     0x983A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("SLLI",    0x903A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("SRA",     0x1D83A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("SRAI",    0x1D03A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("SRL",     0xD83A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("SRLI",    0xD03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        InstructionSyntax.CATEGORY.SHIFT_ROTATE);
+		addInstruction("STB",     0x05,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("STH",     0x0D,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("STW",     0x15,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("SUB",     0x1C83A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("XOR",     0xF03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("XORHI",   0x3C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
+		addInstruction("XORI",    0x1C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
 
 		for (InstructionInfo instruction: instructions) {
 			opCodeHash.put(instruction.getHash(), instruction);
 			nameHash.put(instruction.getName(), instruction);
+
+			instructionSyntax.add(instruction);
+			syntaxNameHash.put(instruction.getName(), instruction);
 		}
+
+		MacroManager macroManager = new MacroManager();
+		for (InstructionSyntax instruction : macroManager.getAll()) {
+			instructionSyntax.add(instruction);
+			syntaxNameHash.put(instruction.getName(), instruction);
+		}
+
+		java.util.Collections.sort(instructionSyntax);
 
 		inited = true;
 	}
@@ -146,39 +145,9 @@ public class InstructionManager
 	 * @param syntax    syntax of the instruction
 	 * @param category  instruction category
 	 */
-	private static void addInstruction(String name, int opCode, InstructionInfo.Type type, InstructionInfo.Syntax syntax, INSTRUCTION_CATEGORY category)
+	private static void addInstruction(String name, int opCode, InstructionInfo.Type type, InstructionInfo.Syntax syntax, InstructionSyntax.CATEGORY category)
 	{
-		instructions.add(new InstructionInfo(name, opCode, type, syntax));
-		addInstructionToCategory(name, category);
-	}
-
-	/**
-	 * Add instruction to category list.
-	 *
-	 * @calledby        addInstruction(), addMacro()
-	 *
-	 * @param name      name of the instruction
-	 * @param category  instruction category
-	 */
-	public static void addInstructionToCategory(String name, INSTRUCTION_CATEGORY category)
-	{
-		categorizedInstructions.put(name, category);
-	}
-
-	/**
-	 * Add macro to category list.
-	 *
-	 * @calledby        MacroManager.addMacro()
-	 *
-	 * @param name      name of the instruction
-	 * @param args      arguments of macro
-	 * @param category  instruction category
-	 */
-	public static void addMacro(String name, String args, INSTRUCTION_CATEGORY category)
-	{
-		// Note: take String args as parameter since it will be used for future getArgument()
-		
-		addInstructionToCategory(name, category);
+		instructions.add(new InstructionInfo(name, opCode, type, syntax, category));
 	}
 
 	public static int getHash(int opCode) {
@@ -277,47 +246,20 @@ public class InstructionManager
 	 * @param    instruction  instruction name
 	 * @return   comma separated arguments
 	 */
-	public static String getArgument(String instruction) {
-		return " rX, rY, rZ";
-	}
-	
-	/**
-	 * Get available instructions in sorted order.
-	 *
-	 * @pre       The HashMap categorizedInstructions must be populated.
-	 * @calledby  GUIMenuBar.setupInstructions()
-	 *
-	 * @return  sorted list of instructions
-	 */
-	public static ArrayList<String> getSortedInstructionList()
-	{
+	public static InstructionSyntax getSyntax(String name) throws InstructionException {
 		init();
-		
-		// Note: This method is only called once when the menu is populated,
-		//       therefore there is no need to cache the sorted arraylist.
-		
-		// temporarily create instance of MacroManager to populate 
-		// macros in categorized instruction list
-		MacroManager macroMan = new MacroManager();
-		
-		ArrayList<String> list = new ArrayList<String>( categorizedInstructions.keySet() );
-		java.util.Collections.sort(list);
-		
-		return list;
-	}
-	
-	/**
-	 * Get instruction category for given instruction.
-	 *
-	 * @pre       The HashMap categorizedInstructions must be populated.
-	 * @calledby  GUIMenuBar.setupInstructions()
-	 *
-	 * @param     instruction  instruction to get category for
-	 * @return    instruction  category
-	 */
-	public static INSTRUCTION_CATEGORY getInstructionCategory(String instruction)
-	{
-		return categorizedInstructions.get(instruction);
+
+		InstructionSyntax instructionSyntax = syntaxNameHash.get(name.toLowerCase());
+
+		if (instructionSyntax == null)
+			throw new InstructionException(name, "Unknown instruction");
+
+		return instructionSyntax;
 	}
 
+	public static ArrayList<InstructionSyntax> getAllInstructionSyntax() {
+		init();
+
+		return instructionSyntax;
+	}
 }

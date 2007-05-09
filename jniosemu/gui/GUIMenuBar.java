@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import jniosemu.events.*;
 import jniosemu.emulator.*;
 import jniosemu.instruction.InstructionManager;
+import jniosemu.instruction.InstructionSyntax;
 
 /**
  * Creates and manages menu bar in GUI.
@@ -222,8 +223,6 @@ public class GUIMenuBar extends JMenuBar
 	 */
 	private JMenu setupInstructions(StateManager stateManager)
 	{
-		ArrayList<String> instructions = InstructionManager.getSortedInstructionList();
-
 		// create instruction category submenus
 		JMenu arithmeticLogicalMenu = new JMenu("Arithmetic & Logical");
 		JMenu moveMenu              = new JMenu("Move");
@@ -236,38 +235,42 @@ public class GUIMenuBar extends JMenuBar
 		JMenu submenu;
 		
 		// add instructions to category submenus
-		for (String instruction : instructions)
-		{
-			// get submenu depending on instruction category
-			switch (InstructionManager.getInstructionCategory(instruction))
+		ArrayList<InstructionSyntax> instructions = InstructionManager.getAllInstructionSyntax();
+		
+		if (instructions != null) {
+			for (InstructionSyntax instruction : instructions)
 			{
-				case ARITHMETIC_LOGICAL:
-					submenu = arithmeticLogicalMenu;
-					break;
-				case MOVE:
-					submenu = moveMenu;
-					break;
-				case COMPARISON:
-					submenu = comparisonMenu;
-					break;
-				case SHIFT_ROTATE:
-					submenu = shiftRotateMenu;
-					break;
-				case PROGRAM_CONTROL:
-					submenu = programControlMenu;
-					break;
-				case DATA_TRANSFER:
-					submenu = dataTransferMenu;
-					break;
-				default:
-					submenu = otherMenu;
-					break;
-			}
+				// get submenu depending on instruction category
+				switch (instruction.getCategory())
+				{
+					case ARITHMETIC_LOGICAL:
+						submenu = arithmeticLogicalMenu;
+						break;
+					case MOVE:
+						submenu = moveMenu;
+						break;
+					case COMPARISON:
+						submenu = comparisonMenu;
+						break;
+					case SHIFT_ROTATE:
+						submenu = shiftRotateMenu;
+						break;
+					case PROGRAM_CONTROL:
+						submenu = programControlMenu;
+						break;
+					case DATA_TRANSFER:
+						submenu = dataTransferMenu;
+						break;
+					default:
+						submenu = otherMenu;
+						break;
+				}
 
-			// add instruction to submenu
-			submenu.add(
-		 		createMenuItem(instruction, EventManager.EVENT.EDITOR_INSERT_INSTRUCTION + DELIMITER_CHAR + instruction)
-		 	);
+				// add instruction to submenu
+				submenu.add(
+					createMenuItem(instruction.getName(), EventManager.EVENT.EDITOR_INSERT_INSTRUCTION + DELIMITER_CHAR + instruction.getName())
+				);
+			}
 		}
 
 		JMenu menu = new JMenu("Instruction");

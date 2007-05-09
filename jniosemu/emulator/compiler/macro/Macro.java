@@ -3,15 +3,14 @@ package jniosemu.emulator.compiler.macro;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import jniosemu.instruction.InstructionException;
+import jniosemu.instruction.InstructionSyntax;
+
 /**
  * Contains information about a Macro
  */
-public class Macro
+public class Macro extends InstructionSyntax
 {
-	/**
-	 * Name of the macro
-	 */
-	private String name;
 	/**
 	 * Arguments that the macro takes
 	 */
@@ -34,10 +33,11 @@ public class Macro
 	 * @param args 	Arguments of the macro
 	 * @param lines	Lines of the macro
 	 */
-	public Macro(String name, String[] args, String[] lines, int lineNumber) {
+	public Macro(String name, String[] args, String[] lines, int lineNumber, CATEGORY category) {
 		this.name = name.toLowerCase();
 		this.args = args;
 		this.lineNumber = lineNumber;
+		this.category = category;
 
 		if (lines != null) {
 			for (String line: lines)
@@ -161,5 +161,17 @@ public class Macro
 			return "Psuedo instruction";
 
 		return "Line "+ (this.lineNumber + macroLine);
+	}
+
+	public String getArguments() throws InstructionException {
+		StringBuffer buffer = new StringBuffer();
+
+		int i = 0;
+		for (String arg : this.args) {
+			buffer.append(arg);
+			if (++i < this.args.length)
+				buffer.append(", ");
+		}
+		return buffer.toString();
 	}
 }

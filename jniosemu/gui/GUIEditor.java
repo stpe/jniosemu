@@ -10,7 +10,9 @@ import java.io.*;
 
 import jniosemu.events.*;
 import jniosemu.editor.*;
+import jniosemu.instruction.InstructionException;
 import jniosemu.instruction.InstructionManager;
+import jniosemu.instruction.InstructionSyntax;
 
 /**
  * Creates and manages the GUI component of the editor view.
@@ -588,12 +590,17 @@ public class GUIEditor extends JPanel
 	private void insertInstruction(String instruction)
 	{
 		// get argument of instruction
-		String argument = InstructionManager.getArgument(instruction);
+		String argument;
+		try {
+			argument = ((InstructionSyntax)InstructionManager.getSyntax(instruction)).getArguments();
+		} catch (InstructionException e) {
+			return;
+		}
 
 		int caretPos = textArea.getCaretPosition();
 
-		// insert instruction and argument at caret position		
-		textArea.insert(instruction + argument, caretPos);
+		// insert instruction and argument at caret position
+		textArea.insert(instruction +" "+ argument, caretPos);
 
 		try {
 			// move caret to beginning of argument
