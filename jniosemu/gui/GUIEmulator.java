@@ -262,7 +262,7 @@ import jniosemu.Utilities;
 			super();
 			setOpaque(true);
 			setFont(listView.getFont());
-			
+			System.out.println("cell font name: " + metrics.getFont().getName() + ", size: " + metrics.getFont().getSize());
 			this.baseline = metrics.getAscent();
 			this.height = metrics.getHeight();
 			this.width = listView.getWidth();
