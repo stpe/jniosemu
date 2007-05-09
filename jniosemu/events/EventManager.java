@@ -36,8 +36,6 @@ public final class EventManager
 		COMPILER_COMPILE,									// Start compiling
 		COMPILER_COMPILE_INIT,						// Start compile requested from GUI
 		COMPILER_ERROR,										// Error occured during compilation
-		CONSOLE_OUTPUT,										// Send a character to console
-		CONSOLE_VIEW,											// Show Console window
 		DIPSWITCH_TOGGLE,									// IO dipswitches in GUI has changed
 		DIPSWITCH_UPDATE,									// Update state of dipswitches
 		DOCUMENT_NEW,											// New document
@@ -75,10 +73,13 @@ public final class EventManager
 		PROGRAMCOUNTER_CHANGE,						// Program counter in emulated program has changed
 		REGISTER_CHANGE,									// Register in emulated program has changed
 		REGISTER_VIEW_SELECT,							// A register is selected in the registers list
-		SERIAL_CONSOLE_VIEW,							// Show Serial Console window
-		SERIAL_INPUT,											// Send a character to emulated serial port
-		SERIAL_OUTPUT,										// Send a character out of emulated serial port
 		STATE_CHANGE,											// Update state (disabled/enabled) of elements in menu and toolbar
+		UART0_INPUT,
+		UART0_OUTPUT,										// Send a character to console
+		UART0_VIEW,											// Show Console window
+		UART1_INPUT,										// Send a character to emulated serial port
+		UART1_OUTPUT,										// Send a character out of emulated serial port
+		UART1_VIEW,											// Show Serial Console window
 		VARIABLE_CHANGE,									// If variables have changed (send memory block)
 		VARIABLE_REQUEST_UPDATE,					// Trigger a VARIABLE_CHANGE and VARIABLE_VECTOR event
 		VARIABLE_VECTOR,									// Vector of Variable for Variable View
