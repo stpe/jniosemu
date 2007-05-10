@@ -185,13 +185,14 @@ public class GUIMenuBar extends JMenuBar
 		
 		menu.addSeparator();
 
-		item = createMenuItem("Console...", EventManager.EVENT.UART1_VIEW.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
-		stateManager.addItem(EventManager.EVENT.UART1_VIEW, item);
-		menu.add(item);
-		
-		item = createMenuItem("Serial Console...", EventManager.EVENT.UART0_VIEW.toString());
+		item = createMenuItem("UART 0...", EventManager.EVENT.UART0_VIEW.toString(),
+		          KeyStroke.getKeyStroke(KeyEvent.VK_0, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		stateManager.addItem(EventManager.EVENT.UART0_VIEW, item);
+		menu.add(item);
+
+		item = createMenuItem("UART 1...", EventManager.EVENT.UART1_VIEW.toString(),
+		          KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+		stateManager.addItem(EventManager.EVENT.UART1_VIEW, item);
 		menu.add(item);
 
 		menu.addSeparator();

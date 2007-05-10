@@ -89,14 +89,14 @@ public class GUIManager
 	GUIMemoryView frameMemoryView = null;
 
 	/**
-	 * Serial Console window.
+	 * Uart 0 Console window.
 	 */
-	GUISerialConsole frameSerialConsole = null;
+	GUIUART uart0Console = null;
 
 	/**
-	 * Console window.
+	 * Uart 1 Console window.
 	 */
-	GUIConsole frameConsole = null;
+	GUIUART uart1Console = null;
 
 	/**
 	 * Initiates the creation of GUI components and adds itself to
@@ -333,10 +333,10 @@ public class GUIManager
 				showVariableView();
 				break;
 			case UART0_VIEW:
-				showSerialConsole();
+				showUart0Console();
 				break;
 			case UART1_VIEW:
-				showConsole();
+				showUart1Console();
 				break;
 			case COMPILER_COMPILE:
 				toggleEditorMessages(false);
@@ -464,20 +464,25 @@ public class GUIManager
 	 * Show Serial Console window positioned in center
 	 * of main window.
 	 *
-	 * @calls     GUISerialConsole
+	 * @calls     GUIUART
 	 * @calledby  update()
 	 */	
-	private void showSerialConsole()
+	private void showUart0Console()
 	{
-		if (frameSerialConsole == null)
+		if (uart0Console == null)
 		{
-			frameSerialConsole = new GUISerialConsole(this.eventManager);
-			frameSerialConsole.setSize(new Dimension(440, 300));
-			frameSerialConsole.setIconImage(this.frame.getIconImage());
-			frameSerialConsole.setLocationRelativeTo(this.frame);
+			uart0Console = new GUIUART(
+				eventManager,
+				"UART_0",
+				EventManager.EVENT.UART0_INPUT,
+				EventManager.EVENT.UART0_OUTPUT			
+			);
+			uart0Console.setSize(new Dimension(440, 300));
+			uart0Console.setIconImage(this.frame.getIconImage());
+			uart0Console.setLocationRelativeTo(this.frame);
 		}
 
-		frameSerialConsole.setVisible(true);		
+		uart0Console.setVisible(true);		
 	}
 
 	/**
@@ -487,17 +492,22 @@ public class GUIManager
 	 * @calls     GUIConsole
 	 * @calledby  update()
 	 */	
-	private void showConsole()
+	private void showUart1Console()
 	{
-		if (frameConsole == null)
+		if (uart1Console == null)
 		{
-			frameConsole = new GUIConsole(this.eventManager);
-			frameConsole.setSize(new Dimension(440, 300));
-			frameConsole.setIconImage(this.frame.getIconImage());
-			frameConsole.setLocationRelativeTo(this.frame);
+			uart1Console = new GUIUART(
+				eventManager,
+				"UART_1",
+				EventManager.EVENT.UART1_INPUT,
+				EventManager.EVENT.UART1_OUTPUT			
+			);
+			uart1Console.setSize(new Dimension(440, 300));
+			uart1Console.setIconImage(this.frame.getIconImage());
+			uart1Console.setLocationRelativeTo(this.frame);
 		}
 
-		frameConsole.setVisible(true);		
+		uart1Console.setVisible(true);		
 	}
 
 	/**

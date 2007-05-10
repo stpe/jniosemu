@@ -12,8 +12,8 @@ import jniosemu.emulator.*;
 /**
  * Creates and manages the GUI component of the serial console.
  */
- public abstract class GUIUART extends JFrame
-                              implements ActionListener, EventObserver {
+ public class GUIUART extends JFrame
+                      implements ActionListener, EventObserver {
 
 	/**
 	 * Reference to EventManager used to receive
@@ -48,6 +48,9 @@ import jniosemu.emulator.*;
 		
 		this.inEvent = inEvent;
 		this.outEvent = outEvent;
+		
+		// setup GUI
+		setup();
 		
 		// add events to listen to
 		EventManager.EVENT[] events = {
