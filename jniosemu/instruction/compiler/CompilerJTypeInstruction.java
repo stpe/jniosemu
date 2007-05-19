@@ -42,13 +42,7 @@ public class CompilerJTypeInstruction extends CompilerInstruction
 		Matcher mArgs;
 		switch (this.instructionInfo.getSyntax()) {
 			case DEFAULT:
-				pArgs = Pattern.compile("([a-z0-9]+)");
-				mArgs = pArgs.matcher(aArgs);
-				if (mArgs.matches()) {
-					this.tImm = mArgs.group(1);
-				} else {
-					throw new InstructionException(aInstructionInfo.getName(), "Wrong argument syntax: "+ aArgs);
-				}
+				this.tImm = aArgs;
 				break;
 			default:
 				throw new InstructionException();

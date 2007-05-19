@@ -153,6 +153,11 @@ public class Utilities
 		return "0x" + hex.substring(hex.length()-8, hex.length());
 	}
 
+	public static String byteToHexString(byte value) {
+		String hex = "00" + Integer.toHexString(value);
+		return "0x" + hex.substring(hex.length()-2, hex.length());
+	}
+
 	/**
 	 * Converts integer to a formatted string of the binary value.
 	 *

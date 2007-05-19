@@ -83,10 +83,15 @@ public class InstructionManager
 		addInstruction("DIVU",    0x1203A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
 		addInstruction("JMP",     0x683A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.CALLJUMP,     InstructionSyntax.CATEGORY.PROGRAM_CONTROL);
 		addInstruction("LDB",     0x07,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDBIO",   0x27,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
 		addInstruction("LDBU",    0x03,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDBUIO",  0x23,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
 		addInstruction("LDH",     0x0F,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDHIO",   0x2F,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
 		addInstruction("LDHU",    0x0B,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDHUIO",  0x2B,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
 		addInstruction("LDW",     0x17,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("LDWIO",   0x37,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
 		addInstruction("MUL",     0x1383A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
 		addInstruction("MULI",    0x24,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
 		addInstruction("MULXSS",  0xF83A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
@@ -108,8 +113,11 @@ public class InstructionManager
 		addInstruction("SRL",     0xD83A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.SHIFT_ROTATE);
 		addInstruction("SRLI",    0xD03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.SHIFT,        InstructionSyntax.CATEGORY.SHIFT_ROTATE);
 		addInstruction("STB",     0x05,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("STBIO",   0x25,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
 		addInstruction("STH",     0x0D,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("STHIO",   0x2D,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
 		addInstruction("STW",     0x15,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
+		addInstruction("STWIO",   0x35,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.MEMORY,       InstructionSyntax.CATEGORY.DATA_TRANSFER);
 		addInstruction("SUB",     0x1C83A,    InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
 		addInstruction("XOR",     0xF03A,     InstructionInfo.Type.RTYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);
 		addInstruction("XORHI",   0x3C,       InstructionInfo.Type.ITYPE, InstructionInfo.Syntax.DEFAULT,      InstructionSyntax.CATEGORY.ARITHMETIC_LOGICAL);

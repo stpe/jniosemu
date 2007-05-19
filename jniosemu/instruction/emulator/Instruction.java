@@ -20,7 +20,7 @@ public abstract class Instruction
 	 * @return Long value
 	 */
 	protected long signedToUnsigned(int value) {
-		// This is a very stupid way to do it but it seams to be the only way Java can do it
+		// This is a very stupid way to do it but it seems to be the only way Java can do it
 		return (long)value & (new Long("4294967295")).longValue();
 	}
 

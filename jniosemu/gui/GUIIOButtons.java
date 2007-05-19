@@ -82,7 +82,7 @@ import jniosemu.Utilities;
 		for(int i = 0; i < buttons.length; i++)
 		{
 			buttons[i] = new JLabel(icons[0]);
-			buttons[i].setToolTipText("SW" + (7 - i));
+			buttons[i].setToolTipText("SW" + (4 + i));
 			
 			final int buttonIndex = i;
 			

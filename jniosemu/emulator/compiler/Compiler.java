@@ -73,6 +73,7 @@ public class Compiler
 	 */
 	public Compiler(String aLines) {
 		this.lines = aLines.split("\n");
+		this.labels.put("nr_uart_txchar", MemoryManager.LIBSTARTADDR);
 	}
 
 	/**
@@ -284,7 +285,7 @@ public class Compiler
 					// Now parse the remaing part. Now when the label is removed
 					this.parseLine(mLabel.group(2), false, aLineNumber);
 				} else {
-					Pattern pInstruction = Pattern.compile("(\\.)?([A-Za-z]+)\\s*(.*?)");
+					Pattern pInstruction = Pattern.compile("(\\.)?([A-Za-z]+)(|\\s+(.*?))");
 					Matcher mInstruction = pInstruction.matcher(match);
 					if (mInstruction.matches()) {
 
@@ -294,7 +295,7 @@ public class Compiler
 
 							// Handle all parts with a "."-character in the begining
 							if (name.equals("equ")) {
-								this.constants.add(new Constant(mInstruction.group(3)));
+								this.constants.add(new Constant(mInstruction.group(4)));
 							} else if (name.equals("data")) {
 								this.codePart = false;
 							} else if (name.equals("text")) {
@@ -303,7 +304,7 @@ public class Compiler
 								this.globals.add(mInstruction.group(3));
 							} else if (name.equals("macro")) {
 								Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
-								Matcher mMacro = pMacro.matcher(mInstruction.group(3));
+								Matcher mMacro = pMacro.matcher(mInstruction.group(4));
 								if (mMacro.matches()) {
 									this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null, aLineNumber, null);
 								} else {
@@ -335,7 +336,7 @@ public class Compiler
 								}
 							} else if (name.equals("skip")) {
 								try {
-									long count = this.parseValue(mInstruction.group(3));
+									long count = this.parseValue(mInstruction.group(4));
 									for (int i = 0; i < count; i++) {
 										this.variables.add(new Variable(this.lastLabel, (byte)0));
 										this.lastLabel = null;
@@ -344,7 +345,7 @@ public class Compiler
 									throw new CompilerException(aLineNumber, e.getMessage());
 								}
 							} else if (name.equals("fill")) {
-								String[] variables = mInstruction.group(3).split(",");
+								String[] variables = mInstruction.group(4).split(",");
 								if (variables.length != 3)
 									throw new CompilerException(aLineNumber, "Not enough arguments");
 
@@ -375,7 +376,7 @@ public class Compiler
 								try {
 									// Parse the macro
 									Macro macro = this.macros.get(ins);
-									ArrayList<String> lines = macro.parse(mInstruction.group(3));
+									ArrayList<String> lines = macro.parse(mInstruction.group(4));
 
 									if (this.lastMacro != null) {
 										this.lastMacro.addLine(lines);
@@ -399,7 +400,7 @@ public class Compiler
 								} else {
 									// get the CompilerInstruction for the instruction
 									try {
-										CompilerInstruction cins = InstructionManager.get(ins, mInstruction.group(3), aLineNumber);
+										CompilerInstruction cins = InstructionManager.get(ins, mInstruction.group(4), aLineNumber);
 										this.instructions.add(cins);
 									} catch (InstructionException e) {
 										throw new CompilerException(aLineNumber, e.getMessage());

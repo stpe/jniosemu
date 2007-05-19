@@ -15,6 +15,10 @@ public class MemoryManager
 	 */
 	public static final int PROGRAMSTARTADDR  = 0x20000;
 	/**
+	 * Address in the memory where the lib function is placed.
+	 */
+	public static final int LIBSTARTADDR  = 0x28000;
+	/**
 	 * Address in the memory where the variables is placed.
 	 */
 	public static final int VARIABLESTARTADDR = 0x30000;
@@ -25,7 +29,7 @@ public class MemoryManager
 	/**
 	 * Size of the stack
 	 */
-	public static final int STACKSIZE         = 0x00020;
+	public static final int STACKSIZE         = 0x00080;
 	/**
 	 * Contains the different MemoryBlocks
 	 */
@@ -53,6 +57,9 @@ public class MemoryManager
 		this.memoryBlocks.add(new DipswitchDevice(eventManager, this));
 		this.memoryBlocks.add(new SerialDevice(eventManager, this, "uart_0", 0x860, EventManager.EVENT.UART0_INPUT, EventManager.EVENT.UART0_OUTPUT));
 		this.memoryBlocks.add(new SerialDevice(eventManager, this, "uart_1", 0x880, EventManager.EVENT.UART1_INPUT, EventManager.EVENT.UART1_OUTPUT));
+
+		byte[] lib = {(byte)0x04, (byte)0xfd, (byte)0xff, (byte)0xde, (byte)0x15, (byte)0x02, (byte)0x00, (byte)0xdf, (byte)0x3a, (byte)0x88, (byte)0x39, (byte)0xd8, (byte)0x15, (byte)0x00, (byte)0x00, (byte)0xe1, (byte)0x15, (byte)0x01, (byte)0x40, (byte)0xe1, (byte)0x17, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x3a, (byte)0xc0, (byte)0x04, (byte)0x10, (byte)0x1e, (byte)0x02, (byte)0x00, (byte)0x10, (byte)0x04, (byte)0x18, (byte)0x82, (byte)0x00, (byte)0x15, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x17, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x37, (byte)0x02, (byte)0x80, (byte)0x10, (byte)0xba, (byte)0xd1, (byte)0x04, (byte)0x10, (byte)0x5c, (byte)0x00, (byte)0x80, (byte)0x10, (byte)0x4c, (byte)0x00, (byte)0x80, (byte)0x10, (byte)0x3a, (byte)0x00, (byte)0x05, (byte)0x10, (byte)0x1e, (byte)0x01, (byte)0x00, (byte)0x10, (byte)0x06, (byte)0xf8, (byte)0x3f, (byte)0x00, (byte)0x17, (byte)0x01, (byte)0xc0, (byte)0xe0, (byte)0x17, (byte)0x00, (byte)0x80, (byte)0xe0, (byte)0x35, (byte)0x01, (byte)0x80, (byte)0x18, (byte)0x17, (byte)0x02, (byte)0x00, (byte)0xdf, (byte)0x04, (byte)0x03, (byte)0xc0, (byte)0xde, (byte)0x3a, (byte)0x28, (byte)0x00, (byte)0xf8};  
+		this.memoryBlocks.add(new Memory("Lib", LIBSTARTADDR, lib.length, lib));
 	}
 
 	public void reset(byte[] program, byte[] variables) {
