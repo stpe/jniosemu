@@ -2,6 +2,8 @@ package jniosemu.emulator.memory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import jniosemu.emulator.SourceCode;
 import jniosemu.emulator.memory.io.*;
 import jniosemu.events.EventManager;
 
@@ -45,11 +47,11 @@ public class MemoryManager
 	 * @param program Program
 	 * @param variables Variables
 	 */
-	public MemoryManager(EventManager eventManager, byte[] program, byte[] variables)
+	public MemoryManager(EventManager eventManager, byte[] program, byte[] variables, SourceCode programSourceCode)
 	{
-		this.memoryBlocks.add(new Memory("Text", PROGRAMSTARTADDR, program.length, program));
-		this.memoryBlocks.add(new Memory("Data", VARIABLESTARTADDR, variables.length, variables));
-		this.memoryBlocks.add(new Memory("Stack", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
+		this.memoryBlocks.add(new Memory("Text", PROGRAMSTARTADDR, program.length, program, programSourceCode));
+		this.memoryBlocks.add(new Memory("Data", VARIABLESTARTADDR, variables.length, variables, null));
+		this.memoryBlocks.add(new Memory("Stack", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null, null));
 
 		this.memoryBlocks.add(new LedDevice(eventManager, this));
 		this.memoryBlocks.add(new TimerDevice(eventManager, this));
@@ -59,16 +61,19 @@ public class MemoryManager
 		this.memoryBlocks.add(new SerialDevice(eventManager, this, "uart_1", 0x880, EventManager.EVENT.UART1_INPUT, EventManager.EVENT.UART1_OUTPUT));
 
 		byte[] lib = {(byte)0x04, (byte)0xfd, (byte)0xff, (byte)0xde, (byte)0x15, (byte)0x02, (byte)0x00, (byte)0xdf, (byte)0x3a, (byte)0x88, (byte)0x39, (byte)0xd8, (byte)0x15, (byte)0x00, (byte)0x00, (byte)0xe1, (byte)0x15, (byte)0x01, (byte)0x40, (byte)0xe1, (byte)0x17, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x3a, (byte)0xc0, (byte)0x04, (byte)0x10, (byte)0x1e, (byte)0x02, (byte)0x00, (byte)0x10, (byte)0x04, (byte)0x18, (byte)0x82, (byte)0x00, (byte)0x15, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x17, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x37, (byte)0x02, (byte)0x80, (byte)0x10, (byte)0xba, (byte)0xd1, (byte)0x04, (byte)0x10, (byte)0x5c, (byte)0x00, (byte)0x80, (byte)0x10, (byte)0x4c, (byte)0x00, (byte)0x80, (byte)0x10, (byte)0x3a, (byte)0x00, (byte)0x05, (byte)0x10, (byte)0x1e, (byte)0x01, (byte)0x00, (byte)0x10, (byte)0x06, (byte)0xf8, (byte)0x3f, (byte)0x00, (byte)0x17, (byte)0x01, (byte)0xc0, (byte)0xe0, (byte)0x17, (byte)0x00, (byte)0x80, (byte)0xe0, (byte)0x35, (byte)0x01, (byte)0x80, (byte)0x18, (byte)0x17, (byte)0x02, (byte)0x00, (byte)0xdf, (byte)0x04, (byte)0x03, (byte)0xc0, (byte)0xde, (byte)0x3a, (byte)0x28, (byte)0x00, (byte)0xf8};  
-		this.memoryBlocks.add(new Memory("Lib", LIBSTARTADDR, lib.length, lib));
+		this.memoryBlocks.add(new Memory("Lib", LIBSTARTADDR, lib.length, lib, null));
 	}
 
-	public void reset(byte[] program, byte[] variables) {
+	public void reset(byte[] program, byte[] variables, SourceCode programSourceCode) {
 		for (MemoryBlock memoryBlock : this.memoryBlocks)
 			memoryBlock.reset();
 
-		this.memoryBlocks.set(0, new Memory("Text", PROGRAMSTARTADDR, program.length, program));
-		this.memoryBlocks.set(1, new Memory("Data", VARIABLESTARTADDR, variables.length, variables));
-		this.memoryBlocks.set(2, new Memory("Stack", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null));
+		this.memoryBlocks.set(0, new Memory("Text", PROGRAMSTARTADDR, program.length, program, programSourceCode));
+		this.memoryBlocks.set(1, new Memory("Data", VARIABLESTARTADDR, variables.length, variables, null));
+		this.memoryBlocks.set(2, new Memory("Stack", (STACKSTARTADDR - STACKSIZE), STACKSIZE, null, null));
+
+		byte[] lib = {(byte)0x04, (byte)0xfd, (byte)0xff, (byte)0xde, (byte)0x15, (byte)0x02, (byte)0x00, (byte)0xdf, (byte)0x3a, (byte)0x88, (byte)0x39, (byte)0xd8, (byte)0x15, (byte)0x00, (byte)0x00, (byte)0xe1, (byte)0x15, (byte)0x01, (byte)0x40, (byte)0xe1, (byte)0x17, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x3a, (byte)0xc0, (byte)0x04, (byte)0x10, (byte)0x1e, (byte)0x02, (byte)0x00, (byte)0x10, (byte)0x04, (byte)0x18, (byte)0x82, (byte)0x00, (byte)0x15, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x17, (byte)0x01, (byte)0x80, (byte)0xe0, (byte)0x37, (byte)0x02, (byte)0x80, (byte)0x10, (byte)0xba, (byte)0xd1, (byte)0x04, (byte)0x10, (byte)0x5c, (byte)0x00, (byte)0x80, (byte)0x10, (byte)0x4c, (byte)0x00, (byte)0x80, (byte)0x10, (byte)0x3a, (byte)0x00, (byte)0x05, (byte)0x10, (byte)0x1e, (byte)0x01, (byte)0x00, (byte)0x10, (byte)0x06, (byte)0xf8, (byte)0x3f, (byte)0x00, (byte)0x17, (byte)0x01, (byte)0xc0, (byte)0xe0, (byte)0x17, (byte)0x00, (byte)0x80, (byte)0xe0, (byte)0x35, (byte)0x01, (byte)0x80, (byte)0x18, (byte)0x17, (byte)0x02, (byte)0x00, (byte)0xdf, (byte)0x04, (byte)0x03, (byte)0xc0, (byte)0xde, (byte)0x3a, (byte)0x28, (byte)0x00, (byte)0xf8};  
+		this.memoryBlocks.set(9, new Memory("Lib", LIBSTARTADDR, lib.length, lib, null));		
 	}
 
 	public void resetState() {
@@ -115,6 +120,15 @@ public class MemoryManager
 		}
 
 		throw new MemoryException(addr);		
+	}
+
+	public MemoryBlock getBlock(int addr) throws MemoryException {
+		for (MemoryBlock block: this.memoryBlocks) {
+			if (block.inRange(addr))
+				return block;
+		}
+
+		throw new MemoryException(addr);
 	}
 
 	/**

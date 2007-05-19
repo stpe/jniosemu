@@ -301,7 +301,7 @@ public class Compiler
 							} else if (name.equals("text")) {
 								this.codePart = true;
 							} else if (name.equals("global")) {
-								this.globals.add(mInstruction.group(3));
+								this.globals.add(mInstruction.group(4));
 							} else if (name.equals("macro")) {
 								Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
 								Matcher mMacro = pMacro.matcher(mInstruction.group(4));
@@ -485,7 +485,12 @@ public class Compiler
 			pc = this.getGlobal("main");
 		} catch (CompilerException e) {}
 
-		return new Program(this.lines, this.instructions, this.variables, binaryProgram, binaryVariables, pc);
+		try {
+			return new Program(this.lines, this.instructions, this.variables, binaryProgram, binaryVariables, pc);
+		} catch (InstructionException e) {
+			// Could not happen
+			throw new CompilerException();
+		}
 	}
 
 	/**

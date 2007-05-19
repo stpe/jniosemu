@@ -53,7 +53,7 @@ import jniosemu.Utilities;
 	/**
 	 * Current program that is emulated.
 	 */
-	private transient Program program;
+	private transient SourceCode sourceCode;
 
 	/**
 	 * Icon for breakpoint that is set (active).
@@ -86,7 +86,6 @@ import jniosemu.Utilities;
 		// add events to listen to
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.EMULATOR_BREAKPOINT_UPDATE,
-			EventManager.EVENT.EMULATOR_READY,
 			EventManager.EVENT.EMULATOR_CLEAR,
 			EventManager.EVENT.PROGRAMCOUNTER_CHANGE,
 			EventManager.EVENT.PROGRAM_CHANGE
@@ -138,19 +137,19 @@ import jniosemu.Utilities;
 	 *
 	 * @param  prg Program object
 	 */
-	private void setProgram(Program prg)
+	private void setSourceCode(SourceCode sourceCode)
 	{
-		this.program = prg;
-		
-		if (prg == null)
+		this.sourceCode = sourceCode;
+
+		if (sourceCode == null)
 		{
 			// clear emulator view
 			listView.setModel(new DefaultListModel());
 			return;
 		}
-		
+
 		// set new program lines as data for jlist
-		listView.setListData( prg.getProgramLines() );
+		listView.setListData( sourceCode.getSourceCodeLines() );
 	}
 
 	/**
@@ -158,7 +157,7 @@ import jniosemu.Utilities;
 	 * the program counter is pointing to and update the
 	 * visual indication.
 	 *
-	 * @pre       setProgram() must have been called to set current
+	 * @pre       setSourceCode() must have been called to set current
 	 *            Program instance before PC may be set.
 	 * @checks    Only ensure index is visible (by scrolling)
 	 *            if it is not negative.
@@ -169,20 +168,14 @@ import jniosemu.Utilities;
 	 */
 	private void setProgramCounterIndicator(int addr)
 	{
-		if (program == null)
+		if (this.sourceCode == null)
 			return;
 			
-		currentIndex = program.getLineNumber(addr);
+		currentIndex = this.sourceCode.getLineNumber(addr);
 
 		if (currentIndex != -1)
-		{
 			listView.ensureIndexIsVisible(currentIndex);
-		}
-		else
-		{
-			eventManager.sendEvent(EventManager.EVENT.PROGRAM_REQUEST_UPDATE);
-		}
-		
+
 		listView.repaint();
 	}
 
@@ -192,15 +185,14 @@ import jniosemu.Utilities;
 			case EMULATOR_BREAKPOINT_UPDATE:
 				listView.repaint();
 				break;
-			case EMULATOR_READY:
 			case PROGRAM_CHANGE:
-				setProgram( (Program) obj );
+				setSourceCode( (SourceCode) obj );
 				break;
 			case PROGRAMCOUNTER_CHANGE:
 				setProgramCounterIndicator( ((Integer) obj).intValue() );
 				break;
 			case EMULATOR_CLEAR:
-				setProgram(null);
+				setSourceCode(null);
 				break;
 		}
 	}
@@ -252,7 +244,7 @@ import jniosemu.Utilities;
 		/**
 		 * ProgramLine object for the current cell that is drawn.
 		 */
-		private ProgramLine lineObj;
+		private SourceCodeLine lineObj;
 		
 		private final int baseline;
 		private final int width;
@@ -290,7 +282,7 @@ import jniosemu.Utilities;
 																			 boolean isSelected,
 																			 boolean cellHasFocus)
 		{
-			this.lineObj = (ProgramLine) value;
+			this.lineObj = (SourceCodeLine) value;
 
 			setBackground(list.getBackground());
 			setForeground(list.getForeground());
@@ -309,9 +301,9 @@ import jniosemu.Utilities;
 			g.fillRect(0, 0, getWidth(), getHeight());
 
 			// current executing program line highlight
-			ProgramLine.SIBLINGSTATUS status = lineObj.isSibling(currentIndex);
+			SourceCodeLine.SIBLINGSTATUS status = lineObj.isSibling(currentIndex);
 
-			if (status != ProgramLine.SIBLINGSTATUS.NONE) {
+			if (status != SourceCodeLine.SIBLINGSTATUS.NONE) {
 				g.setColor(CURRENT_LINE_COLOR);
 				g.fillRect(3, 0, getWidth()-6, getHeight());
 			}

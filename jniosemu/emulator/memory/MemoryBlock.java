@@ -3,6 +3,9 @@ package jniosemu.emulator.memory;
 import java.util.Vector;
 import java.util.HashMap;
 
+import jniosemu.emulator.SourceCode;
+import jniosemu.instruction.InstructionException;
+
 /**
  * Contains a part of the memory.
  */
@@ -28,6 +31,8 @@ public abstract class MemoryBlock
 	protected boolean changed = true;
 
 	protected Vector<MemoryInt> memoryVector;
+
+	protected SourceCode sourceCode = null;
 
 	private HashMap<Integer, MemoryInt.STATE> state = new HashMap<Integer, MemoryInt.STATE>();
 
@@ -175,5 +180,12 @@ public abstract class MemoryBlock
 
 	protected void clearState() {
 		this.state.clear();
+	}
+
+	public SourceCode getSourceCode() throws InstructionException {
+		if (this.sourceCode == null)
+			this.sourceCode = new SourceCode(this.memory, this.getStart());
+
+		return this.sourceCode;
 	}
 }

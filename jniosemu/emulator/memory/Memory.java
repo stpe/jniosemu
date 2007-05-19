@@ -1,5 +1,7 @@
 package jniosemu.emulator.memory;
 
+import jniosemu.emulator.SourceCode;
+
 /**
  * Contains a part of the memory.
  */
@@ -19,12 +21,13 @@ public class Memory extends MemoryBlock
 	 * @param start  External start address
 	 * @param length  Length of the memory part
 	 */
-	public Memory(String name, int start, int length, byte[] memory) {
+	public Memory(String name, int start, int length, byte[] memory, SourceCode sourceCode) {
 		this.name = name;
 		this.start = start;
 		this.length = length;
 
 		this.originalMemory = memory;
+		this.sourceCode = sourceCode;
 		this.reset();
 	}
 

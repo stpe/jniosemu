@@ -11,6 +11,7 @@ import jniosemu.emulator.compiler.CompilerException;
 import jniosemu.emulator.memory.MemoryBlock;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.emulator.register.RegisterManager;
+import jniosemu.instruction.InstructionException;
 import jniosemu.instruction.InstructionManager;
 import jniosemu.instruction.emulator.Instruction;
 
@@ -56,6 +57,8 @@ public class EmulatorManager implements EventObserver
 	 * Current program
 	 */
 	private Program program = null;
+
+	private SourceCode latestSourceCode = null;
 	/**
 	 * Current speed
 	 */
@@ -289,8 +292,10 @@ public class EmulatorManager implements EventObserver
 		this.program = program;
 
 		// Add old breakpoints to this program
+		/*
 		for (Integer lineNumber: this.breakpoints.values())
 			this.program.toggleBreakpoint(lineNumber.intValue());
+		*/
 
 		this.reset();
 	}
@@ -312,9 +317,9 @@ public class EmulatorManager implements EventObserver
 	 */
 	public void load() {
 		if (this.memory == null) {
-			this.memory = new MemoryManager(this.eventManager, this.program.getBinaryProgram(), this.program.getBinaryVariables());
+			this.memory = new MemoryManager(this.eventManager, this.program.getBinaryProgram(), this.program.getBinaryVariables(), this.program.getSourceCode());
 		} else {
-			this.memory.reset(this.program.getBinaryProgram(), this.program.getBinaryVariables());
+			this.memory.reset(this.program.getBinaryProgram(), this.program.getBinaryVariables(), this.program.getSourceCode());
 		}
 
 		for (MemoryBlock memoryBlock : this.memory.getMemoryBlocks()) {
@@ -326,7 +331,7 @@ public class EmulatorManager implements EventObserver
 		this.register = new RegisterManager();
 
 		this.ended = false;
-		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_READY, this.program);
+		this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_READY);
 		this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_VECTOR, this.program.getVariables());
 
 		this.pcChange();
@@ -357,8 +362,8 @@ public class EmulatorManager implements EventObserver
 	 * @param lineNumber  Line to toggle breakpoint
 	 */
 	public void toggleBreakpoint(int lineNumber) {
-		int addr = this.program.getAddress(lineNumber);
-		if (this.program.toggleBreakpoint(lineNumber)) {
+		int addr = this.latestSourceCode.getAddress(lineNumber);
+		if (this.latestSourceCode.toggleBreakpoint(lineNumber)) {
 			this.breakpoints.put(addr, lineNumber);
 		} else {
 			this.breakpoints.remove(addr);
@@ -438,6 +443,14 @@ public class EmulatorManager implements EventObserver
 	 * @calledby load(), step()
 	 */
 	private void pcChange() {
+		try {
+			this.latestSourceCode = this.memory.getBlock(this.pc).getSourceCode();
+		} catch (InstructionException e) {
+			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_ERROR, e.getMessage());
+			return;
+		}
+
+		this.eventManager.sendEvent(EventManager.EVENT.PROGRAM_CHANGE, this.latestSourceCode);
 		this.eventManager.sendEvent(EventManager.EVENT.PROGRAMCOUNTER_CHANGE, Integer.valueOf(this.pc));
 		this.eventManager.sendEvent(EventManager.EVENT.REGISTER_CHANGE, this.register.get());
 		this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());

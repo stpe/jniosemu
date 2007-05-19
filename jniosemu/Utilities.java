@@ -54,13 +54,17 @@ public class Utilities
 		return ret;
 	}
 
-	public static int byteArrayToInt(byte[] value) {
+	public static int byteArrayToInt(byte[] value, int offset) {
 		int ret = 0;
 
 		for (int i = 0; i < 4; i++)
-			ret |= ((long)value[i] << (8 * i));
+			ret |= (((long)value[i+offset] & 0xFF) << (8 * i));
 
 		return ret;
+	}
+
+	public static int byteArrayToInt(byte[] value) {
+		return byteArrayToInt(value, 0);
 	}
 
 	public static long byteArrayToLong(byte[] value) {
