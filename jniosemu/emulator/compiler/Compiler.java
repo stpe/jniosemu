@@ -73,7 +73,15 @@ public class Compiler
 	 */
 	public Compiler(String aLines) {
 		this.lines = aLines.split("\n");
-		this.labels.put("nr_uart_txchar", MemoryManager.LIBSTARTADDR);
+
+		// Add libfunctions
+		this.labels.put("nr_uart_rxchar", MemoryManager.LIBSTARTADDR);
+		this.labels.put("nr_uart_txchar", MemoryManager.LIBSTARTADDR + 100);
+		this.labels.put("nr_uart_txcr", MemoryManager.LIBSTARTADDR + 196);
+		this.labels.put("nr_uart_txhex16", MemoryManager.LIBSTARTADDR + 252);
+		this.labels.put("nr_uart_txhex32", MemoryManager.LIBSTARTADDR + 400);
+		this.labels.put("nr_uart_txhex", MemoryManager.LIBSTARTADDR + 496);
+		this.labels.put("nr_uart_txstring", MemoryManager.LIBSTARTADDR + 540);
 	}
 
 	/**
@@ -314,7 +322,7 @@ public class Compiler
 								this.lastMacro = null;
 							} else if (name.equals("word") || name.equals("hword") || name.equals("byte") || name.equals("ascii") || name.equals("asciz") || name.equals("string")) {
 								try {
-									String[] variables = mInstruction.group(3).split(",");
+									String[] variables = mInstruction.group(4).split(",");
 									Variable.TYPE type;
 									if (name.equals("word"))
 										type = Variable.TYPE.WORD;

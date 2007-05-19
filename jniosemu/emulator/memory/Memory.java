@@ -53,6 +53,7 @@ public class Memory extends MemoryBlock
 			throw new MemoryException(addr);
 		}
 
+		this.sourceCode = null;
 		this.setState(mapAddr, MemoryInt.STATE.WRITE);
 		this.changed = true;
 	}

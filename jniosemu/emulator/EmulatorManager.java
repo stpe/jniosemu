@@ -9,6 +9,7 @@ import jniosemu.events.EventObserver;
 import jniosemu.emulator.compiler.Compiler;
 import jniosemu.emulator.compiler.CompilerException;
 import jniosemu.emulator.memory.MemoryBlock;
+import jniosemu.emulator.memory.MemoryException;
 import jniosemu.emulator.memory.MemoryManager;
 import jniosemu.emulator.register.RegisterManager;
 import jniosemu.instruction.InstructionException;
@@ -443,18 +444,23 @@ public class EmulatorManager implements EventObserver
 	 * @calledby load(), step()
 	 */
 	private void pcChange() {
+		MemoryBlock block = null;
 		try {
-			this.latestSourceCode = this.memory.getBlock(this.pc).getSourceCode();
-		} catch (InstructionException e) {
+			block = this.memory.getBlock(this.pc);
+		} catch (MemoryException e) {
 			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_ERROR, e.getMessage());
-			return;
+			this.ended = true;
+			this.stopEvent();
 		}
 
-		this.eventManager.sendEvent(EventManager.EVENT.PROGRAM_CHANGE, this.latestSourceCode);
-		this.eventManager.sendEvent(EventManager.EVENT.PROGRAMCOUNTER_CHANGE, Integer.valueOf(this.pc));
-		this.eventManager.sendEvent(EventManager.EVENT.REGISTER_CHANGE, this.register.get());
-		this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());
-		this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_CHANGE, this.variableMemory);
+		if (block != null) {
+			this.latestSourceCode = this.memory.getBlock(this.pc).getSourceCode();
+			this.eventManager.sendEvent(EventManager.EVENT.PROGRAM_CHANGE, this.latestSourceCode);
+			this.eventManager.sendEvent(EventManager.EVENT.PROGRAMCOUNTER_CHANGE, Integer.valueOf(this.pc));
+			this.eventManager.sendEvent(EventManager.EVENT.REGISTER_CHANGE, this.register.get());
+			this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());
+			this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_CHANGE, this.variableMemory);
+		}
 	}
 
 	/**

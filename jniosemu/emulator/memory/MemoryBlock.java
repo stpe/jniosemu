@@ -182,7 +182,7 @@ public abstract class MemoryBlock
 		this.state.clear();
 	}
 
-	public SourceCode getSourceCode() throws InstructionException {
+	public SourceCode getSourceCode() {
 		if (this.sourceCode == null)
 			this.sourceCode = new SourceCode(this.memory, this.getStart());
 

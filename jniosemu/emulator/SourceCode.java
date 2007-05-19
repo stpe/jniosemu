@@ -26,7 +26,7 @@ public class SourceCode
 	 */
 	private Hashtable<Integer, Integer> lineNumberLookup = new Hashtable<Integer, Integer>();
 
-	public SourceCode (byte[] binaryCode, int startAddr) throws InstructionException {
+	public SourceCode (byte[] binaryCode, int startAddr) {
 		this.startAddr = startAddr;
 		SourceCodeLine sourceCodeLine = null;
 
@@ -41,7 +41,7 @@ public class SourceCode
 		}
 	}
 
-	public SourceCode (String[] sourceCode, ArrayList<CompilerInstruction> instructions, int startAddr) throws InstructionException {
+	public SourceCode (String[] sourceCode, ArrayList<CompilerInstruction> instructions, int startAddr) {
 		this.startAddr = startAddr;
 
 		int sourceCodeLineNumber = 1;

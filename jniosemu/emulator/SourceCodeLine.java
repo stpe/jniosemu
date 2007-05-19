@@ -49,12 +49,16 @@ public class SourceCodeLine
 	 */
 	private SourceCodeLine parent = null;
 
-	public SourceCodeLine(int opCode, int lineNumber, SourceCodeLine parent) throws InstructionException {
+	public SourceCodeLine(int opCode, int lineNumber, SourceCodeLine parent) {
 		this.opCode = opCode;
 		this.lineNumber = lineNumber;
 		this.parent = parent;
 
-		this.instruction = InstructionManager.get(opCode);
+		try {
+			this.instruction = InstructionManager.get(opCode);
+		} catch (Exception e) {
+			// If there is an error we just not view the instruction
+		}
 
 		if (this.opCode == 0) {
 			this.breakpoint = BREAKPOINT.DISABLED;
@@ -75,14 +79,19 @@ public class SourceCodeLine
 	 * @param lineNumber  Program line number
 	 * @param parent  Parent SourceCodeLine
 	 */
-	public SourceCodeLine(CompilerInstruction compilerInstruction, String sourceCodeLine, int lineNumber, SourceCodeLine parent) throws InstructionException {
+	public SourceCodeLine(CompilerInstruction compilerInstruction, String sourceCodeLine, int lineNumber, SourceCodeLine parent) {
 		this.sourceCodeLine = this.replaceTabWithSpaces(sourceCodeLine, 8);
 		this.lineNumber = lineNumber;
 		this.parent = parent;
 
 		if (compilerInstruction != null) {
 			this.opCode = compilerInstruction.getOpcode();
-			this.instruction = InstructionManager.get(this.opCode);
+
+			try {
+				this.instruction = InstructionManager.get(this.opCode);
+			} catch (Exception e) {
+				// If there is an error we just not view the instruction
+			}
 		}
 
 		if (this.opCode == 0) {
