@@ -363,6 +363,9 @@ public class EmulatorManager implements EventObserver
 	 * @param lineNumber  Line to toggle breakpoint
 	 */
 	public void toggleBreakpoint(int lineNumber) {
+		if (this.latestSourceCode == null)
+			return;
+
 		int addr = this.latestSourceCode.getAddress(lineNumber);
 		if (this.latestSourceCode.toggleBreakpoint(lineNumber)) {
 			this.breakpoints.put(addr, lineNumber);
@@ -454,8 +457,12 @@ public class EmulatorManager implements EventObserver
 		}
 
 		if (block != null) {
-			this.latestSourceCode = this.memory.getBlock(this.pc).getSourceCode();
-			this.eventManager.sendEvent(EventManager.EVENT.PROGRAM_CHANGE, this.latestSourceCode);
+			SourceCode sourceCode = this.memory.getBlock(this.pc).getSourceCode();
+			if (sourceCode != this.latestSourceCode) {
+				this.latestSourceCode = sourceCode;
+				this.eventManager.sendEvent(EventManager.EVENT.PROGRAM_CHANGE, this.latestSourceCode);
+			}
+
 			this.eventManager.sendEvent(EventManager.EVENT.PROGRAMCOUNTER_CHANGE, Integer.valueOf(this.pc));
 			this.eventManager.sendEvent(EventManager.EVENT.REGISTER_CHANGE, this.register.get());
 			this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());

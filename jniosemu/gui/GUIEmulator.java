@@ -49,7 +49,7 @@ import jniosemu.Utilities;
 	 * Current line index of program counter.
 	 */
 	private int currentIndex;
-	
+
 	/**
 	 * Current program that is emulated.
 	 */
@@ -121,8 +121,8 @@ import jniosemu.Utilities;
 
 		// scrollbars
 		JScrollPane scrollPane = new JScrollPane(listView,
-		                    JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-		                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);		
+												JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+												JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		// put everything into the emulator panel
 		this.setLayout(new BorderLayout());
@@ -141,7 +141,7 @@ import jniosemu.Utilities;
 	{
 		this.sourceCode = sourceCode;
 
-		if (sourceCode == null)
+		if (this.sourceCode == null)
 		{
 			// clear emulator view
 			listView.setModel(new DefaultListModel());
@@ -149,7 +149,7 @@ import jniosemu.Utilities;
 		}
 
 		// set new program lines as data for jlist
-		listView.setListData( sourceCode.getSourceCodeLines() );
+		listView.setListData( this.sourceCode.getSourceCodeLines() );
 	}
 
 	/**
@@ -170,13 +170,32 @@ import jniosemu.Utilities;
 	{
 		if (this.sourceCode == null)
 			return;
-			
+
 		currentIndex = this.sourceCode.getLineNumber(addr);
-
-		if (currentIndex != -1)
-			listView.ensureIndexIsVisible(currentIndex);
-
 		listView.repaint();
+
+		if (currentIndex != -1) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					int firstVisibleIndex = listView.getFirstVisibleIndex();
+					int lastVisibleIndex = listView.getLastVisibleIndex();
+					int visibleRowCount = lastVisibleIndex - firstVisibleIndex;
+
+					if (currentIndex > firstVisibleIndex + (int)(visibleRowCount * 0.1) && currentIndex < lastVisibleIndex - (int)(visibleRowCount * 0.1))
+						return;
+
+					int rowHeight = listView.getFontMetrics(listView.getFont()).getHeight();
+					Point p = listView.getLocation();
+
+					int index = currentIndex - (int)(visibleRowCount * 0.2);
+					if (index < 0)
+						index = 0;
+
+					Rectangle r = new Rectangle((int)p.getX(), index * rowHeight, 1, visibleRowCount * rowHeight);
+					listView.scrollRectToVisible(r);
+				}
+			});
+		}
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
@@ -206,7 +225,7 @@ import jniosemu.Utilities;
 	 *
 	 * @param  e  MouseEvent object for the click
 	 */
-	public void mouseClicked(MouseEvent e) 
+	public void mouseClicked(MouseEvent e)
 	{
 		if (e.getX() <= BREAKPOINT_AREA_WIDTH)
 		{
@@ -245,12 +264,12 @@ import jniosemu.Utilities;
 		 * ProgramLine object for the current cell that is drawn.
 		 */
 		private SourceCodeLine lineObj;
-		
+
 		private final int baseline;
 		private final int width;
-    private final int height;
-    private final int iconOffset;
-		
+		private final int height;
+		private final int iconOffset;
+
 		public EmulatorCellRenderer(FontMetrics metrics) {
 			super();
 			setOpaque(true);
@@ -259,18 +278,18 @@ import jniosemu.Utilities;
 			this.baseline = metrics.getAscent();
 			this.height = metrics.getHeight();
 			this.width = listView.getWidth();
-			
+
 			this.iconOffset = (height - breakPointSetIcon.getIconHeight()) / 2;
 		}
 
-    /** 
-     * Return the renderers fixed size.  
-     */
+		/**
+		 * Return the renderers fixed size.
+		 */
 		public Dimension getPreferredSize()
 		{
 			return new Dimension(width, height);
 		}
-		
+
 		/**
 		 * Cell rendered methos sets background/foreground
 		 * color and stores ProgramLine for row.
@@ -294,7 +313,7 @@ import jniosemu.Utilities;
 		 * Custom paint method bypassing standard JComponent
 		 * painting to optimize performance.
 		 */
-		public void paintComponent(Graphics g) 
+		public void paintComponent(Graphics g)
 		{
 			// clear background
 			g.setColor(getBackground());
@@ -339,7 +358,7 @@ import jniosemu.Utilities;
 			}
 
 			xOffset = BREAKPOINT_AREA_WIDTH;
-			
+
 			// opcode
 			if (lineObj.getOpCode() != null)
 				g.drawString(lineObj.getOpCode(), xOffset, this.baseline);
@@ -348,7 +367,7 @@ import jniosemu.Utilities;
 			if (lineObj.getInstruction() != null)
 			{
 				xOffset = (int) Math.max(INSTRUCTION_OFFSET, INSTRUCTION_OFFSET_PERCENT * getWidth());
-				
+
 				g.drawString(lineObj.getInstruction(), xOffset, this.baseline);
 			}
 
