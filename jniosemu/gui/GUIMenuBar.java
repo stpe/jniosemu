@@ -65,45 +65,45 @@ public class GUIMenuBar extends JMenuBar
 
 		JMenuItem item;
 
-		item = createMenuItem("New", EventManager.EVENT.DOCUMENT_NEW.toString(), 
-		          KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		item = createMenuItem("New", EventManager.EVENT.DOCUMENT_NEW.toString(),
+							KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 		stateManager.addItem(EventManager.EVENT.DOCUMENT_NEW, item);
 		menu.add(item);
-		
+
 		item = createMenuItem("Open...", EventManager.EVENT.DOCUMENT_OPEN.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		stateManager.addItem(EventManager.EVENT.DOCUMENT_OPEN, item);
 		menu.add(item);
-		
+
 		item = createMenuItem("Save", EventManager.EVENT.DOCUMENT_SAVE.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 		stateManager.addItem(EventManager.EVENT.DOCUMENT_SAVE, item);
 		menu.add(item);
-		
+
 		item = createMenuItem("Save As...", EventManager.EVENT.DOCUMENT_SAVE_AS.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
+							KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
 		stateManager.addItem(EventManager.EVENT.DOCUMENT_SAVE_AS, item);
 		menu.add(item);
-		
+
 		menu.addSeparator();
-		
+
 		item = createMenuItem("Exit", EventManager.EVENT.APPLICATION_EXIT.toString());
 		menu.add(item);
 
 		// Edit menu
 		menu = new JMenu("Edit");
 		this.add(menu);
-		
+
 		item = createMenuItem("Undo", EventManager.EVENT.EDITOR_UNDO.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
 		stateManager.addItem(EventManager.EVENT.EDITOR_UNDO, item);
 		menu.add(item);
 
 		item = createMenuItem("Redo", EventManager.EVENT.EDITOR_REDO.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
 		stateManager.addItem(EventManager.EVENT.EDITOR_REDO, item);
 		menu.add(item);
-		
+
 
 		// Insert instruction menu
 		this.add( setupInstructions(stateManager) );
@@ -113,40 +113,40 @@ public class GUIMenuBar extends JMenuBar
 		this.add(menu);
 
 		item = createMenuItem("Assemble", EventManager.EVENT.COMPILER_COMPILE_INIT.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F9, ActionEvent.CTRL_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_F9, ActionEvent.CTRL_MASK));
 		stateManager.addItem(EventManager.EVENT.COMPILER_COMPILE_INIT, item);
 		menu.add(item);
-		
+
 		item = createMenuItem("Run", EventManager.EVENT.EMULATOR_RUN.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
+							KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
 		stateManager.addItem(EventManager.EVENT.EMULATOR_RUN, item);
 		menu.add(item);
-		
+
 		item = createMenuItem("Pause", EventManager.EVENT.EMULATOR_PAUSE.toString());
 		stateManager.addItem(EventManager.EVENT.EMULATOR_PAUSE, item);
 		menu.add(item);
-		
+
 		item = createMenuItem("Step", EventManager.EVENT.EMULATOR_STEP.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0));
+							KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0));
 		stateManager.addItem(EventManager.EVENT.EMULATOR_STEP, item);
 		menu.add(item);
 
 		item = createMenuItem("Step Over", EventManager.EVENT.EMULATOR_STEP_OVER.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
+							KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
 		stateManager.addItem(EventManager.EVENT.EMULATOR_STEP_OVER, item);
 		menu.add(item);
-		
+
 		item = createMenuItem("Reset", EventManager.EVENT.EMULATOR_RESET.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_F2, ActionEvent.CTRL_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_F2, ActionEvent.CTRL_MASK));
 		stateManager.addItem(EventManager.EVENT.EMULATOR_RESET, item);
 		menu.add(item);
-		
+
 		menu.addSeparator();
 
-		// execution speed submenu		
+		// execution speed submenu
 		JMenu submenu = new JMenu("Execution Speed");
 		menu.add(submenu);
-		
+
 		ButtonGroup speedGroup = new ButtonGroup();
 
 		item = new JRadioButtonMenuItem("Slow");
@@ -154,15 +154,9 @@ public class GUIMenuBar extends JMenuBar
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
-		
+
 		item = new JRadioButtonMenuItem("Normal", true);
 		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.NORMAL);
-		item.addActionListener(this);
-		speedGroup.add(item);
-		submenu.add(item);
-
-		item = new JRadioButtonMenuItem("Full");
-		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.FULL);
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
@@ -172,40 +166,46 @@ public class GUIMenuBar extends JMenuBar
 		item.addActionListener(this);
 		speedGroup.add(item);
 		submenu.add(item);
-		
+
+		item = new JRadioButtonMenuItem("Ultra");
+		item.setActionCommand(EventManager.EVENT.EMULATOR_SPEED + DELIMITER_CHAR + EmulatorManager.SPEED.ULTRA);
+		item.addActionListener(this);
+		speedGroup.add(item);
+		submenu.add(item);
+
 
 		// View menu
 		menu = new JMenu("View");
 		this.add(menu);
 
 		item = createMenuItem("Variables...", EventManager.EVENT.VARIABLE_VIEW.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		stateManager.addItem(EventManager.EVENT.VARIABLE_VIEW, item);
 		menu.add(item);
-		
+
 		item = createMenuItem("Memory...", EventManager.EVENT.MEMORY_VIEW.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		stateManager.addItem(EventManager.EVENT.MEMORY_VIEW, item);
 		menu.add(item);
-		
+
 		menu.addSeparator();
 
 		item = createMenuItem("UART 0...", EventManager.EVENT.UART0_VIEW.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_0, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_0, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		stateManager.addItem(EventManager.EVENT.UART0_VIEW, item);
 		menu.add(item);
 
 		item = createMenuItem("UART 1...", EventManager.EVENT.UART1_VIEW.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.CTRL_MASK | ActionEvent.SHIFT_MASK));
 		stateManager.addItem(EventManager.EVENT.UART1_VIEW, item);
 		menu.add(item);
 
 		menu.addSeparator();
 		item = createMenuItem("Toggle Editor/Emulator", EventManager.EVENT.APPLICATION_TAB_TOGGLE.toString(),
-		          KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+							KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
 		stateManager.addItem(EventManager.EVENT.APPLICATION_TAB_TOGGLE, item);
 		menu.add(item);
-		
+
 		this.add(Box.createHorizontalGlue());
 
 		// Help menu
@@ -237,12 +237,12 @@ public class GUIMenuBar extends JMenuBar
 		JMenu programControlMenu    = new JMenu("Program Control");
 		JMenu dataTransferMenu      = new JMenu("Data Transfer");
 		JMenu otherMenu             = new JMenu("Other");
-		
+
 		JMenu submenu;
-		
+
 		// add instructions to category submenus
 		ArrayList<InstructionSyntax> instructions = InstructionManager.getAllInstructionSyntax();
-		
+
 		if (instructions != null) {
 			for (InstructionSyntax instruction : instructions)
 			{
@@ -282,14 +282,14 @@ public class GUIMenuBar extends JMenuBar
 		JMenu menu = new JMenu("Instruction");
 
 		// add instruction categories as submenus
-		menu.add(arithmeticLogicalMenu); 
-		menu.add(moveMenu); 
-		menu.add(comparisonMenu); 
-		menu.add(shiftRotateMenu); 
-		menu.add(programControlMenu); 
-		menu.add(dataTransferMenu); 
-		menu.add(otherMenu); 		
-		
+		menu.add(arithmeticLogicalMenu);
+		menu.add(moveMenu);
+		menu.add(comparisonMenu);
+		menu.add(shiftRotateMenu);
+		menu.add(programControlMenu);
+		menu.add(dataTransferMenu);
+		menu.add(otherMenu);
+
 		return menu;
 	}
 
@@ -307,10 +307,10 @@ public class GUIMenuBar extends JMenuBar
 	private JMenuItem createMenuItem(String text, String actionCommand, KeyStroke keyStroke)
 	{
 		JMenuItem item = new JMenuItem(text);
-		
+
 		if (keyStroke != null)
 			item.setAccelerator(keyStroke);
-		
+
 		item.setActionCommand(actionCommand);
 		item.addActionListener(this);
 
@@ -346,7 +346,7 @@ public class GUIMenuBar extends JMenuBar
 
 		int delimiterIndex = actionCommand.indexOf(DELIMITER_CHAR);
 
-		// check if action command has value		
+		// check if action command has value
 		if (delimiterIndex != -1)
 		{
 			actionValue = actionCommand.substring(delimiterIndex + 1);
@@ -363,23 +363,27 @@ public class GUIMenuBar extends JMenuBar
 		}
 
 		Object eventObj = actionValue;
-		
-		switch(event) 
+
+		switch(event)
 		{
 			case EMULATOR_SPEED:
 				eventObj = EmulatorManager.SPEED.NORMAL;
-	
-				if (actionValue.equals(EmulatorManager.SPEED.FULL.toString()))
+
+				if (actionValue.equals(EmulatorManager.SPEED.ULTRA.toString()))
 				{
-					eventObj = EmulatorManager.SPEED.FULL;
+					eventObj = EmulatorManager.SPEED.ULTRA;
+				}
+				else if (actionValue.equals(EmulatorManager.SPEED.FAST.toString()))
+				{
+					eventObj = EmulatorManager.SPEED.FAST;
 				}
 				else if (actionValue.equals(EmulatorManager.SPEED.SLOW.toString()))
 				{
 					eventObj = EmulatorManager.SPEED.SLOW;
-				} 
+				}
 				break;
 		}
-		
+
 		eventManager.sendEvent(event, eventObj);
 	}
 

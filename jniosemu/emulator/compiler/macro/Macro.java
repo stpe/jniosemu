@@ -3,6 +3,7 @@ package jniosemu.emulator.compiler.macro;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import jniosemu.Utilities;
 import jniosemu.instruction.InstructionException;
 import jniosemu.instruction.InstructionSyntax;
 
@@ -117,7 +118,7 @@ public class Macro extends InstructionSyntax
 			for(String line: this.lines) {
 				String outLine = line;
 				for (int j = 0; j < args.length; j++)
-					outLine = outLine.replaceAll("\\\\"+ this.args[j], args[j]);
+					outLine = Utilities.stringReplace(outLine, "\\"+ this.args[j], args[j]);
 				lines.add(outLine);
 			}
 		} else {

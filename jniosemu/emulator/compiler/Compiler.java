@@ -84,28 +84,6 @@ public class Compiler
 		this.labels.put("nr_uart_txstring", MemoryManager.LIBSTARTADDR + 540);
 	}
 
-	/**
-	 * Replaces all instanses of aReplace with aNew in aValue.
-	 *
-	 * @calledby parseValue(), parseLine()
-	 *
-	 * @param aValue The string where the replacment will happen
-	 * @param aReplace The old value
-	 * @param aNew The new value
-	 * @return The new string
-	 */
-	public static String stringReplace(String aValue, String aReplace, String aNew) {
-		int start = aValue.indexOf(aReplace);
-		StringBuffer replace;
-		while (start >= 0) {
-			replace = new StringBuffer(aValue);
-			replace.replace(start, start+aReplace.length(), aNew);
-			aValue = replace.toString();
-			start = aValue.indexOf(aReplace, start);
-		}
-		return aValue;
-	}
-
 	public static long parseValue(String aValue) throws InstructionException {
 		return parseValue(aValue, null, 0, 1);
 	}
@@ -136,7 +114,7 @@ public class Compiler
 				String match = mLabels.group(0);
 				if (aLabels.containsKey(match)) {
 					long newValue = (long)(aLabels.get(match) - aAddr) / aDivider;
-					aValue = stringReplace(aValue, match, Long.toString(newValue));
+					aValue = Utilities.stringReplace(aValue, match, Long.toString(newValue));
 				}
 			}
 		}
@@ -166,7 +144,7 @@ public class Compiler
 				}
 
 				// Replace the parentheses with the value
-				aValue = stringReplace(aValue, mParenthesis.group(0), Long.toString(inner));
+				aValue = Utilities.stringReplace(aValue, mParenthesis.group(0), Long.toString(inner));
 			}
 		} while (found);
 
@@ -183,7 +161,7 @@ public class Compiler
 			} else {
 				sb.append( Long.toString(Long.parseLong(mHexBin.group(6), 2)) );
 			}
-			aValue = stringReplace(aValue, mHexBin.group(0), sb.toString());
+			aValue = Utilities.stringReplace(aValue, mHexBin.group(0), sb.toString());
 		}
 
 		// Take care of the "not"-operation
@@ -191,7 +169,7 @@ public class Compiler
 		Matcher mNotOperator = pNotOperator.matcher(aValue);
 		while (mNotOperator.find()) {
 			long newValue = ~Long.parseLong(mNotOperator.group(1));
-			aValue = stringReplace(aValue, mNotOperator.group(0), Long.toString(newValue));
+			aValue = Utilities.stringReplace(aValue, mNotOperator.group(0), Long.toString(newValue));
 		}
 
 		// Take care of all the other operations
@@ -232,7 +210,7 @@ public class Compiler
 						// Can't happen
 						throw new InstructionException("Not a valid operator", mCalculate.group(2));
 					}
-					aValue = stringReplace(aValue, mCalculate.group(0), Long.toString(newValue));
+					aValue = Utilities.stringReplace(aValue, mCalculate.group(0), Long.toString(newValue));
 				}
 			} while (found);
 		}
@@ -270,7 +248,7 @@ public class Compiler
 		// If it is the first pass replace constants with there value
 		if (aFirst) {
 			for(Constant constant: this.constants) {
-				aLine = stringReplace(aLine, constant.getName(), constant.getValue());
+				aLine = Utilities.stringReplace(aLine, constant.getName(), constant.getValue());
 			}
 		}
 
@@ -309,7 +287,7 @@ public class Compiler
 								this.codePart = false;
 							} else if (name.equals("text")) {
 								this.codePart = true;
-							} else if (name.equals("global")) {
+							} else if (name.equals("global") || name.equals("globl")) {
 								this.globals.add(mInstruction.group(4));
 							} else if (name.equals("macro")) {
 								Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
@@ -394,7 +372,7 @@ public class Compiler
 										try {
 											for (String line: lines) { 
 												i++;
-												this.parseLine(line, true, aLineNumber);
+												this.parseLine(line, false, aLineNumber);
 											}
 										} catch (CompilerException e) {
 											throw new CompilerException(aLineNumber, "Macro "+ ins +": Assembler error:\n\t"+ macro.getLineNumberAsString(i) +": "+ e.getMessagePart());

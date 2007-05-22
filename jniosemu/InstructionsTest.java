@@ -94,7 +94,7 @@ public class InstructionsTest {
 
 		EmulatorManager emulatorManager = new EmulatorManager(eventManager);
 		emulatorManager.compile(fileContent);
-		emulatorManager.setSpeed(EmulatorManager.SPEED.FULL);
+		emulatorManager.setSpeed(EmulatorManager.SPEED.ULTRA);
 
 		for (int i = 0; i < 2; i++) {
 			emulatorManager.runAll();

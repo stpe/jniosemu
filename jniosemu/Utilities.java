@@ -189,4 +189,26 @@ public class Utilities
 		ClassLoader classLoader = tmp.getClass().getClassLoader();
 		return classLoader.getResource(path);
 	}
+
+	/**
+	 * Replaces all instanses of aReplace with aNew in aValue.
+	 *
+	 * @calledby parseValue(), parseLine()
+	 *
+	 * @param aValue The string where the replacment will happen
+	 * @param aReplace The old value
+	 * @param aNew The new value
+	 * @return The new string
+	 */
+	public static String stringReplace(String aValue, String aReplace, String aNew) {
+		int start = aValue.indexOf(aReplace);
+		StringBuffer replace;
+		while (start >= 0) {
+			replace = new StringBuffer(aValue);
+			replace.replace(start, start+aReplace.length(), aNew);
+			aValue = replace.toString();
+			start = aValue.indexOf(aReplace, start);
+		}
+		return aValue;
+	}
 }

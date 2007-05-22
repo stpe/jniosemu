@@ -24,7 +24,7 @@ public class EmulatorManager implements EventObserver
 	/**
 	 * The different speed that is possible to run the emulator in
 	 */
-	public static enum SPEED {FULL, NORMAL, SLOW, FAST};
+	public static enum SPEED {SLOW, NORMAL, FAST, ULTRA};
 	/**
 	 * Program counter address
 	 */
@@ -136,29 +136,26 @@ public class EmulatorManager implements EventObserver
 		this.startEvent();
 
 		boolean nextInstruction = false;
-		boolean sendEvent = false;
-		int instructionCount = 1;
+		int instructionCount = 0;
 
 		do {
-			sendEvent = (this.speed != SPEED.FULL || instructionCount % 1009 == 0);
-			
 			nextInstruction = this.step();
 
-			if (sendEvent)
-				this.pcChange();
-
-			try {
-				switch (this.speed) {
-					case SLOW:
+			switch (this.speed) {
+				case SLOW:
+					this.pcChange();
+					try {
 						Thread.sleep(500);
-						break;
-					case NORMAL:
-						Thread.sleep(1);
-						break;
-				}
-			} catch (InterruptedException e) {}
-
-			instructionCount++;
+					} catch (InterruptedException e) {}
+					break;
+				case NORMAL:
+					this.pcChange();
+					break;
+				case FAST:
+					if ((++instructionCount) % 1009 == 0)
+						this.pcChange();
+					break;
+			}
 		} while (nextInstruction && this.running);
 
 		this.pcChange();
@@ -204,7 +201,6 @@ public class EmulatorManager implements EventObserver
 
 			int opCode = this.memory.readInt(this.pc);
 			if (opCode == 0) {
-				this.pcChange();
 				this.ended = true;
 				return false;
 			}
@@ -218,9 +214,7 @@ public class EmulatorManager implements EventObserver
 			return false;
 		}
 
-		if (this.pc == lastPc || this.ended) {
-			this.pc = 0;
-			this.pcChange();
+		if (this.pc == lastPc) {
 			this.ended = true;
 			return false;
 		}
@@ -450,11 +444,7 @@ public class EmulatorManager implements EventObserver
 		MemoryBlock block = null;
 		try {
 			block = this.memory.getBlock(this.pc);
-		} catch (MemoryException e) {
-			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_ERROR, e.getMessage());
-			this.ended = true;
-			this.stopEvent();
-		}
+		} catch (MemoryException e) {}
 
 		if (block != null) {
 			SourceCode sourceCode = this.memory.getBlock(this.pc).getSourceCode();
@@ -462,12 +452,12 @@ public class EmulatorManager implements EventObserver
 				this.latestSourceCode = sourceCode;
 				this.eventManager.sendEvent(EventManager.EVENT.PROGRAM_CHANGE, this.latestSourceCode);
 			}
-
-			this.eventManager.sendEvent(EventManager.EVENT.PROGRAMCOUNTER_CHANGE, Integer.valueOf(this.pc));
-			this.eventManager.sendEvent(EventManager.EVENT.REGISTER_CHANGE, this.register.get());
-			this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());
-			this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_CHANGE, this.variableMemory);
 		}
+
+		this.eventManager.sendEvent(EventManager.EVENT.PROGRAMCOUNTER_CHANGE, Integer.valueOf(this.pc));
+		this.eventManager.sendEvent(EventManager.EVENT.REGISTER_CHANGE, this.register.get());
+		this.eventManager.sendEvent(EventManager.EVENT.MEMORY_CHANGE, this.memory.getMemoryBlocks());
+		this.eventManager.sendEvent(EventManager.EVENT.VARIABLE_CHANGE, this.variableMemory);
 	}
 
 	/**
@@ -494,9 +484,9 @@ public class EmulatorManager implements EventObserver
 			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_STOP);
 		}
 	}
-	
+
 	public void run()
 	{
-		
+
 	}
 }

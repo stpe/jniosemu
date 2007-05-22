@@ -134,7 +134,7 @@ public class StateManager implements EventObserver
 				setEnabled(EventManager.EVENT.EMULATOR_RUN, false);
 				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, true);
 				setEnabled(EventManager.EVENT.EMULATOR_STEP, false);
-				setEnabled(EventManager.EVENT.EMULATOR_STEP_OVER, true);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP_OVER, false);
 				setEnabled(EventManager.EVENT.EMULATOR_RESET, true);
 				break;
 			case EMULATOR_STOP:
