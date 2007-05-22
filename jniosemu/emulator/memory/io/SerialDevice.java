@@ -71,26 +71,22 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 	public void reset() {
 		this.resetState();
 		this.clearState();
-		this.changed = true;
+		this.changed = 0;
 		this.inputBuffer.clear();
 	}
 
 	public boolean resetState() {
 		this.clearState();
 
-		this.changed = false;
-
 		if (!this.inputBuffer.isEmpty() && (memory[8] & 0x80) == 0) {
 			memory[0] = (byte)(this.inputBuffer.poll() & 0xFF);
 			this.setState(0, MemoryInt.STATE.WRITE);
 			memory[8] |= 0x80;
 			this.setState(8, MemoryInt.STATE.WRITE);
-			this.changed = true;
 		}
 		if ((memory[8] & 0x40) == 0) {
 			memory[8] |= 0x40;
 			this.setState(8, MemoryInt.STATE.WRITE);
-			this.changed = true;
 		}
 
 		return false;
@@ -110,7 +106,6 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 
 		this.sourceCode = null;
 		this.setState(mapAddr, MemoryInt.STATE.WRITE);
-		this.changed = true;
 	}
 
 	public byte readByte(int addr) throws MemoryException {
@@ -128,7 +123,6 @@ public class SerialDevice extends MemoryBlock implements EventObserver
 		}
 
 		this.setState(mapAddr, MemoryInt.STATE.READ);
-		this.changed = true;
 		return ret;
 	}
 

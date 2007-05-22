@@ -28,7 +28,7 @@ public abstract class MemoryBlock
 	 */
 	protected byte[] memory;
 
-	protected boolean changed = true;
+	protected int changed = 0;
 
 	protected Vector<MemoryInt> memoryVector;
 
@@ -141,7 +141,11 @@ public abstract class MemoryBlock
 
 	public abstract boolean resetState();
 
-	public boolean isChanged() {
+	public boolean isChanged(int last) {
+		return (this.changed > last);
+	}
+
+	public int lastChanged() {
 		return this.changed;
 	}
 
@@ -176,6 +180,8 @@ public abstract class MemoryBlock
 		} else {
 			this.state.put(index, state);
 		}
+
+		this.changed++;
 	}
 
 	protected void clearState() {

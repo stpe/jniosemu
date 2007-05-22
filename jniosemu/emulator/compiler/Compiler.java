@@ -229,7 +229,8 @@ public class Compiler
 					} else if (mCalculate.group(2).equals("-")) {
 						newValue = valueA - valueB;
 					} else {
-						throw new InstructionException();
+						// Can't happen
+						throw new InstructionException("Not a valid operator", mCalculate.group(2));
 					}
 					aValue = stringReplace(aValue, mCalculate.group(0), Long.toString(newValue));
 				}
@@ -240,7 +241,7 @@ public class Compiler
 		try {
 			return Long.parseLong(aValue);
 		} catch (Exception e) {
-			throw new InstructionException();
+			throw new InstructionException("Not a valid value", aValue);
 		}
 	}
 

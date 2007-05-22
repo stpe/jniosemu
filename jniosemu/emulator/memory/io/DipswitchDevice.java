@@ -85,7 +85,7 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 	public void reset() {
 		this.resetState();
 
-		this.changed = true;
+		this.changed = 0;
 		this.valueChanged = false;
 
 		this.sendEvent();
@@ -93,10 +93,8 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 
 	public boolean resetState() {
 		this.clearState();
-		this.changed = false;
 
 		if (this.valueChanged) {
-			this.changed = true;
 			memory[0] = Utilities.vectorToByte(this.value);
 			this.setState(0, MemoryInt.STATE.WRITE);
 
@@ -120,7 +118,6 @@ public class DipswitchDevice extends MemoryBlock implements EventObserver
 		}
 
 		this.setState(mapAddr, MemoryInt.STATE.READ);
-		this.changed = true;
 		return ret;
 	}
 

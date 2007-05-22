@@ -38,7 +38,9 @@ import jniosemu.Utilities;
 	 * Variable memory block.
 	 */
 	private MemoryBlock memBlock;
-	
+
+	private int lastChanged = -1;
+
 	/**
 	 * Track if variables should be redrawn.
 	 */
@@ -66,7 +68,8 @@ import jniosemu.Utilities;
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.VARIABLE_CHANGE,
 			EventManager.EVENT.VARIABLE_VECTOR,
-			EventManager.EVENT.EMULATOR_CLEAR
+			EventManager.EVENT.EMULATOR_CLEAR,
+			EventManager.EVENT.EMULATOR_READY
 		};
 
 		this.eventManager.addEventObserver(events, this);
@@ -93,8 +96,8 @@ import jniosemu.Utilities;
 				BorderFactory.createEmptyBorder(4, 4, 0, 4),
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED)
 			)
-		);		
-		
+		);
+
 		variableList = new JList();
 		variableList.setBackground(Color.WHITE);
 		variableList.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -105,20 +108,20 @@ import jniosemu.Utilities;
 		);
 		listPanel.add(variableList);
 
-    // button
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    buttonPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-    
-    JButton button = new JButton("Close");
-    button.addActionListener(this);
-    buttonPanel.add(button);
+		// button
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-    // container
-    Container contentPane = getContentPane();
-    contentPane.setLayout(new BorderLayout());
-    
-    contentPane.add(listPanel, BorderLayout.CENTER);
-    contentPane.add(buttonPanel, BorderLayout.PAGE_END);
+		JButton button = new JButton("Close");
+		button.addActionListener(this);
+		buttonPanel.add(button);
+
+		// container
+		Container contentPane = getContentPane();
+		contentPane.setLayout(new BorderLayout());
+
+		contentPane.add(listPanel, BorderLayout.CENTER);
+		contentPane.add(buttonPanel, BorderLayout.PAGE_END);
 	}
 
 	public void update(EventManager.EVENT eventIdentifier, Object obj)
@@ -126,19 +129,24 @@ import jniosemu.Utilities;
 		switch (eventIdentifier) {
 			case VARIABLE_CHANGE:
 				this.memBlock = (MemoryBlock) obj;
-				if (this.memBlock.isChanged() || redrawState)
+				if (this.memBlock.isChanged(this.lastChanged) || redrawState)
 				{
 					variableList.repaint();
-					
+
 					// if changed, redraw next time to remove indication
-					redrawState = this.memBlock.isChanged();
+					redrawState = this.memBlock.isChanged(this.lastChanged);
+					this.lastChanged = this.memBlock.lastChanged();
 				}
 				break;
 			case VARIABLE_VECTOR:
 				variableList.setListData( (Vector<Variable>) obj );
 				break;
 			case EMULATOR_CLEAR:
+				this.lastChanged = -1;
 				variableList.setModel(new DefaultListModel());
+				break;
+			case EMULATOR_READY:
+				this.lastChanged = -1;
 				break;
 		}
 	}
@@ -165,7 +173,7 @@ import jniosemu.Utilities;
 		private final FontMetrics metrics;
 		private final int baseline;
 		private final int width;
-    private final int height;
+		private final int height;
 
 		public VariableCellRenderer(FontMetrics metrics) {
 			super();

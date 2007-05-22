@@ -70,7 +70,7 @@ public class LedDevice extends MemoryBlock
 	public void reset() {
 		this.resetState();
 
-		this.changed = true;
+		this.changed = 0;
 		this.value = new Vector<Boolean>(COUNT);
 		for (int i = 0; i < COUNT; i++)
 			this.value.add(i, false);
@@ -81,7 +81,6 @@ public class LedDevice extends MemoryBlock
 	public boolean resetState() {
 		this.clearState();
 
-		this.changed = false;
 		return false;
 	}
 
@@ -100,7 +99,6 @@ public class LedDevice extends MemoryBlock
 
 		this.sourceCode = null;
 		this.setState(mapAddr, MemoryInt.STATE.WRITE);
-		this.changed = true;
 	}
 
 	public byte readByte(int addr) throws MemoryException {
@@ -113,7 +111,6 @@ public class LedDevice extends MemoryBlock
 		}
 
 		this.setState(mapAddr, MemoryInt.STATE.READ);
-		this.changed = true;
 		return ret;
 	}
 

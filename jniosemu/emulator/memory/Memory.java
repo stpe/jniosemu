@@ -41,7 +41,6 @@ public class Memory extends MemoryBlock
 		}
 
 		this.setState(mapAddr, MemoryInt.STATE.READ);
-		this.changed = true;
 		return value;
 	}
 
@@ -55,13 +54,12 @@ public class Memory extends MemoryBlock
 
 		this.sourceCode = null;
 		this.setState(mapAddr, MemoryInt.STATE.WRITE);
-		this.changed = true;
 	}
 
 	public void reset() {
 		this.resetState();
 
-		this.changed = true;
+		this.changed = 0;
 		this.memory = new byte[this.length];
 
 		if (this.originalMemory != null)
@@ -70,12 +68,6 @@ public class Memory extends MemoryBlock
 
 	public boolean resetState() {
 		this.clearState();
-
-		this.changed = false;
 		return false;
-	}
-
-	public boolean isChanged() {
-		return this.changed;
 	}
 }

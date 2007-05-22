@@ -63,7 +63,7 @@ public class TimerDevice extends MemoryBlock
 	 */
 	public void reset() {
 		this.clearState();
-		this.changed = true;
+		this.changed = 0;
 		this.memory = new byte[this.length];
 		this.counter = 0;
 		this.period = 0;
@@ -72,21 +72,18 @@ public class TimerDevice extends MemoryBlock
 
 	public boolean resetState() {
 		this.clearState();
-		this.changed = false;
 
 		if (this.counting) {
 			if (this.counter > 0) {
 				this.counter--;
 			} else if ((this.memory[4] & 0x2) > 0) {
 				this.memory[0] |= 0x1;
-				this.changed = true;
 				this.updateCounter();
 				this.setState(0, MemoryInt.STATE.WRITE);
 			} else {
 				this.counting = false;
 				this.memory[0] |= 0x1;
 				this.memory[0] &= 0xFD;
-				this.changed = true;
 				this.setState(0, MemoryInt.STATE.WRITE);
 			}
 		}
@@ -137,7 +134,6 @@ public class TimerDevice extends MemoryBlock
 
 		this.sourceCode = null;
 		this.setState(mapAddr, MemoryInt.STATE.WRITE);
-		this.changed = true;
 	}
 
 	public byte readByte(int addr) throws MemoryException {
@@ -150,7 +146,6 @@ public class TimerDevice extends MemoryBlock
 		}
 
 		this.setState(mapAddr, MemoryInt.STATE.READ);
-		this.changed = true;
 		return ret;
 	}
 }

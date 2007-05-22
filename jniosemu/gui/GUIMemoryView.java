@@ -37,7 +37,9 @@ public class GUIMemoryView extends JFrame
 	 * Lists used to display content of each memory block.
 	 */
 	private JList[] memoryLists = null;
-	
+
+	private int[] lastChanged = null;
+
 	/**
 	 * Track if a memory block should be repainted or not.
 	 */
@@ -64,7 +66,8 @@ public class GUIMemoryView extends JFrame
 		// add events to listen to
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.MEMORY_CHANGE,
-			EventManager.EVENT.EMULATOR_CLEAR
+			EventManager.EVENT.EMULATOR_CLEAR,
+			EventManager.EVENT.EMULATOR_READY
 		};
 
 		this.eventManager.addEventObserver(events, this);
@@ -152,9 +155,11 @@ public class GUIMemoryView extends JFrame
 		
 		memoryLists = new JList[this.memoryBlocks.size()];
 		memoryUpdateState = new boolean[this.memoryBlocks.size()];
-		
+		this.lastChanged = new int[this.memoryBlocks.size()];
+
 		for(int i = 0; i < this.memoryBlocks.size(); i++)
 		{
+			this.lastChanged[i] = -1;
 			memoryLists[i] = this.addList( (MemoryBlock) memoryBlocks.get(i) );
 			
 			// redraw first time
@@ -173,16 +178,17 @@ public class GUIMemoryView extends JFrame
 		{
 			MemoryBlock memBlock = (MemoryBlock) memoryBlocks.get(i);
 			
-			if (memBlock.isChanged() || memoryUpdateState[i])
+			if (memBlock.isChanged(this.lastChanged[i]) || memoryUpdateState[i])
 			{
 				Vector<MemoryInt> memVector =  memBlock.getMemoryVector();
-	
+
 				if (memVector != null)
 					memoryLists[i].setListData(memVector);
 				
 				// if memory block has changed, do also redraw next time
 				// in order to remove indication
-				memoryUpdateState[i] = memBlock.isChanged();
+				memoryUpdateState[i] = memBlock.isChanged(this.lastChanged[i]);
+				this.lastChanged[i] = memBlock.lastChanged();
 			}
 		}
 	}
@@ -197,6 +203,8 @@ public class GUIMemoryView extends JFrame
 		
 		for(int i = 0; i < this.memoryLists.length; i++)
 		{
+			this.lastChanged[i] = -1;
+
 			// clear list
 			memoryLists[i].setModel(new DefaultListModel());
 		}
@@ -224,6 +232,10 @@ public class GUIMemoryView extends JFrame
 			case EMULATOR_CLEAR:
 				clearLists();
 				break;
+			case EMULATOR_READY:
+				for (int i = 0; i < this.lastChanged.length; i++)
+					this.lastChanged[i] = -1;
+				break;
 		}
 	}
 
@@ -248,7 +260,7 @@ public class GUIMemoryView extends JFrame
 			private final FontMetrics metrics;
 			private final int baseline;
 			private final int width;
-	    private final int height;
+			private final int height;
 
 			public MemoryCellRenderer(JList list) {
 				super();
