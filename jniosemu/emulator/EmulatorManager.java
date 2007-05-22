@@ -88,6 +88,7 @@ public class EmulatorManager implements EventObserver
 			EventManager.EVENT.COMPILER_COMPILE,
 			EventManager.EVENT.EMULATOR_PAUSE,
 			EventManager.EVENT.EMULATOR_STEP,
+			EventManager.EVENT.EMULATOR_STEP_OVER,
 			EventManager.EVENT.EMULATOR_RESET,
 			EventManager.EVENT.EMULATOR_RUN,
 			EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE,
@@ -139,7 +140,7 @@ public class EmulatorManager implements EventObserver
 		int instructionCount = 0;
 
 		do {
-			nextInstruction = this.step();
+			nextInstruction = this.step(true, false);
 
 			switch (this.speed) {
 				case SLOW:
@@ -174,9 +175,24 @@ public class EmulatorManager implements EventObserver
 		this.running = true;
 		this.startEvent();
 
-		this.step();
+		this.step(true, false);
 		this.pcChange();
 
+		this.running = false;
+		this.stopEvent();
+	}
+
+	public void runOneOver() {
+		this.running = true;
+		this.startEvent();
+
+		int lastPc = this.pc;
+		if (this.step(true, true) && !this.ended && this.running) {
+			lastPc += 4;
+			while (this.step(false, false) && this.running && this.pc != lastPc);
+		}
+
+		this.pcChange();
 		this.running = false;
 		this.stopEvent();
 	}
@@ -192,20 +208,23 @@ public class EmulatorManager implements EventObserver
 	 *
 	 * @return True if the emulation can continue
 	 */
-	public boolean step() {
+	public boolean step(boolean reset, boolean firstStepOver) {
 		int lastPc = this.pc;
 
-		try {
+		if (reset) {
 			this.register.resetState();
 			this.memory.resetState();
+		}
 
+		Instruction instruction;
+		try {
 			int opCode = this.memory.readInt(this.pc);
 			if (opCode == 0) {
 				this.ended = true;
 				return false;
 			}
 
-			Instruction instruction = InstructionManager.get(opCode);
+			instruction = InstructionManager.get(opCode);
 			instruction.run(this.emulator);
 			this.pc += 4;
 		} catch (Exception e) {
@@ -216,6 +235,11 @@ public class EmulatorManager implements EventObserver
 
 		if (this.pc == lastPc) {
 			this.ended = true;
+			return false;
+		}
+
+		if (firstStepOver && !(instruction instanceof jniosemu.instruction.emulator.CallInstruction || instruction instanceof jniosemu.instruction.emulator.CallrInstruction)) {
+			this.running = false;
 			return false;
 		}
 
@@ -387,6 +411,24 @@ public class EmulatorManager implements EventObserver
 				break;
 			case EMULATOR_STEP:
 				this.runOne();
+				break;
+			case EMULATOR_STEP_OVER:
+				this.running = false;
+				this.ended = false;
+
+				if (this.runningThread != null && this.runningThread.isAlive()) {
+					try {
+						this.runningThread.join(1000);
+					} catch (InterruptedException e) {}
+				}
+
+				this.runningThread = new Thread(new Runnable() {
+					public void run() {
+						runOneOver();
+					}
+				});
+				this.runningThread.setPriority(Thread.MIN_PRIORITY);
+				this.runningThread.start();
 				break;
 			case EMULATOR_RUN:
 				this.running = false;

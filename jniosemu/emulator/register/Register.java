@@ -100,7 +100,10 @@ public class Register
 		if (this.state == STATE.DISABLED)
 			throw new RegisterException(this.number);
 
-		this.state = STATE.READ;
+		// If the state already is WRITE we don't want to change that.
+		if (this.state != STATE.WRITE)
+			this.state = STATE.READ;
+
 		return this.value;
 	}
 
