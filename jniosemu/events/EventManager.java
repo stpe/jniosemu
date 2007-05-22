@@ -62,6 +62,7 @@ public final class EventManager
 		EMULATOR_SPEED,										// Change the emulator speed
 		EMULATOR_START,										// Emulation started
 		EMULATOR_STEP,										// Step emulation one instruction
+		EMULATOR_STEP_OVER,								// Step over call
 		EMULATOR_STOP,										// Emulation stopped
 		EMULATOR_BREAKPOINT_UPDATE,				// Breakpoint has been changed
 		EMULATOR_BREAKPOINT_TOGGLE,				// Breakpoint has been toggled in GUI

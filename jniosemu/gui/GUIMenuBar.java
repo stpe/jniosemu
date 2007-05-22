@@ -130,6 +130,11 @@ public class GUIMenuBar extends JMenuBar
 		          KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0));
 		stateManager.addItem(EventManager.EVENT.EMULATOR_STEP, item);
 		menu.add(item);
+
+		item = createMenuItem("Step Over", EventManager.EVENT.EMULATOR_STEP_OVER.toString(),
+		          KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
+		stateManager.addItem(EventManager.EVENT.EMULATOR_STEP_OVER, item);
+		menu.add(item);
 		
 		item = createMenuItem("Reset", EventManager.EVENT.EMULATOR_RESET.toString(),
 		          KeyStroke.getKeyStroke(KeyEvent.VK_F2, ActionEvent.CTRL_MASK));

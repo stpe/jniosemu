@@ -86,9 +86,15 @@ public class GUIToolBar extends JToolBar
 		this.add(button);
 
 		button = makeButton("step", EventManager.EVENT.EMULATOR_STEP.toString(),
-												"Step through and execute one instruction at a time",
+												"Step. Execute one instruction at a time",
 												"Step");
 		this.add(button);
+
+		button = makeButton("step_over", EventManager.EVENT.EMULATOR_STEP_OVER.toString(),
+												"Step Over. Execute one instruction or call at a time",
+												"Step Over");
+		this.add(button);
+
 
 		button = makeButton("reset", EventManager.EVENT.EMULATOR_RESET.toString(),
 												"Reset emulator",

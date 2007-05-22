@@ -113,30 +113,35 @@ public class StateManager implements EventObserver
 				setEnabled(EventManager.EVENT.EMULATOR_RUN, false);
 				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
 				setEnabled(EventManager.EVENT.EMULATOR_STEP, false);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP_OVER, false);
 				setEnabled(EventManager.EVENT.EMULATOR_RESET, false);
 				break;
 			case EMULATOR_END:
 				setEnabled(EventManager.EVENT.EMULATOR_RUN, false);
 				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
 				setEnabled(EventManager.EVENT.EMULATOR_STEP, false);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP_OVER, false);
 				setEnabled(EventManager.EVENT.EMULATOR_RESET, true);
 				break;
 			case EMULATOR_READY:
 				setEnabled(EventManager.EVENT.EMULATOR_RUN, true);
 				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
 				setEnabled(EventManager.EVENT.EMULATOR_STEP, true);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP_OVER, true);
 				setEnabled(EventManager.EVENT.EMULATOR_RESET, false);
 				break;
 			case EMULATOR_START:
 				setEnabled(EventManager.EVENT.EMULATOR_RUN, false);
 				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, true);
 				setEnabled(EventManager.EVENT.EMULATOR_STEP, false);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP_OVER, true);
 				setEnabled(EventManager.EVENT.EMULATOR_RESET, true);
 				break;
 			case EMULATOR_STOP:
 				setEnabled(EventManager.EVENT.EMULATOR_RUN, true);
 				setEnabled(EventManager.EVENT.EMULATOR_PAUSE, false);
 				setEnabled(EventManager.EVENT.EMULATOR_STEP, true);
+				setEnabled(EventManager.EVENT.EMULATOR_STEP_OVER, true);
 				setEnabled(EventManager.EVENT.EMULATOR_RESET, true);
 				break;
 				
