@@ -36,6 +36,7 @@ public final class EventManager
 		COMPILER_COMPILE,									// Start compiling
 		COMPILER_COMPILE_INIT,						// Start compile requested from GUI
 		COMPILER_ERROR,										// Error occured during compilation
+		CURRENT_DIRECTORY,								// Current working directory has changed
 		DIPSWITCH_TOGGLE,									// IO dipswitches in GUI has changed
 		DIPSWITCH_UPDATE,									// Update state of dipswitches
 		DOCUMENT_NEW,											// New document

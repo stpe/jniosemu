@@ -143,7 +143,7 @@ public class GUIMenuBar extends JMenuBar
 
 		menu.addSeparator();
 
-		item = new JCheckBoxMenuItem("Toggle step over");
+		item = new JCheckBoxMenuItem("Toggle Step Over");
 		item.setActionCommand(EventManager.EVENT.EMULATOR_TOGGLE_STEP_OVER.toString());
 		item.addActionListener(this);
 		menu.add(item);

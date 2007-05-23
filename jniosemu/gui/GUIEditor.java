@@ -89,6 +89,9 @@ public class GUIEditor extends JPanel
 		};
 
     this.eventManager.addEventObserver(events, this);
+    
+    // send working directory on application startup
+    sendCurrentDirectoryEvent();
 	}
 
 	/**
@@ -366,6 +369,8 @@ public class GUIEditor extends JPanel
 		eventManager.sendEvent(EventManager.EVENT.DOCUMENT_NEW_DONE);
 		// change tab to editor tab (if not current)
 		eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
+		
+		sendCurrentDirectoryEvent();
 	}
 
 	/**
@@ -417,6 +422,8 @@ public class GUIEditor extends JPanel
 				eventManager.sendEvent(EventManager.EVENT.DOCUMENT_OPEN_DONE);
 				// change tab to editor tab (if not current)
 				eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
+				
+				sendCurrentDirectoryEvent();
 				
 				// move caret in text area to the top
 				textArea.setCaretPosition(0);
@@ -474,6 +481,8 @@ public class GUIEditor extends JPanel
 		try
 		{
 			Editor.write(this.documentFile.toString(), textArea.getText());
+		
+			sendCurrentDirectoryEvent();
 			
 			textChanged(false, true);
 
@@ -717,6 +726,27 @@ public class GUIEditor extends JPanel
 		
 		// if all whitespace, simply return everything
 		return lineStr;
+	}
+
+	/**
+	 * Send an event with the current directory. If a file is open, then it is
+	 * the directory of that file, if no file is open the system property
+	 * user.dir is used.
+	 */
+	private void sendCurrentDirectoryEvent()
+	{
+		String path = "";
+		
+		if (this.documentFile != null)
+		{
+			path = this.documentFile.getParent();
+		}
+		else
+		{
+			path = System.getProperty("user.dir");
+		}
+
+		eventManager.sendEvent(EventManager.EVENT.CURRENT_DIRECTORY, path);
 	}
 
 }
