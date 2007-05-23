@@ -66,6 +66,8 @@ public class EmulatorManager implements EventObserver
 	private SPEED speed = SPEED.NORMAL;
 
 	private boolean stepOver = false;
+
+	private String currentDir = null;
 	/**
 	 * Breakpoints
 	 */
@@ -88,6 +90,7 @@ public class EmulatorManager implements EventObserver
 
 		EventManager.EVENT[] events = {
 			EventManager.EVENT.COMPILER_COMPILE,
+			EventManager.EVENT.CURRENT_DIRECTORY,
 			EventManager.EVENT.EMULATOR_PAUSE,
 			EventManager.EVENT.EMULATOR_STEP,
 			EventManager.EVENT.EMULATOR_STEP_OVER,
@@ -293,7 +296,7 @@ public class EmulatorManager implements EventObserver
 	 * @param lines Sourcecode of the program
 	 */
 	public void compile(String lines) {
-		Compiler compiler = new Compiler(lines);
+		Compiler compiler = new Compiler(lines, this.currentDir);
 
 		Program program = null;
 		try {
@@ -405,6 +408,9 @@ public class EmulatorManager implements EventObserver
 		switch(eventIdentifier) {
 			case COMPILER_COMPILE:
 				this.compile((String)obj);
+				break;
+			case CURRENT_DIRECTORY:
+				this.currentDir = (String)obj;
 				break;
 			case EMULATOR_STEP:
 				this.initRun(false, false);

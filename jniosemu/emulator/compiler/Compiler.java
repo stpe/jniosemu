@@ -1,5 +1,6 @@
 package jniosemu.emulator.compiler;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -7,6 +8,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import jniosemu.Utilities;
+import jniosemu.editor.Editor;
 import jniosemu.emulator.Program;
 import jniosemu.emulator.compiler.macro.Macro;
 import jniosemu.emulator.compiler.macro.MacroManager;
@@ -63,6 +65,8 @@ public class Compiler
 	 */
 	private String lastLabel = null;
 
+	private String currentDir = null;
+
 	/**
 	 * Init Compiler.
 	 *
@@ -71,8 +75,9 @@ public class Compiler
 	 *
 	 * @param aLines  Sourcecode
 	 */
-	public Compiler(String aLines) {
-		this.lines = aLines.split("\n");
+	public Compiler(String aLines, String currentDir) {
+		this.lines = aLines.split("\r\n|\n|\r");
+		this.currentDir = currentDir;
 
 		// Add libfunctions
 		this.labels.put("nr_uart_rxchar", MemoryManager.LIBSTARTADDR);
@@ -353,6 +358,30 @@ public class Compiler
 								}
 							} else if (name.equals("end")) {
 								// Not sure if we have to do anything but we have it here so we don't get an error
+							} else if (name.equals("include")) {
+								Pattern pFile = Pattern.compile("\"([^\"]+)\"");
+								Matcher mFile = pFile.matcher(mInstruction.group(4));
+								if (mFile.matches()) {
+									String path = this.currentDir +"/"+ mFile.group(1);
+									try {
+										String content;
+										if ((content = Editor.read(path)) != null) {
+											String[] lines = content.split("\r\n|\n|\r");
+											String[] tmpLines = new String[this.lines.length + lines.length + 2];
+											for (int i = 0; i < aLineNumber; i++)
+												tmpLines[i] = new String(this.lines[i]);
+											tmpLines[aLineNumber] = "# START INCLUDE";
+											for (int i = 0; i < lines.length; i++)
+												tmpLines[aLineNumber + 1 + i] = new String(lines[i]);
+											tmpLines[aLineNumber + lines.length + 1] = "# END INCLUDE";
+											for (int i = 0; i < this.lines.length - aLineNumber; i++)
+												tmpLines[aLineNumber + 2 + lines.length + i] = new String(this.lines[aLineNumber + i]);
+											this.lines = tmpLines;
+										}
+									} catch (IOException e) {
+										throw new CompilerException(aLineNumber, "File to include don't exists or can't be open: "+ path);
+									}
+								}
 							} else {
 								throw new CompilerException(aLineNumber, "Unknown: "+ name);
 							}
@@ -412,9 +441,8 @@ public class Compiler
 	 * @throws CompilerException  If parseLine casts CompilerException
 	 */
 	public void compile() throws CompilerException {
-		int i = 0;
-		for (String line: this.lines) {
-			this.parseLine(line, true, ++i);
+		for (int i = 0; i < this.lines.length; i++) {
+			this.parseLine(this.lines[i], true, i+1);
 		}
 	}
 
