@@ -91,6 +91,7 @@ public class EmulatorManager implements EventObserver
 			EventManager.EVENT.EMULATOR_PAUSE,
 			EventManager.EVENT.EMULATOR_STEP,
 			EventManager.EVENT.EMULATOR_STEP_OVER,
+			EventManager.EVENT.EMULATOR_TOGGLE_STEP_OVER,
 			EventManager.EVENT.EMULATOR_RESET,
 			EventManager.EVENT.EMULATOR_RUN,
 			EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE,
@@ -156,7 +157,7 @@ public class EmulatorManager implements EventObserver
 		int endPc;
 
 		do {
-			if (stepOver || this.stepOver) {
+			if (stepOver || (all && this.stepOver)) {
 				endPc = this.pc;
 				nextInstruction = this.step(true, true);
 				if (nextInstruction == 2 && this.running) {
@@ -419,6 +420,9 @@ public class EmulatorManager implements EventObserver
 				break;
 			case EMULATOR_RESET:
 				this.reset();
+				break;
+			case EMULATOR_TOGGLE_STEP_OVER:
+				this.stepOver = !this.stepOver;
 				break;
 			case EMULATOR_BREAKPOINT_TOGGLE:
 				this.toggleBreakpoint(((Integer)obj).intValue());
