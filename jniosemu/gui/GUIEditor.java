@@ -196,7 +196,7 @@ public class GUIEditor extends JPanel
 		{
 			this.textHasChanged = textHasChanged;
 
-			eventManager.sendEvent(EventManager.EVENT.APPLICATION_TITLE_CHANGE, getDocumentTitle());
+			eventManager.sendEvent(EventManager.EVENT.APPLICATION_TITLE_CHANGE, getDocumentTitleSuffixed());
 		}
 	}
 
@@ -480,6 +480,16 @@ public class GUIEditor extends JPanel
 		// save file
 		try
 		{
+			String filename = this.documentFile.toString();
+			
+			// if no file extension, automatically append default extension
+			if (filename.lastIndexOf('.') == -1)
+			{
+				filename = filename + "." + AsmFileFilter.FILE_EXTENSION;
+				
+				this.documentFile = new File(filename);
+			}
+			
 			Editor.write(this.documentFile.toString(), textArea.getText());
 		
 			sendCurrentDirectoryEvent();
@@ -584,6 +594,19 @@ public class GUIEditor extends JPanel
 		{
 			title = this.documentFile.getName();
 		}
+
+		return title;
+	}
+
+	/**
+	 * Returns document title with an asterisk appended if it
+	 * has been modified.
+	 *
+	 * @return  document title
+	 */
+	private String getDocumentTitleSuffixed()
+	{
+		String title = getDocumentTitle();
 		
 		if (textHasChanged)
 			title += "*";

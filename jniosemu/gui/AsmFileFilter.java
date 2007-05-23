@@ -9,6 +9,8 @@ import javax.swing.filechooser.*;
  */
 public class AsmFileFilter extends FileFilter
 {
+	// file extension used for assembly files
+	public static final String FILE_EXTENSION = "s";
 
   public boolean accept(File f)
   {
@@ -19,12 +21,12 @@ public class AsmFileFilter extends FileFilter
 
 		String extension = getExtension(f);
 
-		return (extension != null && ( extension.equals("s") ));
+		return (extension != null && ( extension.equals(FILE_EXTENSION) ));
   }
 
   public String getDescription()
   {
-      return "Assembler Files (*.s)";
+      return "Assembler Files (*." + FILE_EXTENSION + ")";
   }
 
   /**
