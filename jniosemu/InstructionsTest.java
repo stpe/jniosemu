@@ -97,7 +97,7 @@ public class InstructionsTest {
 		emulatorManager.setSpeed(EmulatorManager.SPEED.ULTRA);
 
 		for (int i = 0; i < 2; i++) {
-			emulatorManager.runAll();
+			emulatorManager.execRun(true, false);
 
 			// Wait until EMULATOR_DONE
 

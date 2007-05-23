@@ -64,6 +64,8 @@ public class EmulatorManager implements EventObserver
 	 * Current speed
 	 */
 	private SPEED speed = SPEED.NORMAL;
+
+	private boolean stepOver = false;
 	/**
 	 * Breakpoints
 	 */
@@ -126,21 +128,44 @@ public class EmulatorManager implements EventObserver
 		this.pc = value;
 	}
 
-	/**
-	 * Run instructions as long as there are any or program is stopped
-	 *
-	 * @calledby update()
-	 * @calls startEvent, stopEvent(), step()
-	 */
-	public void runAll() {
+	public void initRun(final boolean all, final boolean stepOver) {
+		this.running = false;
+		this.ended = false;
+
+		if (this.runningThread != null && this.runningThread.isAlive()) {
+			try {
+				this.runningThread.join(1000);
+			} catch (InterruptedException e) {}
+		}
+
+		this.runningThread = new Thread(new Runnable() {
+			public void run() {
+				execRun(all, stepOver);
+			}
+		});
+		this.runningThread.setPriority(Thread.MIN_PRIORITY);
+		this.runningThread.start();
+	}
+
+	public void execRun(boolean all, boolean stepOver) {
 		this.running = true;
 		this.startEvent();
 
-		boolean nextInstruction = false;
+		int nextInstruction = 0;
 		int instructionCount = 0;
+		int endPc;
 
 		do {
-			nextInstruction = this.step(true, false);
+			if (stepOver || this.stepOver) {
+				endPc = this.pc;
+				nextInstruction = this.step(true, true);
+				if (nextInstruction == 2 && this.running) {
+					endPc += 4;
+					while (this.step(false, false) > 0 && this.running && this.pc != endPc);
+				}
+			} else {
+				nextInstruction = this.step(true, false);
+			}
 
 			switch (this.speed) {
 				case SLOW:
@@ -157,42 +182,10 @@ public class EmulatorManager implements EventObserver
 						this.pcChange();
 					break;
 			}
-		} while (nextInstruction && this.running);
+		} while (nextInstruction > 0 && this.running && all);
 
 		this.pcChange();
 
-		this.running = false;
-		this.stopEvent();
-	}
-
-	/**
-	 * Run one instruction
-	 *
-	 * @calledby update()
-	 * @calls startEvent, stopEvent(), step()
-	 */
-	public void runOne() {
-		this.running = true;
-		this.startEvent();
-
-		this.step(true, false);
-		this.pcChange();
-
-		this.running = false;
-		this.stopEvent();
-	}
-
-	public void runOneOver() {
-		this.running = true;
-		this.startEvent();
-
-		int lastPc = this.pc;
-		if (this.step(true, true) && !this.ended && this.running) {
-			lastPc += 4;
-			while (this.step(false, false) && this.running && this.pc != lastPc);
-		}
-
-		this.pcChange();
 		this.running = false;
 		this.stopEvent();
 	}
@@ -208,7 +201,7 @@ public class EmulatorManager implements EventObserver
 	 *
 	 * @return True if the emulation can continue
 	 */
-	public boolean step(boolean reset, boolean firstStepOver) {
+	public int step(boolean reset, boolean firstStepOver) {
 		int lastPc = this.pc;
 
 		if (reset) {
@@ -221,7 +214,7 @@ public class EmulatorManager implements EventObserver
 			int opCode = this.memory.readInt(this.pc);
 			if (opCode == 0) {
 				this.ended = true;
-				return false;
+				return 0;
 			}
 
 			instruction = InstructionManager.get(opCode);
@@ -230,20 +223,23 @@ public class EmulatorManager implements EventObserver
 		} catch (Exception e) {
 			this.eventManager.sendEvent(EventManager.EVENT.EMULATOR_ERROR, e.getMessage());
 			this.ended = true;
-			return false;
+			return 0;
 		}
 
 		if (this.pc == lastPc) {
 			this.ended = true;
-			return false;
+			return 0;
 		}
 
-		if (firstStepOver && !(instruction instanceof jniosemu.instruction.emulator.CallInstruction || instruction instanceof jniosemu.instruction.emulator.CallrInstruction)) {
-			this.running = false;
-			return false;
+		if (this.breakpoints.containsKey(this.pc)) {
+			return 0;
 		}
 
-		return !this.breakpoints.containsKey(this.pc);
+		if (firstStepOver && (instruction instanceof jniosemu.instruction.emulator.CallInstruction || instruction instanceof jniosemu.instruction.emulator.CallrInstruction)) {
+			return 2;
+		}
+
+		return 1;
 	}
 
 	/**
@@ -410,43 +406,13 @@ public class EmulatorManager implements EventObserver
 				this.compile((String)obj);
 				break;
 			case EMULATOR_STEP:
-				this.runOne();
+				this.initRun(false, false);
 				break;
 			case EMULATOR_STEP_OVER:
-				this.running = false;
-				this.ended = false;
-
-				if (this.runningThread != null && this.runningThread.isAlive()) {
-					try {
-						this.runningThread.join(1000);
-					} catch (InterruptedException e) {}
-				}
-
-				this.runningThread = new Thread(new Runnable() {
-					public void run() {
-						runOneOver();
-					}
-				});
-				this.runningThread.setPriority(Thread.MIN_PRIORITY);
-				this.runningThread.start();
+				this.initRun(false, true);
 				break;
 			case EMULATOR_RUN:
-				this.running = false;
-				this.ended = false;
-
-				if (this.runningThread != null && this.runningThread.isAlive()) {
-					try {
-						this.runningThread.join(1000);
-					} catch (InterruptedException e) {}
-				}
-
-				this.runningThread = new Thread(new Runnable() {
-					public void run() {
-						runAll();
-					}
-				});
-				this.runningThread.setPriority(Thread.MIN_PRIORITY);
-				this.runningThread.start();
+				this.initRun(true, false);
 				break;
 			case EMULATOR_PAUSE:
 				this.pause();
