@@ -89,9 +89,6 @@ public class GUIEditor extends JPanel
 		};
 
     this.eventManager.addEventObserver(events, this);
-    
-    // send working directory on application startup
-    sendCurrentDirectoryEvent();
 	}
 
 	/**
@@ -753,20 +750,15 @@ public class GUIEditor extends JPanel
 
 	/**
 	 * Send an event with the current directory. If a file is open, then it is
-	 * the directory of that file, if no file is open the system property
-	 * user.dir is used.
+	 * the directory of that file, if no file is open null is sent.
 	 */
 	private void sendCurrentDirectoryEvent()
 	{
-		String path = "";
+		String path = null;
 		
 		if (this.documentFile != null)
 		{
 			path = this.documentFile.getParent();
-		}
-		else
-		{
-			path = System.getProperty("user.dir");
 		}
 
 		eventManager.sendEvent(EventManager.EVENT.CURRENT_DIRECTORY, path);
