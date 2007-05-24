@@ -211,4 +211,16 @@ public class Utilities
 		}
 		return aValue;
 	}
+
+	public static String stringReplaceOne(String value, String oldstring, String newstring) {
+		int start = value.indexOf(oldstring);
+
+		if (start >= 0) {
+			StringBuffer replace = new StringBuffer(value);
+			replace.replace(start, start+oldstring.length(), newstring);
+			return replace.toString();
+		}
+
+		return value;
+	}
 }

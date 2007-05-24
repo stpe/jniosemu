@@ -166,7 +166,7 @@ public class Compiler
 			} else {
 				sb.append( Long.toString(Long.parseLong(mHexBin.group(6), 2)) );
 			}
-			aValue = Utilities.stringReplace(aValue, mHexBin.group(0), sb.toString());
+			aValue = Utilities.stringReplaceOne(aValue, mHexBin.group(0), sb.toString());
 		}
 
 		// Take care of the "not"-operation
