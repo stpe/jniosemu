@@ -55,7 +55,7 @@ public class GUIAbout extends JDialog
 		// labels
 		JPanel labelPanel = new JPanel(new GridLayout(0, 1));
 
-		JLabel version = new JLabel("JNiosEmu v1.0 (2007-05-21)", JLabel.CENTER);
+		JLabel version = new JLabel("JNiosEmu v1.0 (2007-05-24)", JLabel.CENTER);
 		JLabel website = new JLabel("http://jniosemu.codetouch.com/", JLabel.CENTER);
 		JLabel copyright = new JLabel("Copyright (c) 2007 the developers", JLabel.CENTER);
 

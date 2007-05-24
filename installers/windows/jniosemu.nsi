@@ -24,6 +24,9 @@ SetOutPath $INSTDIR\
 
 File C:\svnwork\trunk\installers\jniosemu.jar
 
+SetOutPath $INSTDIR\examples
+File C:\svnwork\trunk\examples\*
+
 WriteUninstaller $INSTDIR\Uninstall.exe
 
 ; //////////
@@ -36,6 +39,7 @@ Pop $javapath
 CreateDirectory "$SMPROGRAMS\JNiosEmu"
 
 CreateShortCut "$SMPROGRAMS\JNiosEmu\Run JNiosEmu.lnk" "$javapath" "-jar $INSTDIR\jniosemu.jar"
+CreateShortCut "$SMPROGRAMS\JNiosEmu\Examples.lnk" "$INSTDIR\examples"
 CreateShortCut "$SMPROGRAMS\JNiosEmu\Uninstall JNiosEmu.lnk" "$INSTDIR\Uninstall.exe"
 
 ; ///////////////// END CREATING SHORTCUTS //////////////////////////////////
