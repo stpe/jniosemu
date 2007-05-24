@@ -362,6 +362,9 @@ public class Compiler
 								Pattern pFile = Pattern.compile("\"([^\"]+)\"");
 								Matcher mFile = pFile.matcher(mInstruction.group(4));
 								if (mFile.matches()) {
+									if (this.currentDir == null)
+										throw new CompilerException(aLineNumber, "Include path unknown (save file)");
+
 									String path = this.currentDir +"/"+ mFile.group(1);
 									try {
 										String content;
@@ -379,7 +382,7 @@ public class Compiler
 											this.lines = tmpLines;
 										}
 									} catch (IOException e) {
-										throw new CompilerException(aLineNumber, "File to include don't exists or can't be open: "+ path);
+										throw new CompilerException(aLineNumber, "Can't open include file: "+ path);
 									}
 								}
 							} else {
