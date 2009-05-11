@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.5+" codebase="http://jniosemu.codetouch.com/">
+<jnlp spec="1.5+" codebase="http://jniosemu.googlecode.com/">
 	<information>
 	  <title>JNiosEmu</title>
 	  <vendor>JNiosEmu Team</vendor>
-	  <homepage href="http://jniosemu.codetouch.com/" />
+	  <homepage href="http://jniosemu.googlecode.com/" />
 	  <description>Emulate Nios II on your computer</description>
-		<icon href="images/icon.gif" />
-    <icon href="images/splash.jpg" kind="splash" />
+		<icon href="http://jniosemu.googlecode.com/svn/wiki/images/web/webstart/icon.gif" />
+    <icon href="http://jniosemu.googlecode.com/svn/wiki/images/web/webstart/splash.jpg" kind="splash" />
 	</information>
 	<offline-allowed/>
 	<security>
@@ -14,7 +14,7 @@
 	</security>
 	<resources>
 	  <j2se version="1.5+" />
-	  <jar href="jniosemu.jar"/>
+	  <jar href="jniosemu.1.0.jar"/>
 	</resources>
 	<application-desc main-class="jniosemu.JNiosEmu" />
 </jnlp>
