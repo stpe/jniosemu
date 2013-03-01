@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.5+" codebase="http://jniosemu.codetouch.com/">
+	<information>
+	  <title>JNiosEmu</title>
+	  <vendor>JNiosEmu Team</vendor>
+	  <homepage href="http://jniosemu.codetouch.com/" />
+	  <description>Emulate Nios II on your computer</description>
+		<icon href="images/icon.gif" />
+    <icon href="images/splash.jpg" kind="splash" />
+	</information>
+	<offline-allowed/>
+	<security>
+		<all-permissions/>
+	</security>
+	<resources>
+	  <j2se version="1.5+" />
+	  <jar href="jniosemu.jar"/>
+	</resources>
+	<application-desc main-class="jniosemu.JNiosEmu" />
+</jnlp>
