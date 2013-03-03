@@ -1,9 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>JNiosEmu - Java Nios II Emulator - Making it easy to learn assembler</title>
+    <title>JNiosEmu - Java Nios II Emulator - Making it easy to learn assembler</title>
+    <link rel="stylesheet" href="css/jniosemu.css" type="text/css">
+    <link rel="stylesheet" href="css/lightbox.css" type="text/css" media="screen" />    
 </head>
 <body>
-	<a href="https://github.com/stpe/jniosemu">Github</a>
+    <div id="container">
+        <div id="container2">
+            <div id="content">
+                <h1><img src="gfx/jniosemu.png" alt="JNiosEmu - Java Nios II Emulator"></h1>
+
+                <p class="info">JNiosEmu is a development environment and emulator with the purpose of making it
+                easy to learn programming in assembler. Assemble your source with a single button click, immediately see how values change in a register or memory. All this without any prior knowledge of assembler programming or complex tool chains.</p>
+                
+                <p class="info">The emulated system is a subset of the <a href="http://en.wikipedia.org/wiki/Nios_II">Nios II</a> processor from <a href="http://www.altera.com/education/univ/software/nios2/unv-nios2.html">Altera</a>.</p>
+
+
+                <p class="runbutton"><a href="webstart/jniosemu.jnlp" onmouseover="mouseover();" onmouseout="mouseout();"><img id="runbutton" src="gfx/runbutton.png" alt="Run - using Java Web Start"></a></p>
+
+                <h2>Download</h2>
+                
+                <p class="info"><b>Note: JNiosEmu is now moved to <a href="https://github.com/stpe/jniosemu">Github</a>!</b></p>
+                
+                <p class="info">Latest version: 1.0 (2007-05-24)</p>
+                
+                <ul>
+                    <li><a href="downloads/jniosemu-setup.exe">Windows Installer</a></li>
+                    <li><a href="downloads/jniosemu.jar">JAR-file</a> <span class="info">(start with: java -jar jniosemu.jar)</span></li>
+                    <li>Examples: <a href="downloads/nios2_asm_examples.zip">zip</a> or <a href="downloads/nios2_asm_examples.tar.gz">tar.gz</a></li>
+                    <li>Screenshots: <a href="img/screenshot-jniosemu-editor.png" rel="lightbox[jniosemu]" title="Editor screenshot">editor</a>, <a href="img/screenshot-jniosemu-emulator.png" rel="lightbox[jniosemu]" title="Emulator screenshot">emulator</a></li>
+                </ul>
+
+                <p class="info">JNiosEmu requires <a href="http://www.java.com/getjava/">Java 6</a> or later.</p>
+
+                <h2>Documentation</h2>
+                <ul>
+                    <li><a href="https://github.com/stpe/jniosemu/wiki">JNiosEmu User Manual</a></li>
+                    <li><a href="http://www.altera.com/literature/lit-nio2.jsp">Nios II Literature</a></li>
+                </ul>                   
+                
+                
+                <p class="contact">
+                For inquiries, email:<br/>
+                
+                <img src="gfx/contact-jniosemu.png" alt="Contact us...">
+                </p>
+                
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="js/jniosemu.js"></script>
+
+    <script type="text/javascript" src="js/prototype.js"></script>
+    <script type="text/javascript" src="js/scriptaculous.js?load=effects"></script>
+    <script type="text/javascript" src="js/lightbox.js"></script>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-67581-3']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
 </body>
 </html>

@@ -1,0 +1,52 @@
+body {
+    font-family: Arial;
+    font-size: 11px;
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    background-color: #c0c0c0;
+    background-image: url('../gfx/bg.png');
+}
+
+h2 {
+    font-size: 16px;
+    margin-bottom: 7px;
+}
+
+p, ul {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+img {
+    border: 0px;
+}
+
+#container2 {
+    // position: static;
+    margin: 0px auto;
+    background-color: #FFFFFF;
+    width: 360px;
+    height: 100%;
+}
+
+#content {
+    padding: 30px;
+    width: 300px;
+    text-align: left;
+}
+
+.info {
+    font-size: 11px;
+}
+
+.runbutton {
+    text-align: center;
+    margin: 20px 0px;
+}
+
+.contact {
+    font-size: 11px;
+    text-align: center;
+    margin: 40px 0px;
+}
