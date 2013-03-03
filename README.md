@@ -15,9 +15,9 @@ For non-commerical purpose - all free!
 
 It's always fun to hear when JNiosEmu is used or mentioned. Please add to the list...
 
-  * [http://www.ict.kth.se/courses/IS1200 Royal Institute of Technology (KTH), Sweden]
-  * [http://riad.usk.pk.edu.pl/~czarneck/rc/arch Cracow University of Technology, Katedra Informatyki Technicznej]
-  * [http://prodo.fh-koeln.de/links/linkliste.php Cologne University of Applied Sciences]
+  * [Royal Institute of Technology (KTH), Sweden](http://www.ict.kth.se/courses/IS1200)
+  * [Cracow University of Technology, Katedra Informatyki Technicznej](http://riad.usk.pk.edu.pl/~czarneck/rc/arch)
+  * [Cologne University of Applied Sciences](http://prodo.fh-koeln.de/links/linkliste.php)
 
 ## Authors
 
