@@ -74,7 +74,7 @@ public class TimerDevice extends MemoryBlock
 		this.clearState();
 
 		if (this.counting) {
-			if (this.counter > 0) {
+			if (this.counter != 0) {
 				this.counter--;
 			} else if ((this.memory[4] & 0x2) > 0) {
 				this.memory[0] |= 0x1;
