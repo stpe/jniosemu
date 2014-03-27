@@ -71,7 +71,7 @@ public class Utilities
 		long ret = 0;
 
 		for (int i = 0; i < 8; i++)
-			ret |= ((long)value[i] << (8 * i));
+			ret |= ((value[i] & 0xFFL) << (8 * i));
 
 		return ret;
 	}
