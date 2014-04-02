@@ -21,14 +21,14 @@ public abstract class ITypeInstruction extends Instruction
 	/**
 	 * imm part of the instruction
 	 */
-	protected short imm;
+	protected int imm;
 
 	public ITypeInstruction(int opCode) {
 		this.opCode = opCode;
 
 		this.rA  = (opCode >>> 27) & 0x1F;
 		this.rB  = (opCode >>> 22) & 0x1F;
-		this.imm = (short)((opCode >>>  6) & 0xFFFF);
+		this.imm = ((opCode >>>  6) & 0xFFFF);
 	}
 
 	public abstract void run(Emulator em) throws EmulatorException;
