@@ -76,7 +76,7 @@ public class Compiler
 	 * @param aLines  Sourcecode
 	 */
 	public Compiler(String aLines, String currentDir) {
-		this.lines = aLines.split("\r\n|\n|\r");
+		this.lines = removeMultilineComments(aLines).split("\r\n|\n|\r");
 		this.currentDir = currentDir;
 
 		// Add libfunctions
@@ -523,5 +523,36 @@ public class Compiler
 		}
 
 		throw new CompilerException();
+	}
+
+	/**
+	 * Returns input with all multiline comments removed.
+	 * Uses regex from http://stackoverflow.com/a/241506
+	 * @param input Input string
+	 * @return Returns input with comments replaced by spaces
+	 */
+
+	private static String removeMultilineComments(String input) {
+		Pattern myPattern = Pattern.compile("//.*?$|/\\*.*?\\*/|\\'(?:\\\\.|[^\\\\\\'])*\\'|\"(?:\\\\.|[^\\\\\"])*\"",
+			Pattern.DOTALL | Pattern.MULTILINE);
+		Matcher matcher = myPattern.matcher(input);
+		StringBuffer b = new StringBuffer();
+		while (matcher.find()) {
+			matcher.appendReplacement(b, "");
+			String group = matcher.group();
+			if (group.charAt(0) != '/') {
+				// not a comment, but a string or something else
+				b.append(group);
+				continue;
+			}
+			b.append(' ');
+			for (int i = 0; i < group.length(); i++) {
+				if (group.charAt(i) == '\n') {
+					b.append('\n');
+				}
+			}
+		}
+		matcher.appendTail(b);
+		return b.toString();
 	}
 }
