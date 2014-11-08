@@ -1,14 +1,14 @@
 #####################################################################
-# test3.s: Oändlig loop
+# test3.s: Never ending loop
 #####################################################################
 
 		.data
-		
+
 		.global main
 		.text
 
-main:		movi r4, 0 	# Flytta 0 till register r4
-		
-	
-add:		addi r4, r4, 1	# Addera 1 till värdet i r4 och skriv det till r4
-		br add		# Hoppa tillbaka till r4 (oändlig loop)
+main:		movi r4, 0 	# Move 0 to register r4
+
+
+add:		addi r4, r4, 1	# Add 1 to value in r4 and write it to r4
+		br add		# Branch back to r4 (never ending loop)

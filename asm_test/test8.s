@@ -1,10 +1,10 @@
 #####################################################################
-# test8.s: Testar compare instruktioner
+# test8.s: Testing compare operations
 #####################################################################
 	.data
 	.global main
 	.text
-main:   
+main:
 	movi	r1,  1		# 1
 	movi	r2,  -2		# -2
 	cmpeq	r3, r0, r1	# 0

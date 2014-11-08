@@ -1,16 +1,16 @@
 #####################################################################
-# test5.s: Program som läser/skriver i stacken och minnet
+# test5.s: Program that reads/writes stack and memory
 #####################################################################
 
 	.data
 var:	.word 5
 
-	.macro PUSH reg		# Macro för PUSH
+	.macro PUSH reg		# Macro for PUSH
 	addi sp, sp, -4
 	stw \reg, 0(sp)
 	.endm
 
-	.macro POP reg		# Macro för POP
+	.macro POP reg		# Macro for POP
 	ldw \reg, 0(sp)
 	addi sp, sp, 4
 	.endm
@@ -18,12 +18,12 @@ var:	.word 5
 	.global main
 
 	.text
-main:	movia	r8, var		# Flyttar adressen till variabeln var till r8
-	ldw	r9, 0(r8)	# Flyttar värdet på variabeln var till r9
-	addi	r9, r9, 2	# Adderar 2 till värdet på r9
-	stw	r9, 0(r8)	# Flyttar värdet på r8 till variabeln var
+main:	movia	r8, var		# Move adress of variable var to r8
+	ldw	r9, 0(r8)	# Move value of variable var to r9
+	addi	r9, r9, 2	# Add 2 to value of r9
+	stw	r9, 0(r8)	# Move value of r8 to variable var
 
-	PUSH r9			# lägger r9 på stacken
-	POP r10			# poppar värdet i stacken till r10
-				# Om r9 = r10 så fungerar operationen
-				# Kontrollera även att sp har samma värde innan PUSH som efter POP
+	PUSH r9			# pushes r9 on stack
+	POP r10			# pops stack and puts it in r10
+				# If r9 equals r10 this will work
+				# Also verify that sp has same value before PUSH as after POP

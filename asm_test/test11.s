@@ -1,10 +1,10 @@
 #####################################################################
-# test11.s: Testar logiska instruktioner
+# test11.s: Test logic operations
 #####################################################################
 	.data
 	.global main
 	.text
-main:   
+main:
 	movi	r1, 2
 	movi	r2, -2
 	and	r3, r2, r1		# 2

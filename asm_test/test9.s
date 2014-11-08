@@ -1,10 +1,10 @@
 #####################################################################
-# test9.s: Testar mov instruktioner
+# test9.s: Testing mov operations
 #####################################################################
 	.data
 	.global main
 	.text
-main:   
+main:
 	movi	r1,  2		# 2
 	mov	r2, r1		# 2
 	movhi	r3, 0x12345678	# 0x12340000

@@ -1,11 +1,11 @@
 #####################################################################
-# test7.s: Allmänt program som testar lite allt möjligt
+# test7.s: Program that tests a little bit of everything
 #####################################################################
 
 	.text
 	.equ TEST_NUM, 0x90abcdef	# The number to be tested
 	.global start
-start:	
+start:
 	movia r7, TEST_NUM        	# Initialize r7 with the number to be tested
 	mov r4, r7 			# Copy the number to r4
 STRING_COUNTER:
@@ -19,5 +19,5 @@ STRING_COUNTER_LOOP: 			#Loop until the number has no more ones
 END_STRING_COUNTER:
 	mov r16, r2			# Store the result into r16
 END:
-	br END 				# Wait here once the program has completed */
+	br END 				# Wait here once the program has completed
 .end

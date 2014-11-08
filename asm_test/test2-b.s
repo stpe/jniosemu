@@ -1,7 +1,7 @@
 #####################################################################
-# test2-b.s: Enkelt program som lägger ihop två tal
+# test2-b.s: Simple program that adds two values
 #####################################################################
-		
+
 		.data
 
 		.global main

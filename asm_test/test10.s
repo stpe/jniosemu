@@ -1,10 +1,10 @@
 #####################################################################
-# test10.s: Testar matematik instruktioner
+# test10.s: Test for math operations
 #####################################################################
 	.data
 	.global main
 	.text
-main:   
+main:
 	movi	r1, 2
 	movi	r2, -2
 	div	r3, r2, r1		# -1

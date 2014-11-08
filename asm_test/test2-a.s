@@ -1,5 +1,5 @@
 #####################################################################
-# test2-a.s: Enkelt program som lägger ihop två tal med ett fel
+# test2-a.s: Simple program that adds two values - with an error
 #####################################################################
 
 
@@ -10,6 +10,6 @@ tal:		.word	3
 		.text
 main:		movi r1, 5
 		movia r2, tal
-		load r3, 0(r2)		# Felaktig instruktion
+		load r3, 0(r2)		# Error!
 
 		add r4, r1, r3
