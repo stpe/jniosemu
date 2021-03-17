@@ -18,6 +18,7 @@ It's always fun to hear when JNiosEmu is used or mentioned. Please add to the li
   * [Royal Institute of Technology (KTH), Sweden](http://www.ict.kth.se/courses/IS1200)
   * [Cracow University of Technology, Katedra Informatyki Technicznej](http://riad.usk.pk.edu.pl/~czarneck/rc/arch)
   * [Cologne University of Applied Sciences](http://prodo.fh-koeln.de/links/linkliste.php)
+  * [THU (Ulm University of Applied Science), Germany](https://studium.hs-ulm.de/en)
 
 ## Authors
 
