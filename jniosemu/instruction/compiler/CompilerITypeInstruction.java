@@ -137,7 +137,9 @@ public class CompilerITypeInstruction extends CompilerInstruction
 			}
 		} catch (InstructionException e) {
 			throw new InstructionException(this.instructionInfo.getName(), "Error parsing immediate value ("+ this.tImm +")");
-		}
+		} catch (NumberFormatException e) {
+            throw new InstructionException(this.instructionInfo.getName(), "Immediate value is out of range ("+ this.tImm +")");
+        }
 
 		this.imm = (int)(imm & 0xFFFF);
 

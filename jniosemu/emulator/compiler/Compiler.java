@@ -89,7 +89,7 @@ public class Compiler
 		this.labels.put("nr_uart_txstring", MemoryManager.LIBSTARTADDR + 540);
 	}
 
-	public static long parseValue(String aValue) throws InstructionException {
+	public static long parseValue(String aValue) throws InstructionException, NumberFormatException {
 		return parseValue(aValue, null, 0, 1);
 	}
 
@@ -104,7 +104,7 @@ public class Compiler
 	 * @return The value
 	 * @throws InstructionException  If we can't parse the value
 	 */
-	public static long parseValue(String aValue, Hashtable<String, Integer> aLabels, int aAddr, int aDivider) throws InstructionException {
+	public static long parseValue(String aValue, Hashtable<String, Integer> aLabels, int aAddr, int aDivider) throws InstructionException, NumberFormatException {
 		if (aValue.length() == 0)
 			return 0;
 
@@ -282,112 +282,116 @@ public class Compiler
 					if (mInstruction.matches()) {
 
 						// Check if the first character is a ".".
-						if (mInstruction.group(1) != null) {
-							String name = mInstruction.group(2);
+                        if (mInstruction.group(1) != null) {
+                            try {
+                                String name = mInstruction.group(2);
 
-							// Handle all parts with a "."-character in the begining
-							if (name.equals("equ")) {
-								this.constants.add(new Constant(mInstruction.group(4)));
-							} else if (name.equals("data")) {
-								this.codePart = false;
-							} else if (name.equals("text")) {
-								this.codePart = true;
-							} else if (name.equals("global") || name.equals("globl")) {
-								this.globals.add(mInstruction.group(4));
-							} else if (name.equals("macro")) {
-								Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
-								Matcher mMacro = pMacro.matcher(mInstruction.group(4));
-								if (mMacro.matches()) {
-									this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null, aLineNumber, null);
-								} else {
-									throw new CompilerException(aLineNumber, "Wrong syntax for a macro");
-								}
-							} else if (name.equals("endm")) {
-								this.lastMacro = null;
-							} else if (name.equals("word") || name.equals("hword") || name.equals("byte") || name.equals("ascii") || name.equals("asciz") || name.equals("string")) {
-								try {
-									String[] variables = mInstruction.group(4).split(",");
-									Variable.TYPE type;
-									if (name.equals("word"))
-										type = Variable.TYPE.WORD;
-									else if (name.equals("hword"))
-										type = Variable.TYPE.HWORD;
-									else if (name.equals("byte"))
-										type = Variable.TYPE.BYTE;
-									else if (name.equals("ascii"))
-										type = Variable.TYPE.ASCII;
-									else
-										type = Variable.TYPE.ASCIZ;
+                                // Handle all parts with a "."-character in the begining
+                                if (name.equals("equ")) {
+                                    this.constants.add(new Constant(mInstruction.group(4)));
+                                } else if (name.equals("data")) {
+                                    this.codePart = false;
+                                } else if (name.equals("text")) {
+                                    this.codePart = true;
+                                } else if (name.equals("global") || name.equals("globl")) {
+                                    this.globals.add(mInstruction.group(4));
+                                } else if (name.equals("macro")) {
+                                    Pattern pMacro = Pattern.compile("([A-Za-z]+)\\s*(.*?)");
+                                    Matcher mMacro = pMacro.matcher(mInstruction.group(4));
+                                    if (mMacro.matches()) {
+                                        this.lastMacro = this.macros.put(mMacro.group(1), mMacro.group(2), null, aLineNumber, null);
+                                    } else {
+                                        throw new CompilerException(aLineNumber, "Wrong syntax for a macro");
+                                    }
+                                } else if (name.equals("endm")) {
+                                    this.lastMacro = null;
+                                } else if (name.equals("word") || name.equals("hword") || name.equals("byte") || name.equals("ascii") || name.equals("asciz") || name.equals("string")) {
+                                    try {
+                                        String[] variables = mInstruction.group(4).split(",");
+                                        Variable.TYPE type;
+                                        if (name.equals("word"))
+                                            type = Variable.TYPE.WORD;
+                                        else if (name.equals("hword"))
+                                            type = Variable.TYPE.HWORD;
+                                        else if (name.equals("byte"))
+                                            type = Variable.TYPE.BYTE;
+                                        else if (name.equals("ascii"))
+                                            type = Variable.TYPE.ASCII;
+                                        else
+                                            type = Variable.TYPE.ASCIZ;
 
-									for (String variable : variables) {
-										this.variables.add(new Variable(this.lastLabel, type, variable));
-										this.lastLabel = null;
-									}
-								} catch (InstructionException e) {
-									throw new CompilerException(aLineNumber, e.getMessage());
-								}
-							} else if (name.equals("skip")) {
-								try {
-									long count = this.parseValue(mInstruction.group(4));
-									for (int i = 0; i < count; i++) {
-										this.variables.add(new Variable(this.lastLabel, (byte)0));
-										this.lastLabel = null;
-									}
-								} catch (InstructionException e) {
-									throw new CompilerException(aLineNumber, e.getMessage());
-								}
-							} else if (name.equals("fill")) {
-								String[] variables = mInstruction.group(4).split(",");
-								if (variables.length != 3)
-									throw new CompilerException(aLineNumber, "Not enough arguments");
+                                        for (String variable : variables) {
+                                            this.variables.add(new Variable(this.lastLabel, type, variable));
+                                            this.lastLabel = null;
+                                        }
+                                    } catch (InstructionException e) {
+                                        throw new CompilerException(aLineNumber, e.getMessage());
+                                    }
+                                } else if (name.equals("skip")) {
+                                    try {
+                                        long count = this.parseValue(mInstruction.group(4));
+                                        for (int i = 0; i < count; i++) {
+                                            this.variables.add(new Variable(this.lastLabel, (byte) 0));
+                                            this.lastLabel = null;
+                                        }
+                                    } catch (InstructionException e) {
+                                        throw new CompilerException(aLineNumber, e.getMessage());
+                                    }
+                                } else if (name.equals("fill")) {
+                                    String[] variables = mInstruction.group(4).split(",");
+                                    if (variables.length != 3)
+                                        throw new CompilerException(aLineNumber, "Not enough arguments");
 
-								try {
-									long count = this.parseValue(variables[0]);
-									long size = this.parseValue(variables[1]);
-									byte[] value = Utilities.longToByteArray(this.parseValue(variables[2]));
+                                    try {
+                                        long count = this.parseValue(variables[0]);
+                                        long size = this.parseValue(variables[1]);
+                                        byte[] value = Utilities.longToByteArray(this.parseValue(variables[2]));
 
-									for (int i = 0; i < count; i++) {
-										for (int j = 0; j < size; j++) {
-											this.variables.add(new Variable(this.lastLabel, value[(int)j]));
-											this.lastLabel = null;
-										}
-									}
+                                        for (int i = 0; i < count; i++) {
+                                            for (int j = 0; j < size; j++) {
+                                                this.variables.add(new Variable(this.lastLabel, value[(int) j]));
+                                                this.lastLabel = null;
+                                            }
+                                        }
 
-								} catch (InstructionException e) {
-									throw new CompilerException(aLineNumber, e.getMessage());
-								}
-							} else if (name.equals("end")) {
-								// Not sure if we have to do anything but we have it here so we don't get an error
-							} else if (name.equals("include")) {
-								Pattern pFile = Pattern.compile("\"([^\"]+)\"");
-								Matcher mFile = pFile.matcher(mInstruction.group(4));
-								if (mFile.matches()) {
-									if (this.currentDir == null)
-										throw new CompilerException(aLineNumber, "Include path unknown (save file)");
+                                    } catch (InstructionException e) {
+                                        throw new CompilerException(aLineNumber, e.getMessage());
+                                    }
+                                } else if (name.equals("end")) {
+                                    // Not sure if we have to do anything but we have it here so we don't get an error
+                                } else if (name.equals("include")) {
+                                    Pattern pFile = Pattern.compile("\"([^\"]+)\"");
+                                    Matcher mFile = pFile.matcher(mInstruction.group(4));
+                                    if (mFile.matches()) {
+                                        if (this.currentDir == null)
+                                            throw new CompilerException(aLineNumber, "Include path unknown (save file)");
 
-									String path = this.currentDir +"/"+ mFile.group(1);
-									try {
-										String content;
-										if ((content = Editor.read(path)) != null) {
-											String[] lines = content.split("\r\n|\n|\r");
-											String[] tmpLines = new String[this.lines.length + lines.length + 2];
-											for (int i = 0; i < aLineNumber; i++)
-												tmpLines[i] = new String(this.lines[i]);
-											tmpLines[aLineNumber] = "# START INCLUDE";
-											for (int i = 0; i < lines.length; i++)
-												tmpLines[aLineNumber + 1 + i] = new String(lines[i]);
-											tmpLines[aLineNumber + lines.length + 1] = "# END INCLUDE";
-											for (int i = 0; i < this.lines.length - aLineNumber; i++)
-												tmpLines[aLineNumber + 2 + lines.length + i] = new String(this.lines[aLineNumber + i]);
-											this.lines = tmpLines;
-										}
-									} catch (IOException e) {
-										throw new CompilerException(aLineNumber, "Can't open include file: "+ path);
-									}
-								}
-							} else {
-								throw new CompilerException(aLineNumber, "Unknown: "+ name);
-							}
+                                        String path = this.currentDir + "/" + mFile.group(1);
+                                        try {
+                                            String content;
+                                            if ((content = Editor.read(path)) != null) {
+                                                String[] lines = content.split("\r\n|\n|\r");
+                                                String[] tmpLines = new String[this.lines.length + lines.length + 2];
+                                                for (int i = 0; i < aLineNumber; i++)
+                                                    tmpLines[i] = new String(this.lines[i]);
+                                                tmpLines[aLineNumber] = "# START INCLUDE";
+                                                for (int i = 0; i < lines.length; i++)
+                                                    tmpLines[aLineNumber + 1 + i] = new String(lines[i]);
+                                                tmpLines[aLineNumber + lines.length + 1] = "# END INCLUDE";
+                                                for (int i = 0; i < this.lines.length - aLineNumber; i++)
+                                                    tmpLines[aLineNumber + 2 + lines.length + i] = new String(this.lines[aLineNumber + i]);
+                                                this.lines = tmpLines;
+                                            }
+                                        } catch (IOException e) {
+                                            throw new CompilerException(aLineNumber, "Can't open include file: " + path);
+                                        }
+                                    }
+                                } else {
+                                    throw new CompilerException(aLineNumber, "Unknown: " + name);
+                                }
+                            } catch (NumberFormatException e){
+                                throw new CompilerException(aLineNumber, "Value out of range: " + mInstruction.group(3));
+                            }
 						} else {
 							// Check if the instruction is a macro
 							String ins = mInstruction.group(2);
@@ -402,7 +406,7 @@ public class Compiler
 									} else {
 										int i = 0;
 										try {
-											for (String line: lines) { 
+											for (String line: lines) {
 												i++;
 												this.parseLine(line, false, aLineNumber);
 											}

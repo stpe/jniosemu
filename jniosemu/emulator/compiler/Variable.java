@@ -28,7 +28,7 @@ public class Variable
 	 * @param aType		Type of variable
 	 * @param aStartValue	Start value of the variable
 	 */
-	public Variable (String name, TYPE type, String startValue) throws InstructionException {
+	public Variable (String name, TYPE type, String startValue) throws InstructionException, NumberFormatException {
 		this.type = type;
 		this.name = name;
 		switch(this.type) {
