@@ -106,7 +106,12 @@ public class GUIEditor extends JPanel
         };
 
     textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-    textArea.getDocument().addDocumentListener(this);
+    textArea.addMouseWheelListener(mouseWheelEvent ->
+		{
+			if (mouseWheelEvent.isControlDown())
+				textArea.setFont(new Font("Monospaced", Font.PLAIN, textArea.getFont().getSize()+mouseWheelEvent.getWheelRotation()));
+			else textArea.getParent().dispatchEvent(mouseWheelEvent);
+		});textArea.getDocument().addDocumentListener(this);
     textArea.addCaretListener(this);
 
     // put scrollbars around editor text area
