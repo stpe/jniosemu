@@ -15,12 +15,12 @@ import java.util.LinkedList;
 public class InstructionsTest {
 
 	public static final int TEST_FAILED = -1;
-		
+
 	static int numSucceded = 0;
 	static String error_msg;
 
 	public static void main(String [] args) {
-		
+
 		int numFiles = 0;
 		String path = "asm_test/instruction/";
 		error_msg = new String("");
@@ -36,19 +36,19 @@ public class InstructionsTest {
 			System.out.println("Error: No such directory");
 			return;
 		}
-		
+
 		// Sort files in directory.
 		Arrays.sort(s);
-		
+
 		for(int i=0;i<s.length;i++) {
 			File f = new File(path+"/"+s[i]);
 			if(f.isFile()) {
 				numFiles++;
-				
+
 				System.out.print("Test [" + i + "] (" + s[i] + ")");
-				
+
 				int result = processFile(path+"/"+s[i]);
-				
+
 				if(result == TEST_FAILED) {
 					System.out.println("\t\t\t failed: ("+error_msg+")");
 				} else {
@@ -57,7 +57,7 @@ public class InstructionsTest {
 				}
 			}
 		}
-	
+
 		System.out.println("Tests done. ("+numFiles+" total: " + numSucceded + " successful, "+(numFiles - numSucceded)+" failed.)");
 
 		System.exit(0);
@@ -103,25 +103,26 @@ public class InstructionsTest {
 
 			RegisterManager registerManager = emulatorManager.getRegisterManager();
 
-			int registerNum, registerValue = 0;
+			int registerNum, expectedRegisterValue = 0;
 			for(int j=0;j<regNum.size();j++) {
 				registerNum = java.lang.Integer.parseInt(regNum.get(j));
 				try {
-					registerValue = (int)Compiler.parseValue(regValue.get(j));
+					expectedRegisterValue = (int)Compiler.parseValue(regValue.get(j));
 				}
 				catch(Exception e) {
 					error_msg = e.getMessage();
 					return TEST_FAILED;
 				}
-				if(registerManager.read(registerNum) != registerValue) {
-					error_msg = new String("Register r"+registerNum+"="+registerValue+" failed");
+				int registerValue = registerManager.read(registerNum);
+				if(expectedRegisterValue != registerValue) {
+					error_msg = new String("Register r"+registerNum+"="+registerValue+" failed (" + expectedRegisterValue + ")");
 					return TEST_FAILED;
 				}
 			}
 
 			emulatorManager.reset();
 		}
-	
+
 		return regCount;
 	}
 
