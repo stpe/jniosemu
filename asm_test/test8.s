@@ -18,12 +18,12 @@ main:
 	cmpgtu	r11, r2, r1	# 0
 	cmpgtui	r12, r2, -1	# 0
 	cmple	r13, r2, r1	# 1
-	cmplei	r14, r0, r2	# 0
+	cmplei	r14, r0, -1	# 0
 	cmpleu	r15, r2, r1	# 0
 	cmpleui	r16, r1, 1	# 1
 	cmplt	r17, r2, r0	# 1
 	cmplti	r18, r0, 0	# 0
 	cmpltu	r19, r1, r0	# 0
 	cmpltui	r20, r2, 0	# 0
-	cmplne	r21, r2, r1	# 1
-	cmplnei	r22, r2, -2	# 0
+	cmpne	r21, r2, r1	# 1
+	cmpnei	r22, r2, -2	# 0

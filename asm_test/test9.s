@@ -7,7 +7,7 @@
 main:
 	movi	r1,  2		# 2
 	mov	r2, r1		# 2
-	movhi	r3, 0x12345678	# 0x12340000
+	movhi	r3, 0x1234	# 0x12340000
 	movhi	r4, -2		# 0xFFFF0000
 	movhi	r5, 2		# 0
 	movi	r6, -2		# -2
