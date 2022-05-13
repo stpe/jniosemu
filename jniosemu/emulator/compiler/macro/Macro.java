@@ -122,7 +122,7 @@ public class Macro extends InstructionSyntax
 				lines.add(outLine);
 			}
 		} else {
-			lines = (ArrayList<String>)this.lines.clone();
+			lines = new ArrayList<String>(this.lines);
 		}
 
 		return lines;

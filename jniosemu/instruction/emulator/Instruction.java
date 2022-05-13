@@ -21,7 +21,7 @@ public abstract class Instruction
 	 */
 	protected long signedToUnsigned(int value) {
 		// This is a very stupid way to do it but it seems to be the only way Java can do it
-		return (long)value & (new Long("4294967295")).longValue();
+		return (long)value & Long.parseLong("4294967295");
 	}
 
 	/**

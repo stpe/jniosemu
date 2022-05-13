@@ -106,33 +106,33 @@ public class GUIEditor extends JPanel
 			protected void processEvent(AWTEvent e)
 			{
 				boolean isNewline = false;
-				
+
 				if (e instanceof KeyEvent && e.getID() == KeyEvent.KEY_TYPED)
 				{
 					// is typed char a newline character?
 					if (((KeyEvent) e).getKeyChar() == '\n')
 					{
 						isNewline = true;
-						
+
 						int pos = textArea.getCaretPosition();
-						
+
 						// temporarily hide caret while inserting to prevent flicker
 						textArea.getCaret().setVisible(false);
-						
+
 						// insert whitespace of previous line first
 						textArea.insert(getIndentString(pos - 1), pos);
-						
+
 						textArea.getCaret().setVisible(true);
 					}
-				} 
-				
+				}
+
 				// let textarea process keyevent as usual if typed
 				// character is not a new line
 				if (!isNewline)
 					super.processEvent(e);
 			}
     };
-    
+
 		textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		textArea.getDocument().addDocumentListener(this);
 		textArea.addCaretListener(this);
@@ -257,23 +257,23 @@ public class GUIEditor extends JPanel
 	{
 		int row = 0;
 		int column = 0;
-		
+
 		try {
 			// calculate row
-			int y = textArea.modelToView(e.getDot()).y;
+			double y = textArea.modelToView2D(e.getDot()).getY();
 			int rowHeight = textArea.getFontMetrics( textArea.getFont() ).getHeight();
 
-			row = y/rowHeight + 1;
-			
+			row = (int)(y/rowHeight) + 1;
+
 			// calculate offset
 			int offset = e.getDot();
 			column = offset - Utilities.getRowStart(textArea, offset) + 1;
-			
-		} catch (javax.swing.text.BadLocationException ex) { 
+
+		} catch (javax.swing.text.BadLocationException ex) {
 			row = 0;
 			column = 0;
 		}
-		
+
 		this.eventManager.sendEvent(EventManager.EVENT.EDITOR_CURSOR_CHANGE, new Point(row, column));
 	}
 
@@ -312,13 +312,13 @@ public class GUIEditor extends JPanel
 				try {
 					// get offset from line number
 					int offset = this.textArea.getLineStartOffset( java.lang.Math.max(((Integer) obj).intValue() - 1, 0) );
-					
+
 					// move caret to position
 					this.textArea.setCaretPosition(offset);
-					
+
 					// set focus to text area
 					this.textArea.requestFocusInWindow();
-					
+
 				} catch(BadLocationException ex) {
 					// invalid line number
 					return;
@@ -335,7 +335,7 @@ public class GUIEditor extends JPanel
 	 * user to prevent unintential loss of data.
 	 *
 	 * @calledby  update()
-	 * @calls     EventManager.sendEvent(), hasChanged(), 
+	 * @calls     EventManager.sendEvent(), hasChanged(),
 	 *            showSaveChangesDialog(), saveDocument()
 	 */
 	private void newDocument()
@@ -356,8 +356,8 @@ public class GUIEditor extends JPanel
 				case JOptionPane.CANCEL_OPTION:
 					return;
 			}
-		}		
-		
+		}
+
 		// clear editor
 		textArea.setText("");
 		this.documentFile = null;
@@ -366,7 +366,7 @@ public class GUIEditor extends JPanel
 		eventManager.sendEvent(EventManager.EVENT.DOCUMENT_NEW_DONE);
 		// change tab to editor tab (if not current)
 		eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
-		
+
 		sendCurrentDirectoryEvent();
 	}
 
@@ -379,7 +379,7 @@ public class GUIEditor extends JPanel
 	 *
 	 * @pre       Instance of FileChooser fc is created.
 	 * @calledby  update()
-	 * @calls     EventManager.sendEvent(), Editor.read(), 
+	 * @calls     EventManager.sendEvent(), Editor.read(),
 	 *            hasChanged(), showSaveChangesDialog(), saveDocument()
 	 */
 	private void openDocument()
@@ -400,8 +400,8 @@ public class GUIEditor extends JPanel
 				case JOptionPane.CANCEL_OPTION:
 					return;
 			}
-		}		
-		
+		}
+
 		// show file dialog
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
 		{
@@ -411,7 +411,7 @@ public class GUIEditor extends JPanel
 			{
 				String content = Editor.read(file.toString());
 
-				this.documentFile = file;				
+				this.documentFile = file;
 				textArea.setText(content);
 				textChanged(false, true);
 
@@ -419,9 +419,9 @@ public class GUIEditor extends JPanel
 				eventManager.sendEvent(EventManager.EVENT.DOCUMENT_OPEN_DONE);
 				// change tab to editor tab (if not current)
 				eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
-				
+
 				sendCurrentDirectoryEvent();
-				
+
 				// move caret in text area to the top
 				textArea.setCaretPosition(0);
 				// set focus to text area
@@ -452,7 +452,7 @@ public class GUIEditor extends JPanel
 
 			return saveDocument();
 		}
-		
+
 		return false;
 	}
 
@@ -473,38 +473,38 @@ public class GUIEditor extends JPanel
 		{
 			return saveAsDocument();
 		}
-		
+
 		// save file
 		try
 		{
 			String filename = this.documentFile.toString();
-			
+
 			// if no file extension, automatically append default extension
 			if (filename.lastIndexOf('.') == -1)
 			{
 				filename = filename + "." + AsmFileFilter.FILE_EXTENSION;
-				
+
 				this.documentFile = new File(filename);
 			}
-			
+
 			Editor.write(this.documentFile.toString(), textArea.getText());
-		
+
 			sendCurrentDirectoryEvent();
-			
+
 			textChanged(false, true);
 
 			// send event of successfully saved document
 			eventManager.sendEvent(EventManager.EVENT.DOCUMENT_SAVE_DONE);
 			// change tab to editor tab (if not current)
 			eventManager.sendEvent(EventManager.EVENT.APPLICATION_TAB_CHANGE, Integer.valueOf(GUIManager.TAB_EDITOR));
-			
+
 			return true;
 		}
 		catch (IOException e)
 		{
 			eventManager.sendEvent(EventManager.EVENT.EXCEPTION, e);
 			return false;
-		}		
+		}
 	}
 
 	/**
@@ -548,12 +548,12 @@ public class GUIEditor extends JPanel
 					return;
 			}
 		}
-		
+
 		// exit application
-		System.exit(0);		
+		System.exit(0);
 	}
 
-	/** 
+	/**
    * Show dialog window offering user to save changes of
    * current document.
    *
@@ -571,7 +571,7 @@ public class GUIEditor extends JPanel
 					null,
 					null,
 					null
-			);		
+			);
 	}
 
 	/**
@@ -604,7 +604,7 @@ public class GUIEditor extends JPanel
 	private String getDocumentTitleSuffixed()
 	{
 		String title = getDocumentTitle();
-		
+
 		if (textHasChanged)
 			title += "*";
 
@@ -639,7 +639,7 @@ public class GUIEditor extends JPanel
 
 			textArea.setCaretPosition(newCaretPos);
 		} catch(IllegalArgumentException e) {
-			
+
 		}
 	}
 
@@ -653,7 +653,7 @@ public class GUIEditor extends JPanel
 	public void undoableEditHappened(UndoableEditEvent e)
 	{
 		undo.addEdit(e.getEdit());
-		
+
 		// update menus
 		updateUndoRedoState();
 	}
@@ -668,10 +668,10 @@ public class GUIEditor extends JPanel
 		try {
 			this.undo.undo();
 		} catch (CannotUndoException ex) { }
-		
+
 		updateUndoRedoState();
 	}
-	
+
 	/**
 	 * Performs a redo in the editor.
 	 *
@@ -682,7 +682,7 @@ public class GUIEditor extends JPanel
 		try {
 			this.undo.redo();
 		} catch (CannotRedoException ex) { }
-		
+
 		updateUndoRedoState();
 	}
 
@@ -708,7 +708,7 @@ public class GUIEditor extends JPanel
 	private String getIndentString(int position)
 	{
 		String lineStr = "";
-		
+
 		try {
 			// get line number
 			int line = textArea.getLineOfOffset(position);
@@ -716,11 +716,11 @@ public class GUIEditor extends JPanel
 			// get line as string except last character (newline)
 			lineStr = textArea.getText().substring(textArea.getLineStartOffset(line), textArea.getLineEndOffset(line) - 1);
 		} catch(BadLocationException e) { }
-		
+
 		// no need to proceed if empty row
 		if (lineStr == "")
 			return "";
-		
+
 		char[] charArr = lineStr.toCharArray();
 
 		int i = 0;
@@ -734,16 +734,16 @@ public class GUIEditor extends JPanel
 				nonWhitespaceFound = true;
 				break;
 			}
-			
+
 			i++;
 		}
 
-		// return initial whitespace		
+		// return initial whitespace
 		if (nonWhitespaceFound)
 		{
 			return lineStr.substring(0, i);
 		}
-		
+
 		// if all whitespace, simply return everything
 		return lineStr;
 	}
@@ -755,7 +755,7 @@ public class GUIEditor extends JPanel
 	private void sendCurrentDirectoryEvent()
 	{
 		String path = null;
-		
+
 		if (this.documentFile != null)
 		{
 			path = this.documentFile.getParent();
