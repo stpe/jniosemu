@@ -124,7 +124,7 @@ public class Compiler
 			}
 		}
 
-		// Find all parentheses and macron 
+		// Find all parentheses and macron
 		StringBuffer sb = new StringBuffer(128);	// used to avoid string concatination
 		boolean found;
 		do {
@@ -156,15 +156,15 @@ public class Compiler
 		// Translate all binary and hexdecimal values into decimal values
 		Pattern pHexBin = Pattern.compile("(-)?0((x)([0-9A-Fa-f]+)|(b)([0-1]+))");
 		Matcher mHexBin = pHexBin.matcher(aValue);
-		
+
 		while (mHexBin.find()) {
 			sb.setLength(0);
 			sb.append( (mHexBin.group(1) != null) ? "-" : "" );
 
 			if (mHexBin.group(3) != null) {
-				sb.append( Long.toString(Long.parseLong(mHexBin.group(4), 16)) );
+				sb.append( Long.toString(parseLong(mHexBin.group(4), 16)) );
 			} else {
-				sb.append( Long.toString(Long.parseLong(mHexBin.group(6), 2)) );
+				sb.append( Long.toString(parseLong(mHexBin.group(6), 2)) );
 			}
 			aValue = Utilities.stringReplaceOne(aValue, mHexBin.group(0), sb.toString());
 		}
@@ -173,7 +173,7 @@ public class Compiler
 		Pattern pNotOperator = Pattern.compile("~(-?[\\d]+)");
 		Matcher mNotOperator = pNotOperator.matcher(aValue);
 		while (mNotOperator.find()) {
-			long newValue = ~Long.parseLong(mNotOperator.group(1));
+			long newValue = ~parseLong(mNotOperator.group(1));
 			aValue = Utilities.stringReplace(aValue, mNotOperator.group(0), Long.toString(newValue));
 		}
 
@@ -187,8 +187,8 @@ public class Compiler
 				if (mCalculate.find()) {
 					found = true;
 					long newValue;
-					long valueA = Long.parseLong(mCalculate.group(1));
-					long valueB = Long.parseLong(mCalculate.group(3));
+					long valueA = parseLong(mCalculate.group(1));
+					long valueB = parseLong(mCalculate.group(3));
 					if (mCalculate.group(2).equals("<<")) {
 						newValue = valueA << valueB;
 					} else if (mCalculate.group(2).equals(">>>")) {
@@ -221,10 +221,18 @@ public class Compiler
 		}
 
 		// Now it should just be a numeric value
+		return parseLong(aValue);
+	}
+
+	private static long parseLong(String value) throws InstructionException {
+		return parseLong(value, 10);
+	}
+
+	private static long parseLong(String value, int base) throws InstructionException {
 		try {
-			return Long.parseLong(aValue);
-		} catch (Exception e) {
-			throw new InstructionException("Not a valid value", aValue);
+			return Long.parseLong(value, base);
+		} catch (NumberFormatException e) {
+			throw new InstructionException("Not a valid value", value);
 		}
 	}
 
@@ -240,7 +248,7 @@ public class Compiler
 	}
 
 	/**
-	 * Parses a sourcecode line 
+	 * Parses a sourcecode line
 	 *
 	 * @post If instruction is found they are added to instructions
 	 * @calledby compile()
@@ -402,7 +410,7 @@ public class Compiler
 									} else {
 										int i = 0;
 										try {
-											for (String line: lines) { 
+											for (String line: lines) {
 												i++;
 												this.parseLine(line, false, aLineNumber);
 											}
