@@ -1,36 +1,31 @@
 package jniosemu.instruction;
 
-public abstract class InstructionSyntax implements Comparable
-{
-	/**
-	 * Categories for instructions used for instruction insert menu.
-	 */
-	public static enum CATEGORY {
-		ARITHMETIC_LOGICAL,
-		MOVE,
-		COMPARISON,
-		SHIFT_ROTATE,
-		PROGRAM_CONTROL,
-		DATA_TRANSFER,
-		OTHER
-	}
-	
-	protected CATEGORY category = null;
+public abstract class InstructionSyntax implements Comparable {
+  /** Categories for instructions used for instruction insert menu. */
+  public static enum CATEGORY {
+    ARITHMETIC_LOGICAL,
+    MOVE,
+    COMPARISON,
+    SHIFT_ROTATE,
+    PROGRAM_CONTROL,
+    DATA_TRANSFER,
+    OTHER
+  }
 
-	/**
-	 * Name of instruction.
-	 */
-	protected String name;
+  protected CATEGORY category = null;
 
-	public abstract String getName();
+  /** Name of instruction. */
+  protected String name;
 
-	public CATEGORY getCategory() {
-		return this.category;
-	}
+  public abstract String getName();
 
-	public abstract String getArguments() throws InstructionException;
+  public CATEGORY getCategory() {
+    return this.category;
+  }
 
-	public int compareTo(Object obj) {
-		return this.name.compareTo(((InstructionSyntax)obj).getName());
-	}
+  public abstract String getArguments() throws InstructionException;
+
+  public int compareTo(Object obj) {
+    return this.name.compareTo(((InstructionSyntax) obj).getName());
+  }
 }

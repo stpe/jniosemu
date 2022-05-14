@@ -1,12 +1,11 @@
 package jniosemu.emulator;
 
-public class EmulatorException extends Exception
-{
-	public EmulatorException() {
-		super();
-	}
+public class EmulatorException extends Exception {
+  public EmulatorException() {
+    super();
+  }
 
-	public EmulatorException(String msg) {
-		super(msg);
-	}
+  public EmulatorException(String msg) {
+    super(msg);
+  }
 }

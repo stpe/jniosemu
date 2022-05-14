@@ -1,385 +1,312 @@
 package jniosemu.gui;
 
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.util.*;
-import java.lang.Math;
-
-import jniosemu.events.*;
-import jniosemu.emulator.*;
 import jniosemu.Utilities;
+import jniosemu.emulator.*;
+import jniosemu.events.*;
 
-/**
- * Creates and manages the GUI component of the emulator view.
- */
- public class GUIEmulator extends JPanel
-											 implements MouseListener, EventObserver {
+/** Creates and manages the GUI component of the emulator view. */
+public class GUIEmulator extends JPanel implements MouseListener, EventObserver {
 
-	/**
-	 * Defines the width, offset and offset in percent for columns
-	 * in the emulator view.
-	 */
-	private static int BREAKPOINT_AREA_WIDTH = 18;
-	private static int INSTRUCTION_OFFSET = 110;
-	private static float INSTRUCTION_OFFSET_PERCENT = 0.20f;
-	private static int SOURCECODE_OFFSET = 250;
-	private static float SOURCECODE_OFFSET_PERCENT = 0.50f;
+  /** Defines the width, offset and offset in percent for columns in the emulator view. */
+  private static int BREAKPOINT_AREA_WIDTH = 18;
 
-	/**
-	 * Colors used for highlighting currently executed line
-	 * in emulatov view.
-	 */
-	private static Color CURRENT_LINE_COLOR = new Color(255, 255, 0);
-	private static Color SIBLING_LINE_COLOR = new Color(255, 255, 220);
+  private static int INSTRUCTION_OFFSET = 110;
+  private static float INSTRUCTION_OFFSET_PERCENT = 0.20f;
+  private static int SOURCECODE_OFFSET = 250;
+  private static float SOURCECODE_OFFSET_PERCENT = 0.50f;
 
-	/**
-	 * Reference to EventManager used to receive
-	 * and send events.
-	 */
-	private transient EventManager eventManager;
+  /** Colors used for highlighting currently executed line in emulatov view. */
+  private static Color CURRENT_LINE_COLOR = new Color(255, 255, 0);
 
-	/**
-	 * List component used to display emulator code.
-	 */
-	private JList listView;
+  private static Color SIBLING_LINE_COLOR = new Color(255, 255, 220);
 
-	/**
-	 * Current line index of program counter.
-	 */
-	private int currentIndex;
+  /** Reference to EventManager used to receive and send events. */
+  private transient EventManager eventManager;
 
-	/**
-	 * Current program that is emulated.
-	 */
-	private transient SourceCode sourceCode;
+  /** List component used to display emulator code. */
+  private JList listView;
 
-	/**
-	 * Icon for breakpoint that is set (active).
-	 */
-	private ImageIcon breakPointSetIcon;
+  /** Current line index of program counter. */
+  private int currentIndex;
 
-	/**
-	 * Icon for breakpoint that is unset.
-	 */
-	private ImageIcon breakPointUnsetIcon;
+  /** Current program that is emulated. */
+  private transient SourceCode sourceCode;
 
-	/**
-	 * Initiates the creation of GUI components and adds itself to
-	 * the Event Manager as an observer.
-	 *
-	 * @post      eventManager reference is set for this object.
-	 * @calledby  GUIManager.setup()
-	 * @calls     setup(), EventManager.addEventObserver()
-	 *
-	 * @param  eventManager  The Event Manager object.
-	 */
-	public GUIEmulator(EventManager eventManager)
-	{
-		super();
+  /** Icon for breakpoint that is set (active). */
+  private ImageIcon breakPointSetIcon;
 
-		this.eventManager = eventManager;
+  /** Icon for breakpoint that is unset. */
+  private ImageIcon breakPointUnsetIcon;
 
-		setup();
+  /**
+   * Initiates the creation of GUI components and adds itself to the Event Manager as an observer.
+   *
+   * @post eventManager reference is set for this object.
+   * @calledby GUIManager.setup()
+   * @calls setup(), EventManager.addEventObserver()
+   * @param eventManager The Event Manager object.
+   */
+  public GUIEmulator(EventManager eventManager) {
+    super();
 
-		// add events to listen to
-		EventManager.EVENT[] events = {
-			EventManager.EVENT.EMULATOR_BREAKPOINT_UPDATE,
-			EventManager.EVENT.EMULATOR_CLEAR,
-			EventManager.EVENT.PROGRAMCOUNTER_CHANGE,
-			EventManager.EVENT.PROGRAM_CHANGE
-		};
-		this.eventManager.addEventObserver(events, this);
-	}
+    this.eventManager = eventManager;
 
-	/**
-	 * Setup GUI components and attributes.
-	 *
-	 * @post      components created and added to panel
-	 * @calledby  GUIEmulator
-	 */
-	private void setup()
-	{
-		currentIndex = 0;
+    setup();
 
-		// get breakpoint images
-		breakPointSetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_set.png"));
-		breakPointUnsetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_unset.png"));
+    // add events to listen to
+    EventManager.EVENT[] events = {
+      EventManager.EVENT.EMULATOR_BREAKPOINT_UPDATE,
+      EventManager.EVENT.EMULATOR_CLEAR,
+      EventManager.EVENT.PROGRAMCOUNTER_CHANGE,
+      EventManager.EVENT.PROGRAM_CHANGE
+    };
+    this.eventManager.addEventObserver(events, this);
+  }
 
-		// emulator listview
-		listView = new JList();
-		listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		listView.setBackground(Color.WHITE);
-		listView.setCellRenderer(
-			new EmulatorCellRenderer(
-				listView.getFontMetrics(listView.getFont())
-			)
-		);
+  /**
+   * Setup GUI components and attributes.
+   *
+   * @post components created and added to panel
+   * @calledby GUIEmulator
+   */
+  private void setup() {
+    currentIndex = 0;
 
-		listView.addMouseListener(this);
+    // get breakpoint images
+    breakPointSetIcon = new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_set.png"));
+    breakPointUnsetIcon =
+        new ImageIcon(Utilities.loadImage("graphics/emulator/breakpoint_unset.png"));
 
-		// scrollbars
-		JScrollPane scrollPane = new JScrollPane(listView,
-												JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-												JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    // emulator listview
+    listView = new JList();
+    listView.setFont(new Font("Monospaced", Font.PLAIN, 12));
+    listView.setBackground(Color.WHITE);
+    listView.setCellRenderer(new EmulatorCellRenderer(listView.getFontMetrics(listView.getFont())));
 
-		// put everything into the emulator panel
-		this.setLayout(new BorderLayout());
-		this.add(scrollPane, BorderLayout.CENTER);
-	}
+    listView.addMouseListener(this);
 
-	/**
-	 * Set program object to be displayed in emulator view.
-	 *
-	 * @calls     Program.getProgramLines()
-	 * @calledby  update()
-	 *
-	 * @param  prg Program object
-	 */
-	private void setSourceCode(SourceCode sourceCode)
-	{
-		this.sourceCode = sourceCode;
+    // scrollbars
+    JScrollPane scrollPane =
+        new JScrollPane(
+            listView,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		if (this.sourceCode == null)
-		{
-			// clear emulator view
-			listView.setModel(new DefaultListModel());
-			return;
-		}
+    // put everything into the emulator panel
+    this.setLayout(new BorderLayout());
+    this.add(scrollPane, BorderLayout.CENTER);
+  }
 
-		// set new program lines as data for jlist
-		listView.setListData( this.sourceCode.getSourceCodeLines() );
-	}
+  /**
+   * Set program object to be displayed in emulator view.
+   *
+   * @calls Program.getProgramLines()
+   * @calledby update()
+   * @param prg Program object
+   */
+  private void setSourceCode(SourceCode sourceCode) {
+    this.sourceCode = sourceCode;
 
-	/**
-	 * Set which address in the current emulated program
-	 * the program counter is pointing to and update the
-	 * visual indication.
-	 *
-	 * @pre       setSourceCode() must have been called to set current
-	 *            Program instance before PC may be set.
-	 * @checks    Only ensure index is visible (by scrolling)
-	 *            if it is not negative.
-	 * @calls     Program.getLineNumber()
-	 * @calledby  update()
-	 *
-	 * @param  addr Address of program counter
-	 */
-	private void setProgramCounterIndicator(int addr)
-	{
-		if (this.sourceCode == null)
-			return;
+    if (this.sourceCode == null) {
+      // clear emulator view
+      listView.setModel(new DefaultListModel());
+      return;
+    }
 
-		currentIndex = this.sourceCode.getLineNumber(addr);
-		listView.repaint();
+    // set new program lines as data for jlist
+    listView.setListData(this.sourceCode.getSourceCodeLines());
+  }
 
-		if (currentIndex != -1) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					int firstVisibleIndex = listView.getFirstVisibleIndex();
-					int lastVisibleIndex = listView.getLastVisibleIndex();
-					int visibleRowCount = lastVisibleIndex - firstVisibleIndex;
+  /**
+   * Set which address in the current emulated program the program counter is pointing to and update
+   * the visual indication.
+   *
+   * @pre setSourceCode() must have been called to set current Program instance before PC may be
+   *     set.
+   * @checks Only ensure index is visible (by scrolling) if it is not negative.
+   * @calls Program.getLineNumber()
+   * @calledby update()
+   * @param addr Address of program counter
+   */
+  private void setProgramCounterIndicator(int addr) {
+    if (this.sourceCode == null) return;
 
-					if (currentIndex > firstVisibleIndex + (int)(visibleRowCount * 0.1) && currentIndex < lastVisibleIndex - (int)(visibleRowCount * 0.1))
-						return;
+    currentIndex = this.sourceCode.getLineNumber(addr);
+    listView.repaint();
 
-					int rowHeight = listView.getFontMetrics(listView.getFont()).getHeight();
-					Point p = listView.getLocation();
+    if (currentIndex != -1) {
+      SwingUtilities.invokeLater(
+          new Runnable() {
+            public void run() {
+              int firstVisibleIndex = listView.getFirstVisibleIndex();
+              int lastVisibleIndex = listView.getLastVisibleIndex();
+              int visibleRowCount = lastVisibleIndex - firstVisibleIndex;
 
-					int index = currentIndex - (int)(visibleRowCount * 0.2);
-					if (index < 0)
-						index = 0;
+              if (currentIndex > firstVisibleIndex + (int) (visibleRowCount * 0.1)
+                  && currentIndex < lastVisibleIndex - (int) (visibleRowCount * 0.1)) return;
 
-					Rectangle r = new Rectangle((int)p.getX(), index * rowHeight, 1, visibleRowCount * rowHeight);
-					listView.scrollRectToVisible(r);
-				}
-			});
-		}
-	}
+              int rowHeight = listView.getFontMetrics(listView.getFont()).getHeight();
+              Point p = listView.getLocation();
 
-	public void update(EventManager.EVENT eventIdentifier, Object obj)
-	{
-		switch (eventIdentifier) {
-			case EMULATOR_BREAKPOINT_UPDATE:
-				listView.repaint();
-				break;
-			case PROGRAM_CHANGE:
-				setSourceCode( (SourceCode) obj );
-				break;
-			case PROGRAMCOUNTER_CHANGE:
-				setProgramCounterIndicator( ((Integer) obj).intValue() );
-				break;
-			case EMULATOR_CLEAR:
-				setSourceCode(null);
-				break;
-		}
-	}
+              int index = currentIndex - (int) (visibleRowCount * 0.2);
+              if (index < 0) index = 0;
 
-	/**
-	 * Listens to mouse clicks in the list. If the mouse click is
-	 * in the breakpoint column of the emulator, a toggle breakpoint
-	 * event is sent.
-	 *
-	 * @calls  EventManager.sendEvent();
-	 *
-	 * @param  e  MouseEvent object for the click
-	 */
-	public void mouseClicked(MouseEvent e)
-	{
-		if (e.getX() <= BREAKPOINT_AREA_WIDTH)
-		{
-			int index = listView.locationToIndex(e.getPoint());
-			eventManager.sendEvent(EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE, Integer.valueOf(index));
-		}
-	}
+              Rectangle r =
+                  new Rectangle((int) p.getX(), index * rowHeight, 1, visibleRowCount * rowHeight);
+              listView.scrollRectToVisible(r);
+            }
+          });
+    }
+  }
 
-	/**
-	 * Not used, empty method. Enforced by MouseListener interface.
-	 */
-	public void mouseEntered(MouseEvent e) { }
+  public void update(EventManager.EVENT eventIdentifier, Object obj) {
+    switch (eventIdentifier) {
+      case EMULATOR_BREAKPOINT_UPDATE:
+        listView.repaint();
+        break;
+      case PROGRAM_CHANGE:
+        setSourceCode((SourceCode) obj);
+        break;
+      case PROGRAMCOUNTER_CHANGE:
+        setProgramCounterIndicator(((Integer) obj).intValue());
+        break;
+      case EMULATOR_CLEAR:
+        setSourceCode(null);
+        break;
+    }
+  }
 
-	/**
-	 * Not used, empty method. Enforced by MouseListener interface.
-	 */
-	public void mouseExited(MouseEvent e) { }
+  /**
+   * Listens to mouse clicks in the list. If the mouse click is in the breakpoint column of the
+   * emulator, a toggle breakpoint event is sent.
+   *
+   * @calls EventManager.sendEvent();
+   * @param e MouseEvent object for the click
+   */
+  public void mouseClicked(MouseEvent e) {
+    if (e.getX() <= BREAKPOINT_AREA_WIDTH) {
+      int index = listView.locationToIndex(e.getPoint());
+      eventManager.sendEvent(EventManager.EVENT.EMULATOR_BREAKPOINT_TOGGLE, Integer.valueOf(index));
+    }
+  }
 
-	/**
-	 * Not used, empty method. Enforced by MouseListener interface.
-	 */
-	public void mousePressed(MouseEvent e) { }
+  /** Not used, empty method. Enforced by MouseListener interface. */
+  public void mouseEntered(MouseEvent e) {}
 
-	/**
-	 * Not used, empty method. Enforced by MouseListener interface.
-	 */
-	public void mouseReleased(MouseEvent e) { }
+  /** Not used, empty method. Enforced by MouseListener interface. */
+  public void mouseExited(MouseEvent e) {}
 
-	/**
-	 * Custom cell renderer for the JList in the emulator view.
-	 */
-	class EmulatorCellRenderer extends JPanel
-												 implements ListCellRenderer {
+  /** Not used, empty method. Enforced by MouseListener interface. */
+  public void mousePressed(MouseEvent e) {}
 
-		/**
-		 * ProgramLine object for the current cell that is drawn.
-		 */
-		private SourceCodeLine lineObj;
+  /** Not used, empty method. Enforced by MouseListener interface. */
+  public void mouseReleased(MouseEvent e) {}
 
-		private final int baseline;
-		private final int width;
-		private final int height;
-		private final int iconOffset;
+  /** Custom cell renderer for the JList in the emulator view. */
+  class EmulatorCellRenderer extends JPanel implements ListCellRenderer {
 
-		public EmulatorCellRenderer(FontMetrics metrics) {
-			super();
-			setOpaque(true);
-			setFont(listView.getFont());
+    /** ProgramLine object for the current cell that is drawn. */
+    private SourceCodeLine lineObj;
 
-			this.baseline = metrics.getAscent();
-			this.height = metrics.getHeight();
-			this.width = listView.getWidth();
+    private final int baseline;
+    private final int width;
+    private final int height;
+    private final int iconOffset;
 
-			this.iconOffset = (height - breakPointSetIcon.getIconHeight()) / 2;
-		}
+    public EmulatorCellRenderer(FontMetrics metrics) {
+      super();
+      setOpaque(true);
+      setFont(listView.getFont());
 
-		/**
-		 * Return the renderers fixed size.
-		 */
-		public Dimension getPreferredSize()
-		{
-			return new Dimension(width, height);
-		}
+      this.baseline = metrics.getAscent();
+      this.height = metrics.getHeight();
+      this.width = listView.getWidth();
 
-		/**
-		 * Cell rendered methos sets background/foreground
-		 * color and stores ProgramLine for row.
-		 */
-		public Component getListCellRendererComponent(
-																			 JList list,
-																			 Object value,
-																			 int index,
-																			 boolean isSelected,
-																			 boolean cellHasFocus)
-		{
-			this.lineObj = (SourceCodeLine) value;
+      this.iconOffset = (height - breakPointSetIcon.getIconHeight()) / 2;
+    }
 
-			setBackground(list.getBackground());
-			setForeground(list.getForeground());
+    /** Return the renderers fixed size. */
+    public Dimension getPreferredSize() {
+      return new Dimension(width, height);
+    }
 
-			return this;
-		}
+    /** Cell rendered methos sets background/foreground color and stores ProgramLine for row. */
+    public Component getListCellRendererComponent(
+        JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      this.lineObj = (SourceCodeLine) value;
 
-		/**
-		 * Custom paint method bypassing standard JComponent
-		 * painting to optimize performance.
-		 */
-		public void paintComponent(Graphics g)
-		{
-			// clear background
-			g.setColor(getBackground());
-			g.fillRect(0, 0, getWidth(), getHeight());
+      setBackground(list.getBackground());
+      setForeground(list.getForeground());
 
-			// current executing program line highlight
-			SourceCodeLine.SIBLINGSTATUS status = lineObj.isSibling(currentIndex);
+      return this;
+    }
 
-			if (status != SourceCodeLine.SIBLINGSTATUS.NONE) {
-				g.setColor(CURRENT_LINE_COLOR);
-				g.fillRect(3, 0, getWidth()-6, getHeight());
-			}
+    /** Custom paint method bypassing standard JComponent painting to optimize performance. */
+    public void paintComponent(Graphics g) {
+      // clear background
+      g.setColor(getBackground());
+      g.fillRect(0, 0, getWidth(), getHeight());
 
-			switch (status) {
-				case FIRST:
-					g.setColor(SIBLING_LINE_COLOR);
-					g.fillRect(4, 1, getWidth()-8, getHeight()-1);
-					break;
-				case MIDDLE:
-					g.setColor(SIBLING_LINE_COLOR);
-					g.fillRect(4, 0, getWidth()-8, getHeight());
-					break;
-				case LAST:
-					g.setColor(SIBLING_LINE_COLOR);
-					g.fillRect(4, 0, getWidth()-8, getHeight()-1);
-					break;
-			}
+      // current executing program line highlight
+      SourceCodeLine.SIBLINGSTATUS status = lineObj.isSibling(currentIndex);
 
-			g.setColor(getForeground());
+      if (status != SourceCodeLine.SIBLINGSTATUS.NONE) {
+        g.setColor(CURRENT_LINE_COLOR);
+        g.fillRect(3, 0, getWidth() - 6, getHeight());
+      }
 
-			int xOffset = 6;
+      switch (status) {
+        case FIRST:
+          g.setColor(SIBLING_LINE_COLOR);
+          g.fillRect(4, 1, getWidth() - 8, getHeight() - 1);
+          break;
+        case MIDDLE:
+          g.setColor(SIBLING_LINE_COLOR);
+          g.fillRect(4, 0, getWidth() - 8, getHeight());
+          break;
+        case LAST:
+          g.setColor(SIBLING_LINE_COLOR);
+          g.fillRect(4, 0, getWidth() - 8, getHeight() - 1);
+          break;
+      }
 
-			// breakpoint
-			switch (lineObj.getBreakPoint())
-			{
-				case TRUE:
-					g.drawImage(breakPointSetIcon.getImage(), xOffset, iconOffset, null);
-					break;
-				case FALSE:
-					g.drawImage(breakPointUnsetIcon.getImage(), xOffset, iconOffset, null);
-					break;
-			}
+      g.setColor(getForeground());
 
-			xOffset = BREAKPOINT_AREA_WIDTH;
+      int xOffset = 6;
 
-			// opcode
-			if (lineObj.getOpCode() != null)
-				g.drawString(lineObj.getOpCode(), xOffset, this.baseline);
+      // breakpoint
+      switch (lineObj.getBreakPoint()) {
+        case TRUE:
+          g.drawImage(breakPointSetIcon.getImage(), xOffset, iconOffset, null);
+          break;
+        case FALSE:
+          g.drawImage(breakPointUnsetIcon.getImage(), xOffset, iconOffset, null);
+          break;
+      }
 
-			// instruction
-			if (lineObj.getInstruction() != null)
-			{
-				xOffset = (int) Math.max(INSTRUCTION_OFFSET, INSTRUCTION_OFFSET_PERCENT * getWidth());
+      xOffset = BREAKPOINT_AREA_WIDTH;
 
-				g.drawString(lineObj.getInstruction(), xOffset, this.baseline);
-			}
+      // opcode
+      if (lineObj.getOpCode() != null) g.drawString(lineObj.getOpCode(), xOffset, this.baseline);
 
-			// source line
-			if (lineObj.getSourceCodeLine() != null)
-			{
-				xOffset = (int) Math.max(SOURCECODE_OFFSET, SOURCECODE_OFFSET_PERCENT * getWidth());
+      // instruction
+      if (lineObj.getInstruction() != null) {
+        xOffset = (int) Math.max(INSTRUCTION_OFFSET, INSTRUCTION_OFFSET_PERCENT * getWidth());
 
-				g.drawString(lineObj.getSourceCodeLine(), xOffset, this.baseline);
-			}
-		}
+        g.drawString(lineObj.getInstruction(), xOffset, this.baseline);
+      }
 
-	}
+      // source line
+      if (lineObj.getSourceCodeLine() != null) {
+        xOffset = (int) Math.max(SOURCECODE_OFFSET, SOURCECODE_OFFSET_PERCENT * getWidth());
 
+        g.drawString(lineObj.getSourceCodeLine(), xOffset, this.baseline);
+      }
+    }
+  }
 }

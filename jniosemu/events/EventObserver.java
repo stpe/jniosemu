@@ -7,13 +7,12 @@ package jniosemu.events;
  */
 public interface EventObserver {
 
-	/**
-	 * Receive incoming events from event manager.
-	 *
-	 * @calledby  EventManager.sendEvent()
-	 *
-	 * @param  eventIdentifier String identifying the event
-	 * @param  obj             Object associated with event by sender
-	 */
-	public void update(EventManager.EVENT eventIdentifier, Object obj);
+  /**
+   * Receive incoming events from event manager.
+   *
+   * @calledby EventManager.sendEvent()
+   * @param eventIdentifier String identifying the event
+   * @param obj Object associated with event by sender
+   */
+  public void update(EventManager.EVENT eventIdentifier, Object obj);
 }
