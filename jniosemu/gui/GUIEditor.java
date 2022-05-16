@@ -113,7 +113,8 @@ public class GUIEditor extends JPanel
             } else {
               textArea.getParent().dispatchEvent(mouseWheelEvent);
             }
-		});textArea.getDocument().addDocumentListener(this);
+		});
+    textArea.getDocument().addDocumentListener(this);
     textArea.addCaretListener(this);
 
     // put scrollbars around editor text area
