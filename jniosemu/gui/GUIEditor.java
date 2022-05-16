@@ -108,9 +108,11 @@ public class GUIEditor extends JPanel
     textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
     textArea.addMouseWheelListener(mouseWheelEvent ->
 		{
-			if (mouseWheelEvent.isControlDown())
-				textArea.setFont(new Font("Monospaced", Font.PLAIN, textArea.getFont().getSize()+mouseWheelEvent.getWheelRotation()));
-			else textArea.getParent().dispatchEvent(mouseWheelEvent);
+			if (mouseWheelEvent.isControlDown()) {
+              textArea.setFont(new Font("Monospaced", Font.PLAIN, textArea.getFont().getSize() + mouseWheelEvent.getWheelRotation()));
+            } else {
+              textArea.getParent().dispatchEvent(mouseWheelEvent);
+            }
 		});textArea.getDocument().addDocumentListener(this);
     textArea.addCaretListener(this);
 
