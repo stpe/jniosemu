@@ -5,7 +5,7 @@ JNiosEmu is an educational Nios II based development environment and emulator wi
 
 ## Documentation
 
-See the [wiki](https://github.com/stpe/jniosemu/wiki) and the [website](http://stpe.github.com/jniosemu/).
+See the [wiki](https://github.com/stpe/jniosemu/wiki) and the [website](http://stpe.github.io/jniosemu/).
 
 ## License
 
